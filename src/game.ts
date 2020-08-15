@@ -18,6 +18,7 @@ const landOwnerData = {
       "scale":{"x":1, "y":1, "z":1},
       "hideFrame":false,
       "hideBoard":false,
+      "hideAd":true,
       "gameID":"1,1"
     }
  }`
