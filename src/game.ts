@@ -12,7 +12,7 @@ import {SammichGame} from '../metas/sammichgame/sammichgame';
 
 const landOwnerData = {
   host_data: `{
-    "sammich":{
+    "sammichgame":{
       "position":{"x":8,"y":0.8,"z":12},
       "rotation":{"x":0,"y":0,"z":0},
       "scale":{"x":1, "y":1, "z":1},
