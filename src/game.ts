@@ -19,7 +19,7 @@ const landOwnerData = {
       "hideFrame":false,
       "hideBoard":false,
       "hideAd":true,
-      "gameID":"1,1"
+      "gameID":"0,0"
     }
  }`
 };
