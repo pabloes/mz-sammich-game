@@ -8,7 +8,7 @@ declare var dcl: DecentralandInterface
 
 import { MetaZoneAPI } from './metazone-api';
 
-import {Sammich} from '../metas/sammich/sammich';
+import {SammichGame} from '../metas/sammichgame/sammichgame';
 
 const landOwnerData = {
   host_data: `{
@@ -25,9 +25,9 @@ const landOwnerData = {
 };
 let meta;
 try{
-  meta = new Sammich(mzAPI, landOwnerData)
+  meta = new SammichGame(mzAPI, landOwnerData)
 }catch(err){
-  meta = new Sammich({getUserData}, landOwnerData)
+  meta = new SammichGame({getUserData}, landOwnerData)
 }
 
 engine.addSystem(meta);
