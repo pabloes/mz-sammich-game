@@ -6150,8 +6150,9 @@ const SpriteAnimation_1 = __webpack_require__(0);
 const gameUtils_1 = __webpack_require__(5);
 const GameRepo_1 = __importDefault(__webpack_require__(23));
 const config_1 = __webpack_require__(18);
+const Notification_1 = __webpack_require__(96);
 const hostData_1 = __webpack_require__(19);
-const land_1 = __webpack_require__(96);
+const land_1 = __webpack_require__(97);
 const SpriteMaterial_1 = __webpack_require__(1);
 engine["PRODI"] = true;
 const DevGame = GameRepo_1.default.CostumeGame;
@@ -6232,6 +6233,10 @@ class SammichGame {
             this.rootTransform.rotation.setEuler(rotation.x, rotation.y, rotation.z);
             root.addComponent(this.rootTransform);
             engine.addEntity(root);
+            const SoundE = new Entity();
+            SoundE.addComponent(new Transform({ position: new Vector3(0, 2, -2) }));
+            SoundE.setParent(root);
+            Sound_1.addSoundsToEntity(SoundE);
             if (!hideFrame)
                 Frame_1.createFrame(root);
             if (!hideAd)
@@ -6241,6 +6246,80 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
+            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
+                console.log("handleGameRoomFull", { trackSeed, player, minGames });
+                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            };
+            gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
+                console.log("onPlayersFull", lobbyRoom);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onGameRunning(({ lobbyRoom, minGames }) => {
+                console.log("onGameRunning", lobbyRoom, typeof lobbyRoom, minGames);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed: lobbyRoom.state.trackSeed, minGames, alreadyStarted: true });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onChangeState((fieldChanges, state) => {
+                console.log("gameLobby onChangeState");
+            });
+            gameLobby.onCreate((gameRoom, { minGames }) => {
+                console.log("you have CREATED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 1, minGames }));
+            });
+            gameLobby.onJoin((gameRoom, { minGames }) => {
+                console.log("you have JOINED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 2, minGames }));
+            });
+            const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
+            if (showJoinVoice) {
+                const joinVoice = new Entity();
+                const joinVoiceShape = new GLTFShape(`${resourceBaseUrl}models/joinVoice.glb`);
+                joinVoice.addComponent(new Transform({
+                    position: new Vector3(0, position.y - 1.5, -13),
+                    scale: new Vector3(1.5, 2, 2)
+                }));
+                joinVoice.addComponent(joinVoiceShape);
+                joinVoice.addComponent(new OnPointerDown(() => {
+                    openExternalURL(`https://meet.jit.si/${voiceChannel}#config.startWithAudioMuted=true&config.startWithVideoMuted=true`);
+                }));
+                joinVoice.setParent(root);
+            }
+            if (showScenario) {
+                const sammichScenario = new Entity();
+                const scenarioShape = new GLTFShape(`${resourceBaseUrl}models/sammich-scene.glb`);
+                const rotationX = rotation.y === 0
+                    ? 0
+                    : rotation.y === 90
+                        ? -6
+                        : rotation.y === 180
+                            ? 0
+                            : 6;
+                const rotationZ = rotation.y === 0
+                    ? -6
+                    : rotation.y === 90
+                        ? 0
+                        : rotation.y === 180
+                            ? 6
+                            : 0;
+                sammichScenario.addComponent(new Transform({
+                    position: new Vector3(position.x + rotationX, 0, position.z + rotationZ),
+                    rotation: Quaternion.Euler(rotation.x, rotation.y - 180, rotation.z),
+                    scale: new Vector3(1, 1, 1)
+                }));
+                sammichScenario.addComponent(scenarioShape);
+                engine.addEntity(sammichScenario);
+            }
         }))();
     }
     update(dt) {
@@ -6268,7 +6347,6 @@ class SammichGame {
             }
             this.state.countToCheckCamera = 0;
         }
-        var t = new Transform();
     }
     refreshHost(landData) {
         if (!this.rootTransform)
@@ -11641,6 +11719,40 @@ exports.Reflection = Reflection;
 
 /***/ }),
 /* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.showNotification = void 0;
+const canvas = new UICanvas();
+const text = new UIText(canvas);
+text.fontSize = 30;
+text.color = Color4.White();
+text.hAlign = "center";
+text.vAlign = "center";
+text.width = "100%";
+text.height = "100%";
+text.value = "";
+text.visible = false;
+canvas.visible = false;
+exports.showNotification = (str, { error = false, info = false, warning = false } = {}) => {
+    canvas.visible = true;
+    text.visible = true;
+    console.log("showNotification", str);
+    text.value = str;
+    text.width = 120;
+    text.height = 30;
+    setTimeout(() => {
+        text.visible = false;
+        canvas.visible = false;
+        text.value = "";
+    }, 4000);
+};
+
+
+/***/ }),
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
