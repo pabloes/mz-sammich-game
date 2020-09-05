@@ -6308,30 +6308,6 @@ class SammichGame {
         }))();
     }
     update(dt) {
-        this.state.countToCheckCamera += dt;
-        if (this.state.countToCheckCamera >= 1) {
-            const { position, soundDistance } = hostData_1.getHostData();
-            const bounds = soundDistance ? {
-                x1: position.x - soundDistance,
-                x2: position.x + soundDistance,
-                z1: position.z - soundDistance,
-                z2: position.z + soundDistance
-            } : { x1: 0, x2: 16, z1: 0, z2: 16 };
-            const { x, y, z } = Camera.instance.position;
-            console.log("soundDistance", soundDistance, bounds, { x, y, z });
-            if (Camera.instance.position.x >= bounds.x1
-                && Camera.instance.position.x <= bounds.x2
-                && Camera.instance.position.z >= bounds.z1
-                && Camera.instance.position.z <= bounds.z2) {
-                console.log("mute", false);
-                Sound_1.setTotalMute(false);
-            }
-            else {
-                console.log("mute", true);
-                Sound_1.setTotalMute(true);
-            }
-            this.state.countToCheckCamera = 0;
-        }
     }
     refreshHost(landData) {
         if (!this.rootTransform)
