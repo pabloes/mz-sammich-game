@@ -6233,10 +6233,6 @@ class SammichGame {
             this.rootTransform.rotation.setEuler(rotation.x, rotation.y, rotation.z);
             root.addComponent(this.rootTransform);
             engine.addEntity(root);
-            const SoundE = new Entity();
-            SoundE.addComponent(new Transform({ position: new Vector3(0, 2, -2) }));
-            SoundE.setParent(root);
-            Sound_1.addSoundsToEntity(SoundE);
             if (!hideFrame)
                 Frame_1.createFrame(root);
             if (!hideAd)
