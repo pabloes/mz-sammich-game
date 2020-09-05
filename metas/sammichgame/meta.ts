@@ -6150,8 +6150,9 @@ const SpriteAnimation_1 = __webpack_require__(0);
 const gameUtils_1 = __webpack_require__(5);
 const GameRepo_1 = __importDefault(__webpack_require__(23));
 const config_1 = __webpack_require__(18);
+const Notification_1 = __webpack_require__(96);
 const hostData_1 = __webpack_require__(19);
-const land_1 = __webpack_require__(96);
+const land_1 = __webpack_require__(97);
 const SpriteMaterial_1 = __webpack_require__(1);
 engine["PRODI"] = true;
 const DevGame = GameRepo_1.default.CostumeGame;
@@ -6245,6 +6246,26 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
+            if (!engine["PRODI"]) {
+                SpritePanel_1.hideSpritePanel();
+                Sound_1.toggleMusic();
+                let game = new DevGame(root, { seed: devSeed, currentPlayer: 2, level: 1, gameIndex: 0 });
+                game.setStartTime(Date.now() + 2000);
+                game.onFinish(() => { });
+                game.onFinishRound && game.onFinishRound(() => { });
+                game.onShareState((sharedState) => {
+                    game.shareState(Object.assign(Object.assign({}, sharedState), { player: 1, senderPlayer: 1 }));
+                });
+                game.init();
+            }
+            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
+                console.log("handleGameRoomFull", { trackSeed, player, minGames });
+                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            };
             const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
             if (showJoinVoice) {
                 const joinVoice = new Entity();
@@ -11659,6 +11680,40 @@ exports.Reflection = Reflection;
 
 /***/ }),
 /* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.showNotification = void 0;
+const canvas = new UICanvas();
+const text = new UIText(canvas);
+text.fontSize = 30;
+text.color = Color4.White();
+text.hAlign = "center";
+text.vAlign = "center";
+text.width = "100%";
+text.height = "100%";
+text.value = "";
+text.visible = false;
+canvas.visible = false;
+exports.showNotification = (str, { error = false, info = false, warning = false } = {}) => {
+    canvas.visible = true;
+    text.visible = true;
+    console.log("showNotification", str);
+    text.value = str;
+    text.width = 120;
+    text.height = 30;
+    setTimeout(() => {
+        text.visible = false;
+        canvas.visible = false;
+        text.value = "";
+    }, 4000);
+};
+
+
+/***/ }),
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
