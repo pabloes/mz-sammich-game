@@ -1,1 +1,11122 @@
-export default(function(e){var t={};function n(i){if(t[i])return t[i].exports;var r=t[i]={i,l:0,exports:{}};e[i].call(r.exports,r,r.exports,n);r.l=1;return r.exports}n.m=e;n.c=t;n.d=function(e,t,i){n.o(e,t)||Object.defineProperty(e,t,{enumerable:1,get:i})};n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"});Object.defineProperty(e,"__esModule",{value:1})};n.t=function(e,t){1&t&&(e=n(e));if(8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var i=Object.create(null);n.r(i);Object.defineProperty(i,"default",{enumerable:1,value:e});if(2&t&&"string"!=typeof e)for(var r in e)n.d(i,r,function(t){return e[t]}.bind(null,r));return i};n.n=function(e){var t=e&&e.__esModule?function t(){return e["default"]}:function t(){return e};n.d(t,"a",t);return t};n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)};n.p="";return n(n.s=47)}([function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.getSpriteUv=t.SpriteAnimationSystem=t.createSpriteEntity=void 0;const i=n(1),r={time:.5,frames:[],init:1,position:void 0,scale:void 0};t.createSpriteEntity=(e,{position:t=new Vector3(0,0,0),scale:n=new Vector3(1,1,1),uvs:r})=>{const s=new Entity,o=new PlaneShape;o.withCollisions=0;o.isPointerBlocker=0;const a=new Transform({position:t,scale:n});o.uvs=r;s.addComponent(o);s.addComponent(i.spriteMaterial);s.addComponent(a);s.setParent(e);return{show:()=>{o.visible=1},hide:()=>{o.visible=0},getEntity:()=>s,getShape:()=>o,getTransform:()=>a,updateUvs:e=>o.uvs=e}};class s{constructor(e,t=r){const{scale:n,time:s,position:o,frames:a,init:c}=t;this.globalOptions=Object.assign(Object.assign({},r),t);this.root=e;this.setInitialState();this.sprite=new Entity;this.plane=new PlaneShape;this.sprite.addComponent(i.spriteMaterial);this.sprite.addComponent(this.plane);(o||n)&&this.sprite.addComponent(new Transform({scale:n,position:o}));this.plane.uvs=a[0].uvs;engine.addSystem(this)}setPosition(e){this.sprite.getComponent(Transform).position.set(e.x,e.y,e.z)}getPosition(){return this.sprite.getComponent(Transform).position}setRotation(e){this.sprite.getComponent(Transform).rotation.setEuler(0,0,e)}addComponentOrReplace(e){this.sprite.addComponentOrReplace(e)}addComponent(e){this.sprite.addComponent(e)}removeComponent(e){this.sprite.removeComponent(e)}init(){this.state.initialized=1;this.sprite.setParent(this.root)}nextFrame(){this.state.currentFrame++;this.state.currentFrame>=this.state.playtrack.length-1&&this.state.playing&&!this.state.loop&&(this.state.playing=0);this.state.currentFrame>=this.state.playtrack.length&&(this.state.loop?this.state.currentFrame=0:this.state.currentFrame=this.state.playtrack.length-1);this.plane.uvs=this.globalOptions.frames[this.state.playtrack[this.state.currentFrame]].uvs}update(e){if(this.state.initialized)if(this.state.playing){this.state.dtCount+=e;if(this.state.dtCount>=this.state.time){this.state.dtCount=0;this.nextFrame()}}else this.state.dtCount=0}play(e,t){this.state.playtrack=e;this.state.dtCount=0;this.state.currentFrame=-1;this.state.initialized=1;this.state.playing=1;this.state.end=e.length-1;this.state.time=(null==t?void 0:t.time)||this.globalOptions.time;this.state.loop=(null==t?void 0:t.loop)||0;this.nextFrame()}stop(e=0){this.plane.uvs=this.globalOptions.frames[0].uvs;this.state.playing=0}destroy(){engine.removeSystem(this)}setInitialState(){this.state={initialized:0,playing:0,currentFrame:0,dtCount:0,start:0,end:0,loop:0,time:this.globalOptions.time||.5,playtrack:[0]}}resetState(){this.state=Object.assign(Object.assign({},this.state),{playing:0})}}t.SpriteAnimationSystem=s;t.getSpriteUv=(e,t=0,n=64,i=n)=>{let r=1024/n,s=1024/i,o=e+t,a=1/r,c=1/s,l=s-Math.floor((o-1)/r),u=Math.floor((o-1)%r);const h=u*a,d=(u+1)*a,p=(l-1)*c,f=l*c;return[0,0,0,0,0,0,0,0,d,p,h,p,h,f,d,f]}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.loadTexture=t.spriteMaterial=void 0;t.spriteMaterial=new Material;t.loadTexture=()=>{const e=(engine["RESOURCE_BASE"]||globalThis["RESOURCE_BASE"]||"")+"images/sprite3.png"}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.removeSoundsFromEntity=t.addSoundsToEntity=t.stopAllSounds=t.stopSound=t.isMusic=t.playOnce=t.playLoop=t.isPlaying=t.toggleMusic=t.setTotalMute=t.loadSounds=void 0;let i={},r=[];t.loadSounds=()=>{const e=""+(engine["RESOURCE_BASE"]||globalThis["RESOURCE_BASE"]||""),t=new AudioClip(e+"sounds/error.mp3"),n=new AudioClip(e+"sounds/music2b.mp3"),s=new AudioClip(e+"sounds/vs.mp3"),o=new AudioClip(e+"sounds/pwned.mp3"),a=new AudioClip(e+"sounds/race.mp3"),c=new AudioClip(e+"sounds/ok.mp3"),l=new AudioClip(e+"sounds/wow.mp3"),u=new AudioClip(e+"sounds/swing.mp3"),h=new AudioClip(e+"sounds/battle.mp3"),d=new AudioClip(e+"sounds/money.mp3"),p=new AudioClip(e+"sounds/jump.mp3"),f=new AudioClip(e+"sounds/readygo.mp3"),g=new AudioClip(e+"sounds/hit.mp3"),m=new AudioSource(t),y=new AudioSource(n),v=new AudioSource(s),S=new AudioSource(o),b=new AudioSource(a),w=new AudioSource(c),_=new AudioSource(l),T=new AudioSource(u),C=new AudioSource(h),P=new AudioSource(d),E=new AudioSource(p),R=new AudioSource(f),I=new AudioSource(g);i={fail:m,music2:y,vs:v,pwned:S,race:b,ok:w,wow:_,swing:T,battle:C,money:P,jump:E,readygo:R,hit:I};r=[i.music2,i.pwned,i.race,i.battle,i.money];r.forEach(e=>{e.volume=.5})};const s={music:1,fx:1,totalMute:0};t.setTotalMute=e=>{s.totalMute=e;e?Object.values(i).forEach(e=>{e.volume=0}):Object.values(i).forEach(e=>{t.isMusic(e)?e.volume=s.music?.5:0:e.volume=1})};t.toggleMusic=()=>{s.music=!s.music;r.forEach(e=>{e.volume=!s.music||s.totalMute?0:.5})};t.isPlaying=e=>i[e].playing;t.playLoop=(e,{volume:t}={volume:void 0})=>{i[e].loop=1;i[e].playing=1};t.playOnce=(e,{volume:t}={volume:void 0})=>{i[e].playOnce();void 0===t||~r.indexOf(i[e])||(i[e].volume=t)};t.isMusic=e=>~r.indexOf(e);t.stopSound=e=>{i[e].playing=0};t.stopAllSounds=()=>{Object.values(i).forEach(e=>e.playing=0)};t.addSoundsToEntity=e=>{Object.values(i).forEach(t=>{const n=new Entity;n.setParent(e);n.addComponent(t);t.volume=1})};t.removeSoundsFromEntity=e=>{Object.values(i).forEach(e=>{})}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.seedGen=void 0;t.seedGen={create:e=>{let t=e;return{random:()=>{t=16807*t%2147483647;return t/2147483647}}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.sleep=t.createUI=t.createRoundResult=t.createTimeResult=t.createPlayerAnswer=void 0;const i=n(0),r={player1:{correct:1,wrong:3},player2:{correct:2,wrong:4}},s=2068;t.createPlayerAnswer=(e,{player:t,size:n=16})=>{const o=new Entity;o.addComponent(new Transform({scale:new Vector3(.5,.5,1),position:new Vector3(1===t?-.3:.3,-10,-.01)}));const a=i.createSpriteEntity(o,{uvs:i.getSpriteUv(r["player"+t].correct,s,16,16),position:new Vector3(0,0,-.001)});o.setParent(e);const c=e=>{let n=5;n=e?r["player"+t].correct:r["player"+t].wrong;a.getShape().uvs=i.getSpriteUv(n,s,16,16)},l=()=>{a.getShape().visible=1},u=()=>{a.getShape().visible=0};return{wrapperEntity:o,sprite:a,setSprite:c,show:l,hide:u}};t.createTimeResult=(e,{player:t,position:n=new Vector3(1===t?-2.4:2.4,.1,-.007),fontSize:r=2.5})=>{const s=new Entity,o=new TextShape,a=i.createSpriteEntity(s,{uvs:i.getSpriteUv(25,2048,16,16),scale:new Vector3(.25,.25,1),position:new Vector3(1===t?-.25:.25,.125,0)});o.isPointerBlocker=0;o.hTextAlign=1===t?"left":"right";o.vTextAlign="bottom";o.fontSize=r;o.font=new Font(Fonts.SanFrancisco_Heavy);o.shadowOffsetX=2;o.shadowOffsetY=2;o.shadowColor=Color3.FromHexString("#000000");o.withCollisions=0;const c=new Transform({position:n});s.addComponent(c);s.addComponent(o);s.setParent(e);const l=undefined,u=undefined,h=undefined;return{show:()=>{o.visible=1;a.getShape().visible=1},hide:()=>{o.visible=0;o.value="";a.getShape().visible=0},update:e=>{o.value=(Math.floor(1e4*e)/1e4/1e3).toString()},getTransform:()=>c,getEntity:()=>s}};t.createRoundResult=(e,{player:t,position:n=new Vector3(1===t?-2:2,3,-.007)})=>{const r=104,s=4/128/2,o=i.createSpriteEntity(e,{uvs:i.getSpriteUv(12,r,128,32),scale:new Vector3(128*s,32*s,1),position:n}),a=undefined,c=undefined,l=undefined;return{show:()=>{o.getShape().visible=1},hide:()=>{o.getShape().visible=0},update:e=>{o.getShape().uvs=e?i.getSpriteUv(12,r,128,32):i.getSpriteUv(4,r,128,32)},getTransform:()=>o.getTransform(),getEntity:()=>o.getEntity()}};t.createUI=(e,{position:n}={position:void 0})=>{const r=t.createTimeResult(e,{player:1}),s=t.createTimeResult(e,{player:2});r.hide();s.hide();const o=new TextShape("0"),a=new TextShape("0");o.withCollisions=a.withCollisions=0;o.isPointerBlocker=a.isPointerBlocker=0;o.font=a.font=new Font(Fonts.SanFrancisco_Heavy);o.fontSize=a.fontSize=2.5;o.vTextAlign=a.vTextAlign="bottom";o.hTextAlign="right";a.hTextAlign="left";const c=new Entity,l=new Entity;c.addComponent(o);c.addComponent(new Transform({position:new Vector3(-.5,n?.1+n.y:.1,-.003)}));l.addComponent(a);l.addComponent(new Transform({position:new Vector3(.5,n?.1+n.y:.1,-.003)}));c.setParent(e);l.setParent(e);const u=i.createSpriteEntity(e,{position:new Vector3(0,n?.5+n.y:.5,-.001),scale:new Vector3(6,1,1),uvs:i.getSpriteUv(2,64,192,32)}),h=undefined,d=undefined,p=undefined,f=undefined,g=undefined,m=undefined,y=undefined;return{updateTime:({player:e,time:t})=>{if(1===e){r.update(t);r.show()}else{s.update(t);s.show()}},updateScore:({player:e,score:t})=>{"undefined"!=typeof t&&(1===e?o.value=t.toString():a.value=t.toString())},hideTime:()=>{r.hide();s.hide()},showTime:()=>{},hideScore:()=>{o.value=a.value=""},show:()=>{u.getShape().visible=1},hide:()=>{u.getShape().visible=0}}};function o(e){return new Promise(t=>setTimeout(t,e))}t.sleep=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.showSpritePanel=t.hideSpritePanel=t.updateSpritePanel=t.createSpritePanel=void 0;const i=n(0),r=n(1),s=new PlaneShape;s.withCollisions=0;s.isPointerBlocker=0;const o=new Transform({position:new Vector3(0,2,-.001),scale:new Vector3(6,4,1)});t.createSpritePanel=e=>{const t=new Entity;t.addComponent(s);t.addComponent(r.spriteMaterial);t.addComponent(o);t.setParent(e)};t.updateSpritePanel=({uvs:e=null,width:t=null,height:n=null,col:r=null,row:a=null,canvasWidth:c=null,scale:l=null})=>{s.uvs=e||i.getSpriteUv(1024/t*a+r,0,t,n);c&&o.scale.set(c,o.scale.y,o.scale.z);l?o.scale.set(l.x,l.y,l.z):o.scale.set(6,4,1)};t.hideSpritePanel=()=>{s.visible=0;o.scale.set(6,4,1)};t.showSpritePanel=()=>{s.visible=1}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.getTextPanelValue=t.updateTextPanel=t.createTextPanel=void 0;let i=null;const r=new Transform({position:new Vector3(0,4,-.01)});t.createTextPanel=(e,t)=>{const n=new Entity;i=new TextShape;i.value=t;i.vTextAlign="top";i.fontSize=3;i.font=new Font(Fonts.SanFrancisco_Heavy);i.shadowOffsetX=2;i.shadowOffsetY=2;i.shadowColor=Color3.FromHexString("#000000");n.addComponent(r);n.addComponent(i);n.setParent(e)};t.updateTextPanel=e=>{if(e.bottom){i.vTextAlign="bottom";r.position.set(r.position.x,0,r.position.z)}else{i.vTextAlign="top";r.position.set(r.position.x,4,r.position.z)}if("left"===e.hTextAlign){i.hTextAlign="left";r.position.set(-3,r.position.y,r.position.z)}else{i.hTextAlign="center";r.position.set(0,r.position.y,r.position.z)}i.color=e.color||Color3.White();Object.assign(i,{hTextAlign:"center"},e,{value:""+e.value})};t.getTextPanelValue=()=>i.value},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.TransformSystem=void 0;const i=n(15),r=n(23),s=n(24),o=n(25),a=n(26);class c{constructor(){this._components=[];c._instance=this;this._components.push(i.MoveTransformComponent);this._components.push(r.RotateTransformComponent);this._components.push(s.ScaleTransformComponent);this._components.push(o.FollowPathComponent);this._components.push(a.KeepRotatingComponent)}static createAndAddToEngine(){if(null==this._instance){this._instance=new c;engine.addSystem(this._instance)}return this._instance}static registerCustomComponent(e){this.createAndAddToEngine()._components.push(e)}update(e){this._components.forEach(t=>{this.updateComponent(e,t)})}updateComponent(e,t){const n=undefined;engine.getComponentGroup(t,Transform).entities.forEach(n=>{const i=n.getComponent(Transform),r=n.getComponent(t);r.update(e);r.assignValueToTransform(i);if(r.hasFinished()){n.removeComponent(r);null!=r.onFinishCallback&&r.onFinishCallback()}})}}t.TransformSystem=c;c._instance=null},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.PART_TYPE_OFFSET_Y=t.PART_OFFSET_INDEX=t.PART_SIZE_HEIGHT=t.PART_SIZE_WIDTH=void 0;t.PART_SIZE_WIDTH={shirt:64,pants:64,hair:64,glasses:64};t.PART_SIZE_HEIGHT={shirt:64,pants:64,hair:64,glasses:64};t.PART_OFFSET_INDEX={shirt:64,pants:80,hair:224,glasses:208};t.PART_TYPE_OFFSET_Y={shirt:-.2,pants:.2,hair:0,glasses:0}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.getTimeSinceStart=void 0;t.getTimeSinceStart=e=>Date.now()-e},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}(),r=this&&this.__spreadArrays||function(){for(var e=0,t=0,n=arguments.length;t<n;t++)e+=arguments[t].length;for(var i=Array(e),r=0,t=0;t<n;t++)for(var s=arguments[t],o=0,a=s.length;o<a;o++,r++)i[r]=s[o];return i};Object.defineProperty(t,"__esModule",{value:1});t.ArraySchema=void 0;var s=function(e){i(t,e);function t(){for(var n=[],i=0;i<arguments.length;i++)n[i]=arguments[i];var s=e.apply(this,n)||this;Object.setPrototypeOf(s,Object.create(t.prototype));Object.defineProperties(s,{$sorting:{value:void 0,enumerable:0,writable:1},$changes:{value:void 0,enumerable:0,writable:1},onAdd:{value:void 0,enumerable:0,writable:1},onRemove:{value:void 0,enumerable:0,writable:1},onChange:{value:void 0,enumerable:0,writable:1},triggerAll:{value:function(){if(s.onAdd)for(var e=0;e<s.length;e++)s.onAdd(s[e],e)}},toJSON:{value:function(){for(var e=[],t=0;t<s.length;t++){var n=s[t];e.push("function"==typeof n.toJSON?n.toJSON():n)}return e}},clone:{value:function(e){var n;if(e){(n=t.of.apply(t,s)).onAdd=s.onAdd;n.onRemove=s.onRemove;n.onChange=s.onChange}else n=new(t.bind.apply(t,r([void 0],s.map((function(e){return"object"==typeof e?e.clone():e})))));return n}}});return s}Object.defineProperty(t,Symbol.species,{get:function(){return t},enumerable:0,configurable:1});t.prototype.sort=function(t){this.$sorting=1;e.prototype.sort.call(this,t);if(this.$changes)for(var n,i=0,r=Array.from(this.$changes.changes);i<r.length;i++){var s=r[i],o=this.$changes.getIndex(this[s]);void 0!==o&&this.$changes.mapIndexChange(this[s],o);this.$changes.mapIndex(this[s],s)}this.$sorting=0;return this};t.prototype.filter=function(t,n){var i=e.prototype.filter.call(this,t);i.$changes=this.$changes.clone();return i};t.prototype.splice=function(e,t){for(var n=[],i=2;i<arguments.length;i++)n[i-2]=arguments[i];var r=Array.prototype.splice.apply(this,arguments),s=Array.prototype.filter.call(this,(function(n,i){return i>=e+t-1}));r.map((function(e){var t=e&&e.$changes;if(t&&t.parent){t.parent.deleteIndex(e);delete t.parent}}));s.forEach((function(e){var t=e&&e.$changes;t&&t.parentField--}));return r};return t}(Array);t.ArraySchema=s},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.MapSchema=void 0;var i=function(){function e(t){var n=this;void 0===t&&(t={});for(var i in t)this[i]=t[i];Object.defineProperties(this,{$changes:{value:void 0,enumerable:0,writable:1},onAdd:{value:void 0,enumerable:0,writable:1},onRemove:{value:void 0,enumerable:0,writable:1},onChange:{value:void 0,enumerable:0,writable:1},clone:{value:function(t){var i;if(t){(i=Object.assign(new e,n)).onAdd=n.onAdd;i.onRemove=n.onRemove;i.onChange=n.onChange}else{var r=new e;for(var s in n)"object"==typeof n[s]?r[s]=n[s].clone():r[s]=n[s]}return i}},triggerAll:{value:function(){if(n.onAdd)for(var e in n)n.onAdd(n[e],e)}},toJSON:{value:function(){var e={};for(var t in n)e[t]="function"==typeof n[t].toJSON?n[t].toJSON():n[t];return e}},_indexes:{value:new Map,enumerable:0,writable:1},_updateIndexes:{value:function(e){for(var t=0,i=new Map,r=0,s=e;r<s.length;r++){var o=s[r];i.set(o,t++)}n._indexes=i}}})}return e}();t.MapSchema=i},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.Interpolate=t.InterpolationType=void 0;var i;(function(e){e[e["LINEAR"]=0]="LINEAR";e[e["EASEINQUAD"]=1]="EASEINQUAD";e[e["EASEOUTQUAD"]=2]="EASEOUTQUAD";e[e["EASEQUAD"]=3]="EASEQUAD"})(i=t.InterpolationType||(t.InterpolationType={}));function r(e,t){switch(e){case i.LINEAR:return s(t);case i.EASEINQUAD:return o(t);case i.EASEOUTQUAD:return a(t);case i.EASEQUAD:return c(t);default:return s(t)}}t.Interpolate=r;function s(e){return e}function o(e){return e*e}function a(e){return e*(2-e)}function c(e){return e*e/(2*(e*e-e)+1)}},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}();Object.defineProperty(t,"__esModule",{value:1});t.Schema=void 0;var r=n(42),s=n(40),o=n(41),a=n(10),c=n(11),l=n(45),u=n(86),h=function(e){i(t,e);function t(){return null!==e&&e.apply(this,arguments)||this}return t}(Error);function d(e,t,n,i){var r,s=0;switch(t){case"number":case"int8":case"uint8":case"int16":case"uint16":case"int32":case"uint32":case"int64":case"uint64":case"float32":case"float64":r="number";isNaN(e)&&console.log('trying to encode "NaN" in '+n.constructor.name+"#"+i);break;case"string":r="string";s=1;break;case"boolean":return}if(typeof e!==r&&(!s||s&&null!==e)){var o="'"+JSON.stringify(e)+"'"+(e&&e.constructor&&" ("+e.constructor.name+")");throw new h("a '"+r+"' was expected, but "+o+" was provided in "+n.constructor.name+"#"+i)}}function p(e,t,n,i){if(!(e instanceof t))throw new h("a '"+t.name+"' was expected, but '"+e.constructor.name+"' was provided in "+n.constructor.name+"#"+i)}function f(e,t,n,i,r){d(n,e,i,r);var o=s[e];if(!o)throw new h("a '"+e+"' was expected, but "+n+" was provided in "+i.constructor.name+"#"+r);o(t,n)}function g(e,t,n){return o[e](t,n)}var m=function(){function e(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];Object.defineProperties(this,{$changes:{value:new l.ChangeTree(this._indexes),enumerable:0,writable:1},$listeners:{value:{},enumerable:0,writable:1}});var n=this._descriptors;n&&Object.defineProperties(this,n)}e.onError=function(e){console.error(e)};Object.defineProperty(e.prototype,"_schema",{get:function(){return this.constructor._schema},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"_descriptors",{get:function(){return this.constructor._descriptors},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"_indexes",{get:function(){return this.constructor._indexes},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"_fieldsByIndex",{get:function(){return this.constructor._fieldsByIndex},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"_filters",{get:function(){return this.constructor._filters},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"_deprecated",{get:function(){return this.constructor._deprecated},enumerable:0,configurable:1});Object.defineProperty(e.prototype,"$changed",{get:function(){return this.$changes.changed},enumerable:0,configurable:1});e.prototype.listen=function(e,t){var n=this;this.$listeners[e]||(this.$listeners[e]=new u.EventEmitter);this.$listeners[e].register(t);return function(){return n.$listeners[e].remove(t)}};e.prototype.decode=function(t,n){void 0===n&&(n={offset:0});var i=[],s=this._schema,l=this._fieldsByIndex,u=t.length;t[n.offset]===r.TYPE_ID&&(n.offset+=2);for(var h=function(){var u=o.nilCheck(t,n)&&++n.offset,h=t[n.offset++];if(h===r.END_OF_STRUCTURE)return"break";var p=l[h],f="_"+p,m=s[p],y=void 0,v=0;if(!p)return"continue";if(u){y=null;v=1}else if(m._schema){(y=d[f]||d.createTypeInstance(t,n,m)).decode(t,n);v=1}else if(Array.isArray(m)){m=m[0];var S=d[f]||new a.ArraySchema;y=S.clone(1);var b=o.number(t,n),w=Math.min(o.number(t,n),b),_=y.length>b;v=w>0||_;var T=0;_&&Array.prototype.splice.call(y,b).forEach((function(t,n){if(t&&t.onRemove)try{t.onRemove()}catch(t){e.onError(t)}if(S.onRemove)try{S.onRemove(t,b+n)}catch(t){e.onError(t)}}));for(var C=0;C<w;C++){var P=o.number(t,n),E=void 0;if(o.indexChangeCheck(t,n)){o.uint8(t,n);E=o.number(t,n);T=1}var R=!T&&void 0===y[P]||T&&void 0===E;if(m.prototype instanceof e){var I=void 0;if(!(I=R?d.createTypeInstance(t,n,m):void 0!==E?S[E]:S[P])){I=d.createTypeInstance(t,n,m);R=1}I.decode(t,n);y[P]=I}else y[P]=g(m,t,n);if(R){if(S.onAdd)try{S.onAdd(y[P],P)}catch(t){e.onError(t)}}else if(S.onChange)try{S.onChange(y[P],P)}catch(t){e.onError(t)}}}else if(m.map){m=m.map;var A=d[f]||new c.MapSchema;y=A.clone(1);var O=o.number(t,n);v=O>0;for(var T=0,x=Object.keys(A),C=0;C<O&&(void 0!==t[n.offset]&&t[n.offset]!==r.END_OF_STRUCTURE);C++){var k=o.nilCheck(t,n)&&++n.offset,M=void 0;if(o.indexChangeCheck(t,n)){o.uint8(t,n);M=x[o.number(t,n)];T=1}var N=o.numberCheck(t,n),D="string"!=typeof m,F=N?x[o.number(t,n)]:o.string(t,n),I=void 0,R;I=(R=!T&&void 0===A[F]||T&&void 0===M&&N)&&D?d.createTypeInstance(t,n,m):void 0!==M?A[M]:A[F];if(k){if(I&&I.onRemove)try{I.onRemove()}catch(t){e.onError(t)}if(A.onRemove)try{A.onRemove(I,F)}catch(t){e.onError(t)}delete y[F]}else{if(D){I.decode(t,n);y[F]=I}else y[F]=g(m,t,n);if(R){if(A.onAdd)try{A.onAdd(y[F],F)}catch(t){e.onError(t)}}else if(A.onChange)try{A.onChange(y[F],F)}catch(t){e.onError(t)}}}}else v=(y=g(m,t,n))!==d[f];v&&(d.onChange||d.$listeners[p])&&i.push({field:p,value:y,previousValue:d[f]});d[f]=y},d=this;n.offset<u;){var p;if("break"===h())break}this._triggerChanges(i);return this};e.prototype.encode=function(e,t,n,i){var o=this;void 0===e&&(e=this);void 0===t&&(t=0);void 0===i&&(i=[]);if(!this.$changes.changed&&!t){this._encodeEndOfStructure(this,e,i);return i}for(var l=this._schema,u=this._indexes,h=this._fieldsByIndex,d=this._filters,g=Array.from(t?this.$changes.allChanges:this.$changes.changes).sort(),m=function(m,v){var S=h[g[m]]||g[m],b="_"+S,w=l[S],_=d&&d[S],T=y[b],C=u[S];if(void 0===T){s.uint8(i,r.NIL);s.number(i,C)}else if(w._schema){if(n&&_&&!_.call(y,n,T,e))return"continue";if(T){s.number(i,C);p(T,w,y,S);y.tryEncodeTypeId(i,w,T.constructor);T.encode(e,t,n,i)}else{s.uint8(i,r.NIL);s.number(i,C)}}else if(Array.isArray(w)){var P=T.$changes;if(n&&_&&!_.call(y,n,T,e))return"continue";s.number(i,C);s.number(i,T.length);var E=Array.from(t?P.allChanges:P.changes).filter((function(e){return void 0!==o[b][e]})).sort((function(e,t){return e-t})),R=E.length;s.number(i,R);var I="string"!=typeof w[0];p(y[b],a.ArraySchema,y,S);for(var A=0;A<R;A++){var O=E[A],x=y[b][O];if(I){s.number(i,O);if(!t){var k;if(void 0!==(k=P.getIndexChange(x))){s.uint8(i,r.INDEX_CHANGE);s.number(i,k)}}p(x,w[0],y,S);y.tryEncodeTypeId(i,w[0],x.constructor);x.encode(e,t,n,i)}else if(void 0!==x){s.number(i,O);f(w[0],i,x,y,S)}}t||n||P.discard()}else if(w.map){var P=T.$changes;if(n&&_&&!_.call(y,n,T,e))return"continue";s.number(i,C);var M=Array.from(t?P.allChanges:P.changes);s.number(i,M.length);var N=Array.from(P.allChanges),I="string"!=typeof w.map,R=M.length;p(y[b],c.MapSchema,y,S);for(var D=0;D<R;D++){var F=M[D],x=y[b][F],U=void 0;if(t){if(void 0===x)continue}else{var k=P.getIndexChange(x);if(x&&void 0!==k){s.uint8(i,r.INDEX_CHANGE);s.number(i,y[b]._indexes.get(k))}U=P.isDeleted(F)&&x?void 0:y[b]._indexes.get(F)}var j=void 0===x;j&&s.uint8(i,r.NIL);void 0!==U?s.number(i,U):s.string(i,F);if(x&&I){p(x,w.map,y,S);y.tryEncodeTypeId(i,w.map,x.constructor);x.encode(e,t,n,i)}else j||f(w.map,i,x,y,S)}if(!t&&!n){P.discard();y[b]._updateIndexes(N)}}else{if(n&&_&&!_.call(y,n,T,e))return"continue";s.number(i,C);f(w,i,T,y,S)}},y=this,v=0,S=g.length;v<S;v++)m(v,S);this._encodeEndOfStructure(this,e,i);t||n||this.$changes.discard();return i};e.prototype.encodeFiltered=function(e,t){return this.encode(this,0,e,t)};e.prototype.encodeAll=function(e){return this.encode(this,1,void 0,e)};e.prototype.encodeAllFiltered=function(e,t){return this.encode(this,1,e,t)};e.prototype.clone=function(){var e=new this.constructor,t=this._schema;for(var n in t)"object"==typeof this[n]&&"function"==typeof this[n].clone?e[n]=this[n].clone():e[n]=this[n];return e};e.prototype.triggerAll=function(){var t=[],n=this._schema;for(var i in n)void 0!==this[i]&&t.push({field:i,value:this[i],previousValue:void 0});try{this._triggerChanges(t)}catch(t){e.onError(t)}};e.prototype.toJSON=function(){var e=this._schema,t=this._deprecated,n={};for(var i in e)t[i]||null===this[i]||"undefined"==typeof this[i]||(n[i]="function"==typeof this[i].toJSON?this[i].toJSON():this["_"+i]);return n};e.prototype.discardAllChanges=function(){var t=this._schema,n=Array.from(this.$changes.changes),i=this._fieldsByIndex;for(var r in n){var s=i[r],o=t[s],a=this[s];if(void 0!==a)if(o._schema)a.discardAllChanges();else if(Array.isArray(o)){for(var c=0,l=a.length;c<l;c++){var u=a[c],h=this["_"+s][u];"string"!=typeof o[0]&&h&&h.discardAllChanges()}a.$changes.discard()}else if(o.map){for(var d=a,p=Object.keys(this["_"+s]),c=0;c<d.length;c++){var f=p[d[c]]||d[c],h;(h=this["_"+s][f])instanceof e&&h&&h.discardAllChanges()}a.$changes.discard()}}this.$changes.discard()};e.prototype._encodeEndOfStructure=function(e,t,n){e!==t&&n.push(r.END_OF_STRUCTURE)};e.prototype.tryEncodeTypeId=function(e,t,n){if(t._typeid!==n._typeid){s.uint8(e,r.TYPE_ID);s.uint8(e,n._typeid)}};e.prototype.createTypeInstance=function(e,t,n){if(e[t.offset]===r.TYPE_ID){t.offset++;var i;return new(this.constructor._context.get(o.uint8(e,t)))}return new n};e.prototype._triggerChanges=function(t){if(t.length>0){for(var n=0;n<t.length;n++){var i=t[n],r=this.$listeners[i.field];if(r)try{r.invoke(i.value,i.previousValue)}catch(t){e.onError(t)}}if(this.onChange)try{this.onChange(t)}catch(t){e.onError(t)}}};return e}();t.Schema=m},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.BaseGame=t.GameScene=void 0;let r=class e{};r=i([Component("game_scene")],r);t.GameScene=r;class s{constructor(){this.entity={};this.callbacks={onFinish:null,onShareState:null};const e=engine.getEntitiesWithComponent("game_scene");console.log("entities when constructor",e,e.length);Object.keys(e).forEach(t=>{engine.removeEntity(e[t])})}init(){}destroy(){}block(){}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onShareState(){}shareState(e){}update(e){}}t.BaseGame=s},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.MoveTransformComponent=void 0;const r=n(7),s=n(12);let o=class e{constructor(e,t,n,i,o=s.InterpolationType.LINEAR){this.start=e;this.end=t;this.normalizedTime=0;this.lerpTime=0;this.onFinishCallback=i;this.interpolationType=o;if(0!=n)this.speed=1/n;else{this.speed=0;this.normalizedTime=1;this.lerpTime=1}r.TransformSystem.createAndAddToEngine()}update(e){this.normalizedTime=Scalar.Clamp(this.normalizedTime+e*this.speed,0,1);this.lerpTime=s.Interpolate(this.interpolationType,this.normalizedTime)}hasFinished(){return this.normalizedTime>=1}assignValueToTransform(e){e.position=Vector3.Lerp(this.start,this.end,this.lerpTime)}};o=i([Component("moveTransformComponent")],o);t.MoveTransformComponent=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.TimerSystem=void 0;const i=n(28),r=n(27),s=n(29);class o{constructor(){this._components=[];o._instance=this;this._components.push(i.Interval);this._components.push(r.Delay);this._components.push(s.ExpireIn)}static createAndAddToEngine(){if(null==this._instance){this._instance=new o;engine.addSystem(this._instance)}return this._instance}static registerCustomComponent(e){this.createAndAddToEngine()._components.push(e)}update(e){this._components.forEach(t=>{this.updateComponent(e,t)})}updateComponent(e,t){let n=engine.getEntitiesWithComponent(t);for(const i in n)if(n.hasOwnProperty(i)){let r=n[i],s=r.getComponent(t);s.elapsedTime+=e;s.elapsedTime>=s.targetTime&&s.onTargetTimeReached(r)}}}t.TimerSystem=o;o._instance=null},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.removeVideoPanel=t.reproduceVideo=void 0;const i=new Transform({position:new Vector3(0,1.975,-.001),scale:new Vector3(-5.95,3.95,1)}),r=new Entity;r.addComponent(i);t.reproduceVideo=(e,t)=>{const n=""+(engine["RESOURCE_BASE"]||globalThis["RESOURCE_BASE"]||""),i=new VideoClip(`${n}video/${t}.mp4`),s=new VideoTexture(i),o=new Material;o.transparencyMode=1;o.specularIntensity=1;o.roughness=1;o.albedoTexture=s;const a=new PlaneShape;a.withCollisions=a.isPointerBlocker=0;r.addComponentOrReplace(a);r.addComponentOrReplace(o);r.setParent(e);s.playing=1;s.loop=1};t.removeVideoPanel=()=>{r.setParent(null);engine.removeEntity(r)}},function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:1});t.generateTrack=void 0;const r=n(19),s=i(n(21)),o=n(32),a=n(31),c=n(22),l=n(33),u=n(3),h=n(34),d=n(30);function p(e,t){const n=u.seedGen.create(e.toString()),i=t,r=Object.values(s.default);let o=[];for(;o.length<i;){const e=a(0,r.length-1,o.map(e=>r.indexOf(e)));o.push(r[e]);o=Array.from(new Set(o))}console.log("choosenGames",o.map(e=>e.id));return o.map((e,t)=>({Game:e}));function a(e,t,i){let r=Math.floor(n.random()*(t+1-e));if(!i)return r;for(;~i.indexOf(r);)r=e+Math.floor(n.random()*(t+1-e));return r}}t.generateTrack=p},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.CostumeGame=void 0;const i=n(3),r=n(14),s=n(49),o=n(54),a=n(55),c=n(9),l=n(5),u=n(2),h=n(4),d=n(0),p=3;class f{constructor(e,{seed:t,currentPlayer:n,level:c,gameIndex:l}){this.state={startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,round:0,score1:0,score2:0,started:0,finished:0,blocked:0,idle:1};this.entity={};this.completion={hair:0,glasses:0,shirt:0,pants:0};this.callbacks={onFinish:null,onShareState:null,onFinishRound:null};this.root=e;this.gameSetup={currentPlayer:n,seed:t,level:c,gameIndex:l};this.randomizer=i.seedGen.create(t.toString());this.scene=new Entity;this.scene.addComponent(new r.GameScene);this.scene.addComponent(new Transform({position:new Vector3(0,0,-.002)}));this.ui=h.createUI(this.scene);const u=this.modelDefinition={hair:this.getRandomInt(1,10),shirt:this.getRandomInt(1,5),pants:this.getRandomInt(1,5),glasses:this.getRandomInt(1,5)},d=-.05;this.entity.model=s.createModel(this.scene,{modelDefinition:u,position:new Vector3(0+d,2,0),scale:new Vector3(1.5,1.5,1),showLabel:"model"});this.dollModel1=s.createModel(this.scene,{modelDefinition:{hair:0,shirt:0,pants:0,glasses:0},position:new Vector3(-1.5+d,2,0),scale:new Vector3(1.5,1.5,1)});this.dollModel2=s.createModel(this.scene,{modelDefinition:{hair:0,shirt:0,pants:0,glasses:0},position:new Vector3(1.5+d,2,0),scale:new Vector3(1.5,1.5,1)});this.collection=o.createCollection(this.getRandomInt.bind(this),u);console.log("model",u);console.log("this.collection",this.collection);this.collection.forEach(e=>{if(!e)debugger});try{console.log(Array.from(new Set(this.collection.map(e=>`${e&&e.type}${e&&e.index}`))));n&&(this.collectionControl=a.createCollectionControl(this.scene,{collection:this.collection,side:n}))}catch(e){debugger}this.roundResult1=h.createRoundResult(this.scene,{player:1});this.roundResult2=h.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();this.primaryButtonCallback=this.primaryButtonCallback.bind(this);this.secondaryButtonCallback=this.secondaryButtonCallback.bind(this);this.clickCallback=this.clickCallback.bind(this);engine.addSystem(this)}setStartTime(e){this.state.startTime=e}init(){u.playLoop("money",{volume:.5});l.updateSpritePanel({uvs:d.getSpriteUv(5,0,192,128)});l.showSpritePanel();this.state.initialized=1}start(){this.scene.setParent(this.root);this.state.started=1;if(this.gameSetup.currentPlayer){Input.instance.subscribe("BUTTON_DOWN",ActionButton.PRIMARY,0,this.primaryButtonCallback);Input.instance.subscribe("BUTTON_DOWN",ActionButton.SECONDARY,0,this.secondaryButtonCallback);Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,this.clickCallback)}}startRound(){this.state.round++;console.log("startRound");this.roundResult1.hide();this.roundResult2.hide();this.ui.hideTime();this.state.blocked=0;this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;this.state.waitingRound=0;const e=this.modelDefinition={hair:this.getRandomInt(1,10),shirt:this.getRandomInt(1,5),pants:this.getRandomInt(1,5),glasses:this.getRandomInt(1,5)};Object.keys(e).forEach(t=>{this.entity.model.update({type:t,index:e[t]});this.dollModel1.update({type:t,index:0});this.dollModel2.update({type:t,index:0});this.completion[t]=0});this.collection=o.createCollection(this.getRandomInt.bind(this),e);this.gameSetup.currentPlayer&&(this.collectionControl=a.createCollectionControl(this.scene,{collection:this.collection,side:this.gameSetup.currentPlayer}))}block(){this.state.blocked=1}finish({winner:e}){console.log("finish",e);const t=1===e?2:1;this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}finishRound({winner:e}){console.log("finishRound",e);this.state.blocked=1;this.state["score"+e]+=1;this.ui.updateScore({player:e,score:this.state["score"+e]});e===this.gameSetup.currentPlayer?u.playOnce("wow"):u.playOnce("fail");this.state.waitingRound=1;this.collectionControl&&this.collectionControl.dispose();Object.keys(this.modelDefinition).forEach(e=>{this.entity.model.update({type:e,index:0})});const t=1===e?2:1;this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onFinishRound(e){this.callbacks.onFinishRound=e;return()=>this.callbacks.onFinishRound=null}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}setRoundStartTime(e){this.state.roundStartTime=e}shareState({player:e,completion:t,timeSinceStart:n}){Object.keys(t).forEach(n=>{t[n]&&this["dollModel"+e].update({type:n,index:this.modelDefinition[n]})});n&&this.ui.updateTime({player:e,time:n})}clickCallback(){if(this.state.blocked)return;console.log("collectionControl.getCurrent()",this.collectionControl.getCurrent());const e=this.collectionControl.getCurrent();if(!e)debugger;if(this.modelDefinition[e.type]===e.index){console.log("YES",e);u.playOnce("ok");this["dollModel"+this.gameSetup.currentPlayer].update(e);this.completion[e.type]=1;if(Object.values(this.completion).every(e=>e)){console.log("COMPLETE",this.completion);const e=c.getTimeSinceStart(0===this.state.round?this.state.startTime:this.state.lastRoundStartTime);this.ui.updateTime({player:this.gameSetup.currentPlayer,time:e});this.callbacks.onShareState({player:this.gameSetup.currentPlayer,completion:this.completion,timeSinceStart:e});this.state.round<p-1?this.callbacks.onFinishRound({time:e,player:this.gameSetup.currentPlayer,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round}):this.callbacks.onFinish({time:e,isWinner:this.gameSetup.currentPlayer,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round})}else this.callbacks.onShareState({player:this.gameSetup.currentPlayer,completion:this.completion})}else{console.log("NO");u.playOnce("fail");this.state.blocked=1;this.collectionControl.showError();setTimeout(()=>{this.collectionControl.hideError();this.state.blocked=0},500)}}primaryButtonCallback(){this.state.blocked||this.collectionControl.previous()}secondaryButtonCallback(){this.state.blocked||this.collectionControl.next()}destroy(){u.stopSound("money");l.hideSpritePanel();this.scene.setParent(null);engine.removeEntity(this.scene);engine.removeSystem(this);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.primaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.secondaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.clickCallback)}update(e){if(this.state.initialized){!this.state.waitingRound&&!this.state.started&&Date.now()>=this.state.startTime&&this.start();this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime&&this.startRound()}}getRandomInt(e,t,n){const i=e+Math.floor(this.randomizer.random()*(t-e+1));return i===n?this.getRandomInt(e,t,n):i}}t.CostumeGame=f;f.id="Costume";f.instructions="You have to complete the costume\n    before your opponent\n    E,F to roll parts\n    CLICK to select"},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createCross=void 0;const i=n(1),r=n(0);t.createCross=(e,{position:t,scale:n})=>{const s=new Entity,o=new PlaneShape;o.withCollisions=0;s.addComponent(i.spriteMaterial);o.uvs=r.getSpriteUv(993,0,32);s.addComponent(o);const a=new Transform({position:t,scale:n});s.addComponent(a);s.setParent(e);return{dispose:()=>{s.setParent(null);engine.removeEntity(s);s.removeComponent(i.spriteMaterial);s.removeComponent(a);s.removeComponent(o)},hide:()=>{o.visible=0},show:()=>{o.visible=1},setPosition:({x:e,y:t,z:n})=>{a.position.set(e,t,n)}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});const i=n(22),r=n(30),s=n(19),o=n(31),a=n(32),c=n(61),l=n(33),u=n(34);t.default={DifferentGame:l.DifferentGame,AttackGame:r.AttackGame,RotationGame:i.RotationGame,CostumeGame:s.CostumeGame,ObstacleGame:o.ObstacleGame,MathGame:a.MathGame,SammichGame:c.SammichGame,FroggerGame:u.FroggerGame}},function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:1});t.RotationGame=void 0;const r=i(n(56)),s=n(3),o=n(14),a=n(9),c=n(1),l=n(5),u=n(2),h=n(0),d=n(4),p=5;class f{constructor(e,{currentPlayer:t,seed:n,level:i=1,gameIndex:r}){this.state={startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,started:0,roundStarted:0,round:0,finished:0,score1:0,score2:0,idle:1,currentRotation:0,answered:0};this.entity={};this.callbacks={onFinish:null,onShareState:null,onFinishRound:null};this.root=e;this.gameSetup={currentPlayer:t,seed:n,level:i,gameIndex:r};this.randomizer=s.seedGen.create(n.toString());this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,0,-.002)}));this.ui=d.createUI(this.scene);this.scene.addComponent(new o.GameScene);this.player1=d.createPlayerAnswer(this.scene,{player:1});this.player2=d.createPlayerAnswer(this.scene,{player:2});this.player1.hide();this.player2.hide();this.roundResult1=d.createRoundResult(this.scene,{player:1});this.roundResult2=d.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();const a=this.entity.image=new Entity,l=undefined;g(this.entity.box=new Entity,c.spriteMaterial,h.getSpriteUv(10,144,64,64));g(a,c.spriteMaterial,h.getSpriteUv(9,144,64,64));this.state.rotationSerie=this.getRotationSerie(this.gameSetup.level);this.state.solution=this.state.rotationSerie.reduce((e,t)=>e+t,0);const u=this.state.correctSolution=this.getRandomInt(1,3);this.state.solutions=[1,2,3].map(e=>e===u?this.state.solution:90*this.getRandomInt(1,4,this.state.solution/90));this.entity.solutions=this.state.solutions.map((e,t)=>{const n=new Entity;this.buildSolution(n,t,e);n.setParent(this.scene);return n});engine.addSystem(this);this.onClickAnswer=this.onClickAnswer.bind(this);this.buildSolution=this.buildSolution.bind(this)}setStartTime(e){this.state.startTime=e}setRoundStartTime(e){this.state.roundStartTime=e}reset(){}getRotationSerie(e){let t=3;e>=3&&e<5?t=4:e>=5&&(t=5);let n=t;const i=[];for(;n--;){const e=this.randomizer.random();i.push(Math.floor(2*e)?90:-90)}return i}finish({winner:e}){this.state.blocked=1;const t=1===e?2:1;e===this.gameSetup.currentPlayer?u.playOnce("wow"):u.playOnce("fail");this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}finishRound({winner:e}){this.state.blocked=1;const t=1===e?2:1;this.state["score"+e]+=1;this.ui.updateScore({player:e,score:this.state["score"+e]});e===this.gameSetup.currentPlayer?u.playOnce("wow"):u.playOnce("fail");this.entity.box.getComponent(Transform).rotation.setEuler(0,0,0);this.entity.box.getComponent(PlaneShape).visible=0;this.entity.image.getComponent(PlaneShape).visible=1;this["roundResult"+e].update(1);this["roundResult"+t].update(0);this.roundResult1.show();this.roundResult2.show();this.state.waitingRound=1}shareState(e){this.state.shared=e;const{round:t}=e;if(t===this.state.round&&"election"===e.type&&e.player!==this.gameSetup.currentPlayer){const{x:t,y:n,z:i}=this.entity.solutions[e.election-1].getComponent(Transform).position,r=this.getIsWinner(this.state,e.election);this["player"+e.player].wrapperEntity.getComponent(Transform).position.set(t+(1===e.player?-.3:.3),n,i);this["player"+e.player].show();this["player"+e.player].setSprite(r);this.ui.updateTime({player:e.player,time:e.timeSinceAnswers})}}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}init(){u.playLoop("money",{volume:.5});l.updateSpritePanel({uvs:h.getSpriteUv(2,0,192,128)});l.showSpritePanel();this.entity.image.setParent(this.scene);this.entity.box.setParent(this.scene);this.entity.box.getComponent(PlaneShape).visible=0;this.state.initialized=1;this.scene.setParent(this.root)}destroy(){u.stopSound("money");l.hideSpritePanel();this.scene.setParent(null);engine.removeEntity(this.scene);engine.removeSystem(this);this.callbacks.onFinish=null;this.callbacks.onShareState=null}update(e){if(!this.state.initialized)return;const t=this.state.round<2?.4:this.state.round<3?.3:.2,n=.2;if(!this.state.started&&Date.now()>=this.state.startTime)this.start(e);else if(!this.state.started||this.state.waitingRound||this.state.roundStarted){if(this.state.started&&!this.state.waitingRound&&this.state.roundStarted){this.state.nextTime+=e;if(this.state.nextTime>=t+n){this.state.nextTime=0;if(this.state.currentRotation<this.state.rotationSerie.length){const e=Quaternion.Euler(0,0,0),n=Quaternion.Euler(0,0,this.state.rotationSerie[this.state.currentRotation]);u.playOnce("swing");this.entity.box.addComponentOrReplace(new r.default.RotateTransformComponent(e,n,t));this.state.nextTime=0;this.state.currentRotation++;this.entity.solutions.forEach(e=>e.getComponent(PlaneShape).visible=0);this.state.answersShown=0}else if(!this.state.waitingRound&&!this.state.answersShown){this.state.blocked=0;this.state.answersShown=1;this.state.shownAnswersTime=Date.now();this.entity.solutions.forEach(e=>e.getComponent(PlaneShape).visible=1)}}}}else{this.state.nextTime+=e;if(this.state.nextTime>=t+n){this.state.nextTime=0;if(this.state.currentRotation<this.state.rotationSerie.length){const e=Quaternion.Euler(0,0,0),n=Quaternion.Euler(0,0,this.state.rotationSerie[this.state.currentRotation]);u.playOnce("swing");this.entity.box.addComponentOrReplace(new r.default.RotateTransformComponent(e,n,t));this.state.nextTime=0;this.state.currentRotation++;this.entity.solutions.forEach(e=>e.getComponent(PlaneShape).visible=0);this.state.answersShown=0}else if(!this.state.waitingRound&&!this.state.answersShown){this.state.answersShown=1;this.state.shownAnswersTime=Date.now();this.entity.solutions.forEach(e=>e.getComponent(PlaneShape).visible=1)}}}this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime&&this.startRound()}block(){this.state.blocked=1}start(e){setTimeout(()=>{this.state.idle=0;this.state.started=1;this.state.finished=0;this.state.nextTime=0;this.entity.box.getComponent(PlaneShape).visible=1;this.entity.image.getComponent(PlaneShape).visible=0},1e3)}startRound(){this.state.round++;this.ui.hideTime();this.entity.solutions.forEach(e=>{e.getComponent(PlaneShape).visible=0});this.player1.hide();this.player2.hide();this.roundResult1.hide();this.roundResult2.hide();this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;setTimeout(()=>{this.state.blocked=0;this.state.waitingRound=0;this.state.answered=0;this.state.roundStarted=1;this.state.nextTime=0;this.entity.box.getComponent(PlaneShape).visible=1;this.entity.image.getComponent(PlaneShape).visible=0;this.state.rotationSerie=this.getRotationSerie(this.state.round+1);this.state.solution=this.state.rotationSerie.reduce((e,t)=>e+t,0);const e=this.state.correctSolution=this.getRandomInt(1,3);this.state.solutions=[1,2,3].map(t=>t===e?this.state.solution:90*this.getRandomInt(1,4,this.state.solution/90));this.state.currentRotation=0;this.entity.solutions.forEach((e,t)=>{e.getComponent(Transform).rotation.setEuler(0,0,0);e.getComponent(Transform).rotate(new Vector3(0,0,1),this.state.solutions[t])})},1e3/(500*this.state.round)*1e3)}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onFinishRound(e){this.callbacks.onFinishRound=e;return()=>this.callbacks.onFinishRound=null}getIsWinner(e,t){const n=this.entity.solutions[t-1],i=undefined;if(r(this.entity.solutions[e.correctSolution-1])===r(n))return 1;console.log(`\n                NOT WINNER\n                --------------\n                election: ${t}\n                state.correctSolution: ${e.correctSolution}\n                election rotation z: ${this.entity.solutions[t-1].getComponent(Transform).rotation.eulerAngles.z}\n                soltion rotation z: ${this.entity.solutions[e.correctSolution-1].getComponent(Transform).rotation.eulerAngles.z}\n            `);return 0;function r(e){const t=Math.round(e.getComponent(Transform).rotation.eulerAngles.z)%360;return t<0?360-t:t}}buildSolution(e,t,n){const i=new PlaneShape;i.visible=0;i.withCollisions=0;const r={x:1.1*t-1.1,y:1.15,z:0},s=new Transform({position:new Vector3(r.x,r.y,r.z),scale:new Vector3(1,1,1e-7)});s.rotate(new Vector3(0,0,1),n);e.addComponent(c.spriteMaterial);i.withCollisions=0;i.uvs=h.getSpriteUv(12,480,32,32);e.addComponent(i);e.addComponent(s);this.gameSetup.currentPlayer&&e.addComponent(new OnClick(()=>this.onClickAnswer(e,r,t)))}onClickAnswer(e,t,n){if(this.state.answered)return;if(this.state.blocked)return;if(!this.state.initialized)return;if(this.state.finished)return;u.playOnce("swing");this["player"+this.gameSetup.currentPlayer].wrapperEntity.getComponent(Transform).position.set(t.x+(1===this.gameSetup.currentPlayer?-.2:.2),t.y,t.z);this["player"+this.gameSetup.currentPlayer].show();this.state.blocked=1;this.state.answered=1;const i=this.getIsWinner(this.state,n+1);this["player"+this.gameSetup.currentPlayer].setSprite(i);const r=a.getTimeSinceStart(0===this.state.round?this.state.startTime:this.state.lastRoundStartTime),s=i?r:999999999-r,o=Date.now()-this.state.shownAnswersTime;this.ui.updateTime({player:this.gameSetup.currentPlayer,time:o});this.callbacks.onShareState({type:"election",player:this.gameSetup.currentPlayer,election:n+1,time:r,timeSinceAnswers:o,round:this.state.round});this.state.round<p-1?this.callbacks.onFinishRound({time:s,player:this.gameSetup.currentPlayer,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round}):this.callbacks.onFinish({time:s,isWinner:i,round:this.state.round,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round})}getRandomInt(e,t,n){const i=Math.floor(this.randomizer.random()*(t-e+1))+e;return i===n?this.getRandomInt(e,t,n):i}}t.RotationGame=f;f.id="Rotation";f.timeToWaitForOtherAnswer=2;f.instructions="Image is hidden and start rotating\n    Click the correct solution";function g(e,t,n){const i=new PlaneShape;i.withCollisions=0;i.uvs=n;const r=new Transform({scale:new Vector3(2,2,1e-6),position:new Vector3(0,2.7,0)});e.addComponent(i);e.addComponent(t);e.addComponent(r)}},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.RotateTransformComponent=void 0;const r=n(7),s=n(12);let o=class e{constructor(e,t,n,i,o=s.InterpolationType.LINEAR){this.start=e;this.end=t;this.normalizedTime=0;this.lerpTime=0;this.onFinishCallback=i;this.interpolationType=o;if(0!=n)this.speed=1/n;else{this.speed=0;this.normalizedTime=1;this.lerpTime=1}r.TransformSystem.createAndAddToEngine()}update(e){this.normalizedTime=Scalar.Clamp(this.normalizedTime+e*this.speed,0,1);this.lerpTime=s.Interpolate(this.interpolationType,this.normalizedTime)}hasFinished(){return this.normalizedTime>=1}assignValueToTransform(e){e.rotation=Quaternion.Slerp(this.start,this.end,this.lerpTime)}};o=i([Component("rotateTransformComponent")],o);t.RotateTransformComponent=o},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.ScaleTransformComponent=void 0;const r=n(7),s=n(12);let o=class e{constructor(e,t,n,i,o=s.InterpolationType.LINEAR){this.start=e;this.end=t;this.normalizedTime=0;this.lerpTime=0;this.onFinishCallback=i;this.interpolationType=o;if(0!=n)this.speed=1/n;else{this.speed=0;this.normalizedTime=1;this.lerpTime=1}r.TransformSystem.createAndAddToEngine()}update(e){this.normalizedTime=Scalar.Clamp(this.normalizedTime+e*this.speed,0,1);this.lerpTime=s.Interpolate(this.interpolationType,this.normalizedTime)}hasFinished(){return this.normalizedTime>=1}assignValueToTransform(e){e.scale=Vector3.Lerp(this.start,this.end,this.lerpTime)}};o=i([Component("scaleTransformComponent")],o);t.ScaleTransformComponent=o},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.FollowPathComponent=void 0;const r=n(7);let s=class e{constructor(e,t,n,i){this.speed=[];this.normalizedTime=0;this.currentIndex=0;this.points=e;this.onFinishCallback=n;this.onPointReachedCallback=i;if(e.length<2)throw new Error("At least 2 points are needed for FollowPathComponent.");if(t>0){let n=0,i=[];for(let t=0;t<e.length-1;t++){let r=Vector3.DistanceSquared(e[t],e[t+1]);n+=r;i.push(r)}for(let e=0;e<i.length;e++)this.speed.push(1/(i[e]/n*t))}else{this.normalizedTime=1;this.currentIndex=e.length-2}r.TransformSystem.createAndAddToEngine()}update(e){this.normalizedTime=Scalar.Clamp(this.normalizedTime+e*this.speed[this.currentIndex],0,1);if(this.normalizedTime>=1&&this.currentIndex<this.points.length-2){this.currentIndex++;this.normalizedTime=0;this.onPointReachedCallback&&this.currentIndex<this.points.length-1&&this.onPointReachedCallback(this.points[this.currentIndex],this.points[this.currentIndex+1])}}hasFinished(){return this.currentIndex>=this.points.length-2&&this.normalizedTime>=1}assignValueToTransform(e){e.position=Vector3.Lerp(this.points[this.currentIndex],this.points[this.currentIndex+1],this.normalizedTime)}};s=i([Component("followPathComponent")],s);t.FollowPathComponent=s},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.KeepRotatingComponent=void 0;const r=n(7);let s=class e{constructor(e,t){this.rotationVelocity=e;this.onFinishCallback=t;this.rotation=Quaternion.Identity;this.finished=0;r.TransformSystem.createAndAddToEngine()}update(e){this.rotation=Quaternion.Slerp(Quaternion.Identity,this.rotationVelocity,e)}hasFinished(){return this.finished}assignValueToTransform(e){e.rotation=e.rotation.multiply(this.rotation)}stop(){this.finished=1}};s=i([Component("keepRotatingComponent")],s);t.KeepRotatingComponent=s},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.Delay=void 0;const r=n(16);let s=class e{constructor(e,t){r.TimerSystem.createAndAddToEngine();this.elapsedTime=0;this.targetTime=e/1e3;this.onTimeReachedCallback=t;this.onTargetTimeReached=e=>{this.onTimeReachedCallback&&this.onTimeReachedCallback();e.removeComponent(this)}}setCallback(e){this.onTimeReachedCallback=e}};s=i([Component("timerDelay")],s);t.Delay=s},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.Interval=void 0;const r=n(16);let s=class e{constructor(e,t){r.TimerSystem.createAndAddToEngine();this.elapsedTime=0;this.targetTime=e/1e3;this.onTimeReachedCallback=t;this.onTargetTimeReached=()=>{this.elapsedTime=0;this.onTimeReachedCallback&&this.onTimeReachedCallback()}}setCallback(e){this.onTimeReachedCallback=e}};s=i([Component("timerInterval")],s);t.Interval=s},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.ExpireIn=void 0;const r=n(16);let s=class e{constructor(e,t){r.TimerSystem.createAndAddToEngine();this.elapsedTime=0;this.targetTime=e/1e3;this.onTimeReachedCallback=t;this.onTargetTimeReached=e=>{this.onTimeReachedCallback&&this.onTimeReachedCallback();e.removeComponent(this);engine.removeEntity(e)}}setCallback(e){this.onTimeReachedCallback=e}};s=i([Component("timerExpireIn")],s);t.ExpireIn=s},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.AttackGame=void 0;const i=n(14),r=n(3),s=n(9),o=n(1),a=n(5),c=n(2),l=n(0),u=n(4),h={DEFEND:0,ATTACK:1},d=640/71*16,p=11;let f=0;const g={E:1,F:2,CLICK:3};class m{constructor(e,{currentPlayer:t,seed:n,level:s,gameIndex:a}){this.state={startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,initialized:0,round:0,idle:1,started:0,blocked:0,finished:0,player1Key:-1,player2Key:-2};this.callbacks={onFinish:null,onFinishRound:null,onShareState:null};this.score1=0;this.score2=0;console.log("currentPlayer",t);f++;this.id=f;const c=engine.getEntitiesWithComponent("game_scene");console.log("entities when constructor",c,c.length);Object.keys(c).forEach(e=>{engine.removeEntity(c[e])});this.root=e;this.gameSetup={currentPlayer:t,seed:n,level:s,gameIndex:a};this.randomizer=r.seedGen.create(n.toString());this.scene=new Entity;this.scene.addComponent(new i.GameScene);this.scene.addComponent(new Transform({position:new Vector3(0,0,-.002)}));this.ui=u.createUI(this.scene);this.label1=l.createSpriteEntity(this.scene,{position:new Vector3(-1.5,3.5,-.001),uvs:l.getSpriteUv(4,384,32,32),scale:new Vector3(1,1,1)});this.label2=l.createSpriteEntity(this.scene,{position:new Vector3(1.5,3.5,-.001),uvs:l.getSpriteUv(4,384,32,32),scale:new Vector3(1,1,1)});this.label1.hide();this.label2.hide();this.char1=new Entity;this.char2=new Entity;this.char1.addComponent(o.spriteMaterial);this.char2.addComponent(o.spriteMaterial);this.char1.addComponent(new Transform({position:new Vector3(-1,2,0),scale:new Vector3(2,2,1)}));this.char2.addComponent(new Transform({position:new Vector3(1,2,0),scale:new Vector3(-2,2,1)}));this.char1.setParent(this.scene);this.char2.setParent(this.scene);this.char1Shape=new PlaneShape;this.char1Shape.uvs=l.getSpriteUv(1,d,64,71);this.char2Shape=new PlaneShape;this.char2Shape.uvs=l.getSpriteUv(1,d,64,71);this.char1.addComponent(this.char1Shape);this.char2.addComponent(this.char2Shape);this.roundResult1=u.createRoundResult(this.scene,{player:1});this.roundResult2=u.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();this.state=Object.assign(Object.assign({},this.state),{player1Key:1+Math.floor(3*this.randomizer.random()),player2Key:1+Math.floor(3*this.randomizer.random()),started:0});engine.addSystem(this)}setStartTime(e){console.log("SET_START_TIME",e);this.state.startTime=e}reset(){}setRoundStartTime(e){console.log("setRoundStartTime",e);this.state.roundStartTime=e}finishRound({winner:e}){this.label1.hide();this.label2.hide();c.stopSound("swing");c.playOnce("hit");this["score"+e]+=1;this.ui.updateScore({player:e,score:this["score"+e]});e!==this.gameSetup.currentPlayer?setTimeout(()=>{c.playOnce("fail")},500):setTimeout(()=>{c.playOnce("ok")},500);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.primaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.secondaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.clickButtonCallback);console.log("finish round",e);const t=[3,640/71*8,128,71];if(1===e){this.char2Shape.visible=0;const e=this.char1.getComponent(Transform);e.scale.set(4,2,1);e.position.set(0,2,0);this.char1Shape.uvs=l.getSpriteUv(...t)}else{this.char2Shape.visible=0;const e=this.char1.getComponent(Transform);e.scale.set(-4,2,1);e.position.set(0,2,0);this.char1Shape.uvs=l.getSpriteUv(...t)}const n=1===e?2:1;this["roundResult"+e].update(1);this["roundResult"+n].update(0);this.roundResult1.show();this.roundResult2.show();this.state.waitingRound=1}handleAction(e){Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.primaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.secondaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.clickButtonCallback);this[`char${this.gameSetup.currentPlayer}Shape`].uvs=l.getSpriteUv(3,d,64,71);const t=s.getTimeSinceStart(0===this.state.round?this.state.startTime:this.state.lastRoundStartTime);console.log("timeSinceStart",this.state.startTime,this.state.roundStartTime,t);const n=e?t:999999999-t;this.ui.updateTime({player:this.gameSetup.currentPlayer,time:t});this.callbacks.onShareState({player:this.gameSetup.currentPlayer,time:n,timeSinceStart:t,round:this.state.round});if(this.state.round<p-1){this.callbacks.onFinishRound({player:this.gameSetup.currentPlayer,time:n,isWinner:e,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round});this.state.waitingRound=1}else this.callbacks.onFinish({player:this.gameSetup.currentPlayer,time:n,isWinner:e,gameIndex:this.gameSetup.gameIndex})}clickButtonCallback(e){c.playOnce("swing");const t=this.state[`player${this.gameSetup.currentPlayer}Key`]===g.CLICK;this.handleAction(t)}primaryButtonCallback(e){c.playOnce("swing");const t=this.state[`player${this.gameSetup.currentPlayer}Key`]===g.E;this.handleAction(t)}secondaryButtonCallback(e){c.playOnce("swing");const t=this.state[`player${this.gameSetup.currentPlayer}Key`]===g.F;this.handleAction(t)}init(){a.updateSpritePanel({uvs:l.getSpriteUv(4,0,192,128)});a.showSpritePanel();c.playLoop("battle",{volume:.5});console.log(" -- init -- ");this.scene.setParent(this.root);this.state.initialized=1}start(){console.log(" -- start -- ");this.state.round=0;this.state.idle=0;this.state.finished=0;this.state.started=1;this.primaryButtonCallback=this.primaryButtonCallback.bind(this);this.secondaryButtonCallback=this.secondaryButtonCallback.bind(this);this.clickButtonCallback=this.clickButtonCallback.bind(this);this.gameSetup.currentPlayer&&Input.instance.subscribe("BUTTON_DOWN",ActionButton.PRIMARY,0,this.primaryButtonCallback);this.gameSetup.currentPlayer&&Input.instance.subscribe("BUTTON_DOWN",ActionButton.SECONDARY,0,this.secondaryButtonCallback);this.gameSetup.currentPlayer&&Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,this.clickButtonCallback);this.label1.show();this.label2.show();this.label1.updateUvs(l.getSpriteUv(this.state.player1Key,387,32,32));this.label2.updateUvs(l.getSpriteUv(this.state.player2Key,387,32,32))}startRound(){this.state.round++;this.ui.hideTime();this.char2Shape.visible=1;const e=this.char1.getComponent(Transform);e.scale.set(2,2,1);e.position.set(-1,2,0);this.char1Shape.uvs=l.getSpriteUv(1,d,64,71);this.char2Shape.uvs=l.getSpriteUv(1,d,64,71);this.roundResult1.hide();this.roundResult2.hide();this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;console.log("start round");this.state.idle=0;this.state.started=1;this.state.waitingRound=0;Input.instance.subscribe("BUTTON_DOWN",ActionButton.PRIMARY,0,this.primaryButtonCallback);Input.instance.subscribe("BUTTON_DOWN",ActionButton.SECONDARY,0,this.secondaryButtonCallback);Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,this.clickButtonCallback);this.state=Object.assign(Object.assign({},this.state),{player1Key:1+Math.floor(3*this.randomizer.random()),player2Key:1+Math.floor(3*this.randomizer.random())});this.label1.show();this.label2.show();this.label1.updateUvs(l.getSpriteUv(this.state.player1Key,387,32,32));this.label2.updateUvs(l.getSpriteUv(this.state.player2Key,387,32,32))}destroy(){c.stopAllSounds();a.hideSpritePanel();Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.primaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.secondaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.clickButtonCallback);console.log("changing scene parent to null");const e=engine.getEntitiesWithComponent("game_scene");console.log(e,e.length);Object.keys(e).forEach(e=>{});this.scene.setParent(null);engine.removeEntity(this.scene);console.log("remove scene");engine.removeSystem(this)}finish(e){this.label1.hide();this.label2.hide();const{winner:t}=e;console.log("RESULT",t);const n=1===t?2:1;c.stopSound("swing");c.playOnce("hit");t!==this.gameSetup.currentPlayer?c.playOnce("fail"):c.playOnce("ok");const i=[3,640/71*8,128,71];if(1===t){this.char2Shape.visible=0;const e=this.char1.getComponent(Transform);e.scale.set(4,2,1);e.position.set(0,2,0);this.char1Shape.uvs=l.getSpriteUv(...i)}else{this.char2Shape.visible=0;const e=this.char1.getComponent(Transform);e.scale.set(-4,2,1);e.position.set(0,2,0);this.char1Shape.uvs=l.getSpriteUv(...i)}this.roundResult1.show();this.roundResult2.show();this["roundResult"+t].update(1);this["roundResult"+n].update(0)}block(){this.state.blocked=1;Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.primaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.secondaryButtonCallback);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.clickButtonCallback)}onFinish(e){this.callbacks.onFinish=e;return()=>{this.callbacks.onFinish=null}}onFinishRound(e){this.callbacks.onFinishRound=e;return()=>this.callbacks.onFinishRound=null}shareState(e){console.log("shareState",e,this.gameSetup.currentPlayer);const{player:t,timeSinceStart:n,time:i,round:r}=e;if(r===this.state.round){this[`char${t}Shape`].uvs=l.getSpriteUv(3,d,64,71);this.ui.updateTime({player:t,time:n})}}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}update(e){if(this.state.initialized)if(!this.state.waitingRound&&!this.state.started&&Date.now()>=this.state.startTime){console.log("start");this.start()}else if(this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime){console.log("startRound");this.startRound()}else Date.now()>=this.state.roundStartTime}}t.AttackGame=m;m.id="Attack";m.timeToWaitForOtherAnswer=1;m.instructions="2 old warriors on each player side, \n    faster than your opponent,\n    press the appropriate key: E, F or CLICK"},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))};Object.defineProperty(t,"__esModule",{value:1});t.ObstacleGame=void 0;const r=n(3),s=n(60),o=n(2),a=n(6),c=n(4),l=({getRandomInt:e,level:t})=>{const n=80*Math.log(t+1);let i=n,r=[];const s=2,o=8;let a=1;for(;r.length<n;){r.push(...new Array(e(s,o)+(a?4:0)).fill(0),1);a=0}r.push(...new Array(3).fill(0));return r};class u{constructor(e,{seed:t,currentPlayer:n,level:i=1,gameIndex:o}){this.state={initialized:0,started:0,currentLeg:1,blocked:1,startTime:Number.MAX_VALUE};this.callbacks={onFinish:null,onShareState:null};this.root=e;this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,0,-.001)}));this.ui=c.createUI(this.scene);this.gameSetup={seed:t.toString(),currentPlayer:n,level:i,gameIndex:o};this.randomizer=r.seedGen.create(t.toString());const a=1===n?2:1,u=l({getRandomInt:this.getRandomInt.bind(this),level:i});console.log("TRACK !!",u);this.screen1=s.createScreen(this.scene,{player:1,track:u});this.screen2=s.createScreen(this.scene,{player:2,track:u});this.roundResult1=c.createRoundResult(this.scene,{player:1});this.roundResult2=c.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();this.moveLeg1=this.moveLeg1.bind(this);this.moveLeg2=this.moveLeg2.bind(this);this.jump=this.jump.bind(this);engine.addSystem(this)}setStartTime(e){this.state.startTime=e}getPlayerScreen(e){return this["screen"+e]}init(){this.state.initialized=1;this.scene.setParent(this.root)}tempBlock(){this.state.blocked=1;this["screen"+this.gameSetup.currentPlayer].showCross();o.playOnce("fail");setTimeout(()=>{this.state.blocked=0;this["screen"+this.gameSetup.currentPlayer].hideCross()},1e3)}moveLeg1(){if(this.state.blocked||!this.state.started)return;const e=this.getPlayerScreen(this.gameSetup.currentPlayer);if(this.state.blocked||1!==this.state.currentLeg||e.getScreenState().moving)return;e.moveScreen();this.state.currentLeg=2;e.getNextStepValue()?this.tempBlock():o.playOnce("ok");const t=this.getPercentage(this.gameSetup.currentPlayer);console.log("percentage",t);this.ui.updateScore({player:this.gameSetup.currentPlayer,score:t});this.callbacks.onShareState({movement:"1",player:this.gameSetup.currentPlayer,percentage:t})}moveLeg2(){if(this.state.blocked||!this.state.started)return;const e=this.getPlayerScreen(this.gameSetup.currentPlayer);if(this.state.blocked||2!==this.state.currentLeg||e.getScreenState().moving)return;e.moveScreen();this.state.currentLeg=1;e.getNextStepValue()?this.tempBlock():o.playOnce("ok");const t=this.getPercentage(this.gameSetup.currentPlayer);this.ui.updateScore({player:this.gameSetup.currentPlayer,score:t});this.callbacks.onShareState({movement:"2",player:this.gameSetup.currentPlayer,percentage:t})}jump(){if(this.state.blocked||!this.state.started)return;const e=this.getPlayerScreen(this.gameSetup.currentPlayer);if(1!==e.getNextStepValue())return;if(e.getScreenState().moving)return;e.moveScreen(1);const t=this.getPercentage(this.gameSetup.currentPlayer,1);this.ui.updateScore({player:this.gameSetup.currentPlayer,score:t});this.callbacks.onShareState({movement:"jump",player:this.gameSetup.currentPlayer,percentage:t});o.playOnce("jump")}getPercentage(e,t){const n=this["screen"+e].getScreenState().currentStep+(t?2:1),i=this["screen"+e].getTotalSteps()-4;return Math.floor(100*n/i)}start(){this.state.started=1;(()=>i(this,void 0,void 0,(function*(){o.playLoop("race",{volume:.5});yield h(3e3);o.playOnce("readygo");a.updateTextPanel({value:"READY!"});yield h(700);a.updateTextPanel({value:"STEADY!"});yield h(800);a.updateTextPanel({value:"GO!"});console.log("START");const e=this.getPlayerScreen(this.gameSetup.currentPlayer);this.state.blocked=0;if(this.gameSetup.currentPlayer){this.state.blocked=0;Input.instance.subscribe("BUTTON_DOWN",ActionButton.PRIMARY,0,this.moveLeg1);Input.instance.subscribe("BUTTON_DOWN",ActionButton.SECONDARY,0,this.moveLeg2);Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,this.jump)}e.onMove(e=>{e%2==0});e.onFinishScreen(()=>{this.block();o.stopSound("race");const e=Date.now()-this.state.startTime;this.callbacks.onFinish({time:e,isWinner:1,gameIndex:this.gameSetup.gameIndex,roundIndex:0});this.ui.updateTime({player:this.gameSetup.currentPlayer,time:e});this.ui.updateScore({player:this.gameSetup.currentPlayer,score:100});this.callbacks.onShareState({player:this.gameSetup.currentPlayer,timeSinceStart:e,percentage:100})});this.screen1.handleVisibility();this.screen2.handleVisibility();yield h(1e3);a.updateTextPanel({value:""})})))()}update(e){if(this.state.initialized)if(!this.state.started&&Date.now()-4e3>=this.state.startTime)this.start();else{this.state.started&&this.getPlayerScreen(1).getScreenState().moving&&this.getPlayerScreen(1).updateScreen(e);this.state.started&&this.getPlayerScreen(2).getScreenState().moving&&this.getPlayerScreen(2).updateScreen(e)}}destroy(){o.stopSound("race");a.updateTextPanel({value:""});Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.moveLeg1);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.moveLeg2);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.jump);this.scene.setParent(null);engine.removeEntity(this.scene);engine.removeSystem(this)}block(){this.state.blocked=1;Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,this.moveLeg1);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,this.moveLeg2);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,this.jump)}finish({winner:e}){const t=1===e?2:1;this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}shareState(e){console.log("shareState",e);const{movement:t,player:n,timeSinceStart:i,percentage:r}=e;if(i)this.ui.updateTime({player:n,time:i});else{const e=this.getPlayerScreen(n);"1"===t||"2"===t?e.moveScreen():e.moveScreen(1)}this.ui.updateScore({player:n,score:r})}getRandomInt(e,t,n){const i=Math.floor(this.randomizer.random()*(t-e+1))+e;return i===n?this.getRandomInt(e,t,n):i}}t.ObstacleGame=u;u.id="Obstacle";u.instructions="Alternate E and F  with rythm to run,\n    when red obstacle right in front,\n    Press click to jump!\n    ";function h(e){return new Promise(t=>setTimeout(t,e))}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.MathGame=void 0;const i=n(2),r=n(1),s=n(5),o=n(3),a=n(9),c=n(0),l=n(4),u=5,h=4/128,d=144,p=(e,{player:t})=>{const n=new Entity,i=new PlaneShape;i.withCollisions=0;i.uvs=c.getSpriteUv(1,d,64,64);n.addComponent(r.spriteMaterial);n.addComponent(i);n.addComponent(new Transform({position:new Vector3(1===t?-(2.2+2*h):2.2-3*h,1.5-2*h,-.002),scale:new Vector3(1===t?2:-2,2,1)}));n.setParent(e);return i};class f{constructor(e,{seed:t,level:n,currentPlayer:i,gameIndex:r}){this.state={blocked:0,started:0,initialized:0,startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,round:0,finished:0,score1:0,score2:0};this.callbacks={onFinish:null,onShareState:null,onFinishRound:null};this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,0,-.002)}));this.ui=l.createUI(this.scene);this.teacher1=p(this.scene,{player:1});this.teacher2=p(this.scene,{player:2});this.player1=l.createPlayerAnswer(this.scene,{player:1});this.player2=l.createPlayerAnswer(this.scene,{player:2});this.player1.hide();this.player2.hide();this.roundResult1=l.createRoundResult(this.scene,{player:1});this.roundResult2=l.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();this.gameSetup={seed:t,currentPlayer:i,level:n,gameIndex:r};this.root=e;this.randomizer=o.seedGen.create(t.toString());const s=new Entity;this.question=new TextShape("");this.question.withCollisions=0;this.question.vTextAlign="top";this.question.fontSize=5;s.addComponent(this.question);s.addComponent(new Transform({position:new Vector3(0,3.5,-.001)}));s.setParent(this.scene);engine.addSystem(this)}setStartTime(e){this.state.startTime=e}setRoundStartTime(e){console.log("setRoundStartTime",e);this.state.roundStartTime=e}onClickAnswer(e){if(this.state.blocked||!this.state.started)return;this.state.blocked=1;i.playOnce("swing");const t=this["player"+this.gameSetup.currentPlayer];t.show();t.wrapperEntity.getComponent(Transform).position.set(this.answersT[e].position.x+(1===this.gameSetup.currentPlayer?-.2:.2),this.answersT[e].position.y,this.answersT[e].position.z);const n=this.answers[e].value===this.answers[this.solutionIndex].value;t.setSprite(n);const r=a.getTimeSinceStart(0===this.state.round?this.state.startTime:this.state.lastRoundStartTime),s=n?r:999999999-r;this.callbacks.onShareState({type:"election",player:this.gameSetup.currentPlayer,index:e,time:s,timeSinceStart:r,round:this.state.round});this.ui.updateTime({player:this.gameSetup.currentPlayer,time:r});if(this.state.round<u-1){this.callbacks.onFinishRound({player:this.gameSetup.currentPlayer,time:s,round:this.state.round,isWinner:n,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round});this.state.waitingRound=1}else this.callbacks.onFinish({player:this.gameSetup.currentPlayer,time:s,round:this.state.round,isWinner:n,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round})}init(){i.playLoop("money",{volume:.5});this.state.initialized=1;s.updateSpritePanel({uvs:c.getSpriteUv(3,0,192,128)});s.showSpritePanel();this.scene.setParent(this.root)}block(){this.state.blocked=1}destroy(){i.stopSound("money");s.hideSpritePanel();this.scene.setParent(null);engine.removeEntity(this.scene)}start(){this.ui.hideTime();const e=Math.floor(50*this.randomizer.random()),t=Math.floor(50*this.randomizer.random());this.question.value=`${e} + ${t}`;this.state.started=1;const n=e+t,i=this.solutionIndex=Math.floor(6*this.randomizer.random()),r=n-1,s=this.getRandomIntExcept(0,5,[i]),o=n-10,a=this.getRandomIntExcept(0,5,[i,s]);this.answers=Array(6).fill(null);this.answersT=Array(6).fill(null);const c=[],l=new PlaneShape,u=new Material;u.albedoColor=new Color4(1,1,1,.05);this.answers.forEach((e,t)=>{const h=new Entity,d=new Entity;l.withCollisions=0;d.addComponent(l);d.addComponent(u);this.answers[t]=new TextShape;this.answers[t].withCollisions=0;this.answers[t].fontSize=3;h.addComponent(this.answers[t]);this.answers[t].value=c[t]=t===i?n:t===s?r:t===a?o:this.getRandomIntExcept(0,100,c);this.answers[t].visible=0;h.addComponent(new Transform({position:new Vector3(0,0,-.01)}));this.answersT[t]=new Transform({position:new Vector3(0===t||3===t?-1:1===t||4===t?0:1,t<3?2.5:1.5,0),scale:new Vector3(.9,.9,.9)});d.addComponent(this.answersT[t]);d.addComponent(new OnClick(()=>{this.onClickAnswer(t)}));d.setParent(this.scene);h.setParent(d)})}startRound(){this.state.round++;this.roundResult1.hide();this.roundResult2.hide();this.ui.hideTime();this.player1.hide();this.player2.hide();this.question.value="";this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;this.state.waitingRound=0;this.answers.forEach((e,t)=>{this.answers[t].value=""});this.question.value="";this.teacher1.uvs=c.getSpriteUv(1,d,64,64);this.teacher2.uvs=c.getSpriteUv(1,d,64,64);setTimeout(()=>{this.gameSetup.currentPlayer&&(this.state.blocked=0);const e=Math.floor(50*this.randomizer.random()),t=Math.floor(50*this.randomizer.random());this.question.value=`${e} + ${t}`;const n=e+t,i=this.solutionIndex=Math.floor(6*this.randomizer.random()),r=n-1,s=this.getRandomIntExcept(0,5,[i]),o=n-10,a=this.getRandomIntExcept(0,5,[i,s]),c=[];this.answers.forEach((e,t)=>{this.answers[t].value=c[t]=t===i?n:t===s?r:t===a?o:this.getRandomIntExcept(0,100,c)})},500)}update(e){if(this.state.initialized)if(!this.state.waitingRound&&!this.state.started&&Date.now()>=this.state.startTime){console.log("start");this.start()}else this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime?this.startRound():Date.now()>=this.state.roundStartTime}finish(e){const{winner:t}=e,n=1===t?2:1;this.state.blocked=1;this["teacher"+t].uvs=c.getSpriteUv(3,d,64,64);this["teacher"+n].uvs=c.getSpriteUv(2,d,64,64);t===this.gameSetup.currentPlayer?i.playOnce("wow"):i.playOnce("fail");this.roundResult1.show();this.roundResult2.show();this["roundResult"+t].update(1);this["roundResult"+n].update(0)}finishRound({winner:e}){console.log("finishRound winner",e);this.state.blocked=1;this.state["score"+e]+=1;this.ui.updateScore({player:e,score:this.state["score"+e]});const t=1===e?2:1;console.log("winner",e);this["teacher"+e].uvs=c.getSpriteUv(3,d,64,64);this["teacher"+t].uvs=c.getSpriteUv(2,d,64,64);e===this.gameSetup.currentPlayer?i.playOnce("wow"):i.playOnce("fail");this["roundResult"+e].update(1);this["roundResult"+t].update(0);this.roundResult1.show();this.roundResult2.show();this.state.waitingRound=1}onFinish(e){this.callbacks.onFinish=e}onFinishRound(e){this.callbacks.onFinishRound=e;return()=>this.callbacks.onFinishRound=null}shareState(e){const{player:t,index:n,timeSinceStart:i,time:r,round:s}=e;if(s!==this.state.round)return;const o=n===this.solutionIndex,a=this["player"+t];a.show();a.wrapperEntity.getComponent(Transform).position.set(this.answersT[n].position.x+(1===t?-.2:.2),this.answersT[n].position.y,this.answersT[n].position.z);a.setSprite(o);this.ui.updateTime({player:t,time:i})}onShareState(e){this.callbacks.onShareState=e}getRandomIntExcept(e,t,n){let i=e+Math.floor(this.randomizer.random()*(t+1-e));if(!n)return i;for(;~n.indexOf(i);)i=e+Math.floor(this.randomizer.random()*(t+1-e));return i}}t.MathGame=f;f.id="Math";f.instructions="Math\nClick the correct answer"},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.DifferentGame=void 0;const i=n(4),r=n(3),s=n(1),o=n(0),a=n(2),c=n(5),l=n(6),u=n(9),h=192,d=(e,t,n)=>{const i=new Entity,r=new PlaneShape;let a=0;i.addComponent(r);i.addComponent(s.spriteMaterial);i.addComponent(new Transform({scale:new Vector3(1.9,1.9,1.9),position:new Vector3(0===t?-2:1===t?0:2,2,-.001)}));r.uvs=o.getSpriteUv(1,h,64,64);r.uvs=o.getSpriteUv(0,0,0,0);i.setParent(e);i.addComponent(new OnClick(()=>{n(t)}));return{setIndex:e=>{a=e;r.uvs=o.getSpriteUv(a,h,64,64)},getSpriteIndex:()=>a,hide:()=>{r.uvs=o.getSpriteUv(0,0,0,0)}}},p=5;class f{constructor(e,{seed:t,level:n,currentPlayer:s,gameIndex:o}){this.callbacks={onFinish:null,onShareState:null,onFinishRound:null};this.state={blocked:0,started:0,initialized:0,startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,round:0,finished:0,score1:0,score2:0,equalSpriteIndex:0,differentSpriteIndex:0,answerPositions:[1,0,0]};this.gameSetup={seed:t,currentPlayer:s,level:n,gameIndex:o};this.root=e;this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,0,-.002)}));this.ui=i.createUI(this.scene);this.player1=i.createPlayerAnswer(this.scene,{player:1});this.player2=i.createPlayerAnswer(this.scene,{player:2});this.player1.hide();this.player2.hide();console.log("diff seed",t);this.randomizer=r.seedGen.create(t.toString());this.onClickAnswer=this.onClickAnswer.bind(this);this.answers=[0,1,2].map(e=>d(this.scene,e,this.onClickAnswer));engine.addSystem(this);s||(this.state.blocked=1)}onClickAnswer(e){if(this.state.blocked||!this.state.started)return;this.state.blocked=1;a.playOnce("swing");const t=!!this.state.answerPositions[e];console.log("isWinner",t);const n=this["player"+this.gameSetup.currentPlayer];n.show();n.wrapperEntity.getComponent(Transform).position.set((0===e?-2:1===e?0:2)+(1===this.gameSetup.currentPlayer?-.5:.5),2,-.002);n.setSprite(t);const i=u.getTimeSinceStart(0===this.state.round?this.state.startTime:this.state.lastRoundStartTime),r=t?i:999999999-i;this.callbacks.onShareState({player:this.gameSetup.currentPlayer,isWinner:t,answerIndex:e,time:r,timeSinceStart:i,round:this.state.round});this.ui.updateTime({player:this.gameSetup.currentPlayer,time:i});if(this.state.round<p-1){this.callbacks.onFinishRound({player:this.gameSetup.currentPlayer,time:r,roundIndex:this.state.round,gameIndex:this.gameSetup.gameIndex});this.state.waitingRound=1}else this.callbacks.onFinish({player:this.gameSetup.currentPlayer,time:r,roundIndex:this.state.round,gameIndex:this.gameSetup.gameIndex})}init(){l.updateTextPanel({value:"Which is different?",color:Color3.Black()});a.playLoop("money",{volume:.5});this.state.initialized=1;c.updateSpritePanel({uvs:o.getSpriteUv(9,0,192,128)});c.showSpritePanel();this.scene.setParent(this.root)}setStartTime(e){console.log("setStartTime",e);this.state.startTime=e}setRoundStartTime(e){this.state.roundStartTime=e}finish(e){const{winner:t}=e,n=1===t?2:1;this.state.blocked=1;t===this.gameSetup.currentPlayer?a.playOnce("wow"):a.playOnce("fail")}finishRound({winner:e}){this.state.blocked=1;this.state["score"+e]+=1;this.ui.updateScore({player:e,score:this.state["score"+e]});const t=1===e?2:1;e===this.gameSetup.currentPlayer?a.playOnce("wow"):a.playOnce("fail");this.state.waitingRound=1}reproduceRound(){this.gameSetup.currentPlayer&&(this.state.blocked=0);this.ui.hideTime();l.updateTextPanel({value:"Which is different?",color:Color3.Black()});this.state.equalSpriteIndex=this.getRandomIntExcept(1,9);this.state.differentSpriteIndex=this.getRandomIntExcept(1,9,[this.state.equalSpriteIndex]);console.log("REPRODUCE, STATE",this.state.equalSpriteIndex,this.state.differentSpriteIndex);this.state.answerPositions=g([1,0,0],this.randomizer.random);this.state.answerPositions.forEach((e,t)=>{e?this.answers[t].setIndex(this.state.differentSpriteIndex):this.answers[t].setIndex(this.state.equalSpriteIndex)})}start(){console.log("_START_");this.state.started=1;this.reproduceRound()}startRound(){this.state.round++;this.player1.hide();this.player2.hide();this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;this.state.waitingRound=0;this.answers.forEach(e=>e.hide());setTimeout(()=>{this.reproduceRound()},500)}block(){this.state.blocked=1}update(e){this.state.initialized&&(!this.state.waitingRound&&!this.state.started&&Date.now()>=this.state.startTime?this.start():this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime&&this.startRound())}shareState({player:e,answerIndex:t,isWinner:n,timeSinceStart:i,round:r}){this.ui.updateTime({player:e,time:i});const s=this["player"+e],o=t;s.setSprite(n);s.show();s.wrapperEntity.getComponent(Transform).position.set((0===o?-2:1===o?0:2)+(1===e?-.5:.5),2,-.002)}destroy(){a.stopSound("money");c.hideSpritePanel();this.scene.setParent(null);engine.removeEntity(this.scene)}onFinish(e){this.callbacks.onFinish=e}onFinishRound(e){this.callbacks.onFinishRound=e}onShareState(e){this.callbacks.onShareState=e}getRandomIntExcept(e,t,n){let i=e+Math.floor(this.randomizer.random()*(t+1-e));if(!n)return i;for(;~n.indexOf(i);)i=e+Math.floor(this.randomizer.random()*(t+1-e));return i}}t.DifferentGame=f;f.id="Different";f.instructions="Different\nClick the image that is different";function g(e,t){for(var n=e.length,i,r;0!==n;){r=Math.floor(t()*n);i=e[n-=1];e[n]=e[r];e[r]=i}return e}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.FroggerGame=void 0;const i=n(63),r=n(3),s=n(4),o=n(2),a=n(6),c={UP:ActionButton.POINTER,LEFT:ActionButton.PRIMARY,RIGHT:ActionButton.SECONDARY};class l{constructor(e,{seed:t,currentPlayer:n,level:o=1,gameIndex:a}){this.callbacks={onFinish:null,onShareState:null};this.state={blocked:0,started:0,initialized:0,startTime:Number.MAX_VALUE,finished:0};this.root=e;this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,0,-.001)}));this.ui=s.createUI(this.scene);this.gameSetup={seed:t,currentPlayer:n,level:o,gameIndex:a};this.randomizer=r.seedGen.create(t.toString());this.screen1=i.createScreen(this.scene,{player:1,seed:t});this.screen2=i.createScreen(this.scene,{player:2,seed:t});this.roundResult1=s.createRoundResult(this.scene,{player:1});this.roundResult2=s.createRoundResult(this.scene,{player:2});this.roundResult1.hide();this.roundResult2.hide();n&&this["screen"+n].onStateChange(e=>{this.ui.updateScore({score:e.score,player:n});const{x:t,y:i,z:r}=e.frogPosition;this.callbacks.onShareState(Object.assign(Object.assign({},e),{player:n,frogPosition:{x:t,y:i,z:r},takenSammiches:e.takenSammiches}));console.log("screenState",e);if(5===e.score&&!this.state.finished){const e=Date.now()-this.state.startTime;this.block();n&&this["screen"+n].block();this.state.finished=1;this.callbacks.onFinish({isWinner:1,time:e,player:n,gameIndex:this.gameSetup.gameIndex,roundIndex:0})}});engine.addSystem(this);this.up=this.up.bind(this);this.left=this.left.bind(this);this.right=this.right.bind(this)}setStartTime(e){this.state.startTime=e}getPlayerScreen(e){return this["screen"+e]}init(){this.state.initialized=1;this.scene.setParent(this.root);o.playLoop("race",{volume:.5})}start(){console.log("START_");this.state.started=1;if(this.gameSetup.currentPlayer){Input.instance.subscribe("BUTTON_DOWN",c.UP,0,this.up);Input.instance.subscribe("BUTTON_DOWN",c.LEFT,0,this.left);Input.instance.subscribe("BUTTON_DOWN",c.RIGHT,0,this.right)}}up(){var e;this.state.started&&!this.state.blocked&&(null===(e=this.getPlayerScreen(this.gameSetup.currentPlayer))||void 0===e?void 0:e.up())}left(){var e;this.state.started&&!this.state.blocked&&(null===(e=this.getPlayerScreen(this.gameSetup.currentPlayer))||void 0===e?void 0:e.left())}right(){var e;this.state.started&&!this.state.blocked&&(null===(e=this.getPlayerScreen(this.gameSetup.currentPlayer))||void 0===e?void 0:e.right())}update(e){if(this.state.initialized)if(!this.state.started&&Date.now()-4e3>=this.state.startTime)this.start();else{this.state.started&&this.getPlayerScreen(1).updateScreen(e,1===this.gameSetup.currentPlayer);this.state.started&&this.getPlayerScreen(2).updateScreen(e,2===this.gameSetup.currentPlayer)}}block(){this.state.blocked=1;this.gameSetup.currentPlayer&&this["screen"+this.gameSetup.currentPlayer].block()}destroy(){console.log("destroy");o.stopSound("race");a.updateTextPanel({value:""});Input.instance.unsubscribe("BUTTON_DOWN",c.UP,this.up);Input.instance.unsubscribe("BUTTON_DOWN",c.LEFT,this.left);Input.instance.unsubscribe("BUTTON_DOWN",c.RIGHT,this.right);this.scene.setParent(null);engine.removeEntity(this.scene);engine.removeSystem(this)}shareState({score:e,player:t,frogPosition:n,takenSammiches:i}){console.log("shareState",{score:e,player:t,frogPosition:n,takenSammiches:i});const{x:r,y:s,z:o}=n||{};this.ui.updateScore({score:e,player:t});this["screen"+t].setFrogPosition(r,s,o);this["screen"+t].setTakenSammiches(i)}finish({winner:e}){console.log("FINISH",e);const t=1===e?2:1;this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}}t.FroggerGame=l;l.id="Frogger";l.instructions="cross the roads and\ntake all sammiches\npressing E F and CLICK"},function(e,t,n){n.r(t);n.d(t,"send",(function(){return r}));n.d(t,"get",(function(){return s}));n.d(t,"post",(function(){return o}));n.d(t,"patch",(function(){return a}));n.d(t,"del",(function(){return c}));n.d(t,"put",(function(){return l}));function i(e,t){t.headers=e.headers||{};t.statusMessage=e.statusText;t.statusCode=e.status;t.data=e.response}function r(e,t,n){return new Promise((function(r,s){n=n||{};var o,a,c,l,u=new XMLHttpRequest,h=n.headers||{};n.timeout&&(u.timeout=n.timeout);u.ontimeout=u.onerror=function(e){e.timeout="timeout"==e.type;s(e)};u.open(e,t.href||t);u.onload=function(){l=u.getAllResponseHeaders().trim().split(/[\r\n]+/);i(u,u);for(;c=l.shift();){c=c.split(": ");u.headers[c.shift().toLowerCase()]=c.join(": ")}if((c=u.headers["content-type"])&&~c.indexOf("application/json"))try{u.data=JSON.parse(u.data,n.reviver)}catch(e){i(u,e);return s(e)}(u.status>=400?s:r)(u)};if((a=n.body)&&"object"==typeof a){h["content-type"]="application/json";a=JSON.stringify(a)}u.withCredentials=!!n.withCredentials;for(o in h)u.setRequestHeader(o,h[o]);u.send(a)}))}var s=r.bind(r,"GET"),o=r.bind(r,"POST"),a=r.bind(r,"PATCH"),c=r.bind(r,"DELETE"),l=r.bind(r,"PUT")},function(e,t,n){var i=this&&this.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.hasOwnProperty.call(e,n)&&(t[n]=e[n]);t["default"]=e;return t};Object.defineProperty(t,"__esModule",{value:1});var r=i(n(37)),s=n(72),o=n(73),a=n(74),c=n(38),l=n(39),u=i(n(40)),h=i(n(41)),d=function(){function e(e,t){var n=this;this.onJoin=s.createSignal();this.onStateChange=s.createSignal();this.onError=s.createSignal();this.onLeave=s.createSignal();this.hasJoined=0;this.onMessageHandlers=o.createNanoEvents();this.id=null;this.name=e;if(t){this.serializer=new(c.getSerializer("schema"));this.rootSchema=t;this.serializer.state=new t}else this.serializer=new(c.getSerializer("fossil-delta"));this.onError((function(e,t){return console.error("colyseus.js - onError => ("+e+") "+t)}));this.onLeave((function(){return n.removeAllListeners()}))}e.prototype.connect=function(e){var t=this;this.connection=new a.Connection(e,0);this.connection.reconnectEnabled=0;this.connection.onmessage=this.onMessageCallback.bind(this);this.connection.onclose=function(e){if(t.hasJoined)t.onLeave.invoke(e.code);else{console.error("Room connection was closed unexpectedly ("+e.code+"): "+e.reason);t.onError.invoke(e.code,e.reason)}};this.connection.onerror=function(e){console.warn("Room, onError ("+e.code+"): "+e.reason);t.onError.invoke(e.code,e.reason)};this.connection.open()};e.prototype.leave=function(e){void 0===e&&(e=1);this.connection?e?this.connection.send([l.Protocol.LEAVE_ROOM]):this.connection.close():this.onLeave.invoke(4e3)};e.prototype.onMessage=function(e,t){return this.onMessageHandlers.on(this.getMessageHandlerKey(e),t)};e.prototype.send=function(e,t){var n=[l.Protocol.ROOM_DATA],i;"string"==typeof e?u.string(n,e):u.number(n,e);if(void 0!==t){var s=r.encode(t);(i=new Uint8Array(n.length+s.byteLength)).set(new Uint8Array(n),0);i.set(new Uint8Array(s),n.length)}else i=new Uint8Array(n);this.connection.send(i.buffer)};Object.defineProperty(e.prototype,"state",{get:function(){return this.serializer.getState()},enumerable:1,configurable:1});e.prototype.listen=function(e,t,n){if("schema"!==this.serializerId){this.serializerId||console.warn("room.Listen() should be called after room.onJoin has been called (DEPRECATION WARNING)");return this.serializer.api.listen(e,t,n)}console.error("'"+this.serializerId+"' serializer doesn't support .listen() method here.")};e.prototype.removeListener=function(e){return this.serializer.api.removeListener(e)};e.prototype.removeAllListeners=function(){this.serializer&&this.serializer.teardown();this.onJoin.clear();this.onStateChange.clear();this.onError.clear();this.onLeave.clear()};e.prototype.onMessageCallback=function(e){var t=Array.from(new Uint8Array(e.data)),n=t[0];if(n===l.Protocol.JOIN_ROOM){var i=1;this.serializerId=l.utf8Read(t,i);i+=l.utf8Length(this.serializerId);var s=c.getSerializer(this.serializerId);if(!s)throw new Error("missing serializer: "+this.serializerId);"fossil-delta"===this.serializerId||this.rootSchema||(this.serializer=new s);t.length>i&&this.serializer.handshake&&this.serializer.handshake(t,{offset:1});this.hasJoined=1;this.onJoin.invoke();this.connection.send([l.Protocol.JOIN_ROOM])}else if(n===l.Protocol.ERROR){var o={offset:1},a=h.number(t,o),u=h.string(t,o);this.onError.invoke(a,u)}else if(n===l.Protocol.LEAVE_ROOM)this.leave();else if(n===l.Protocol.ROOM_DATA_SCHEMA){var d,p,u;(u=new(p=this.serializer.getState().constructor._context.get(t[1]))).decode(t,{offset:2});this.dispatchMessage(p,u)}else if(n===l.Protocol.ROOM_STATE){t.shift();this.setState(t)}else if(n===l.Protocol.ROOM_STATE_PATCH){t.shift();this.patch(t)}else if(n===l.Protocol.ROOM_DATA){var f={offset:1},p=h.stringCheck(t,f)?h.string(t,f):h.number(t,f),u=t.length>f.offset?r.decode(e.data,f.offset):void 0;this.dispatchMessage(p,u)}};e.prototype.setState=function(e){this.serializer.setState(e);this.onStateChange.invoke(this.serializer.getState())};e.prototype.patch=function(e){this.serializer.patch(e);this.onStateChange.invoke(this.serializer.getState())};e.prototype.dispatchMessage=function(e,t){var n=this.getMessageHandlerKey(e);this.onMessageHandlers.events[n]?this.onMessageHandlers.emit(n,t):this.onMessageHandlers.events["*"]?this.onMessageHandlers.emit("*",e,t):console.warn("onMessage not registered for type '"+e+"'.")};e.prototype.getMessageHandlerKey=function(e){switch(typeof e){case"function":return"$"+e._typeid;case"string":return e;case"number":return"i"+e;default:throw new Error("invalid message type.")}};return e}();t.Room=d},function(e,t,n){var i=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:1});var r=i(n(70)),s=i(n(71));t.decode=r.default;t.encode=s.default},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i={};function r(e,t){i[e]=t}t.registerSerializer=r;function s(e){return i[e]}t.getSerializer=s},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i,r;(function(e){e[e["HANDSHAKE"]=9]="HANDSHAKE";e[e["JOIN_ROOM"]=10]="JOIN_ROOM";e[e["ERROR"]=11]="ERROR";e[e["LEAVE_ROOM"]=12]="LEAVE_ROOM";e[e["ROOM_DATA"]=13]="ROOM_DATA";e[e["ROOM_STATE"]=14]="ROOM_STATE";e[e["ROOM_STATE_PATCH"]=15]="ROOM_STATE_PATCH";e[e["ROOM_DATA_SCHEMA"]=16]="ROOM_DATA_SCHEMA"})(i=t.Protocol||(t.Protocol={}));(function(e){e[e["MATCHMAKE_NO_HANDLER"]=4210]="MATCHMAKE_NO_HANDLER";e[e["MATCHMAKE_INVALID_CRITERIA"]=4211]="MATCHMAKE_INVALID_CRITERIA";e[e["MATCHMAKE_INVALID_ROOM_ID"]=4212]="MATCHMAKE_INVALID_ROOM_ID";e[e["MATCHMAKE_UNHANDLED"]=4213]="MATCHMAKE_UNHANDLED";e[e["MATCHMAKE_EXPIRED"]=4214]="MATCHMAKE_EXPIRED";e[e["AUTH_FAILED"]=4215]="AUTH_FAILED";e[e["APPLICATION_ERROR"]=4216]="APPLICATION_ERROR"})(r=t.ErrorCode||(t.ErrorCode={}));function s(e,t){for(var n=e[t++],i="",r=0,s=t,o=t+n;s<o;s++){var a=e[s];if(0!=(128&a))if(192!=(224&a))if(224!=(240&a)){if(240!=(248&a))throw new Error("Invalid byte "+a.toString(16));if((r=(7&a)<<18|(63&e[++s])<<12|(63&e[++s])<<6|(63&e[++s])<<0)>=65536){r-=65536;i+=String.fromCharCode(55296+(r>>>10),56320+(1023&r))}else i+=String.fromCharCode(r)}else i+=String.fromCharCode((15&a)<<12|(63&e[++s])<<6|(63&e[++s])<<0);else i+=String.fromCharCode((31&a)<<6|63&e[++s]);else i+=String.fromCharCode(a)}return i}t.utf8Read=s;function o(e){void 0===e&&(e="");for(var t=0,n=0,i=0,r=e.length;i<r;i++)if((t=e.charCodeAt(i))<128)n+=1;else if(t<2048)n+=2;else if(t<55296||t>=57344)n+=3;else{i++;n+=4}return n+1}t.utf8Length=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.number=t.string=t.boolean=t.writeFloat64=t.writeFloat32=t.float64=t.float32=t.uint64=t.int64=t.uint32=t.int32=t.uint16=t.int16=t.uint8=t.int8=t.utf8Write=void 0;function i(e){for(var t=0,n=0,i=0,r=e.length;i<r;i++)if((t=e.charCodeAt(i))<128)n+=1;else if(t<2048)n+=2;else if(t<55296||t>=57344)n+=3;else{i++;n+=4}return n}function r(e,t,n){for(var i=0,r=0,s=n.length;r<s;r++)if((i=n.charCodeAt(r))<128)e[t++]=i;else if(i<2048){e[t++]=192|i>>6;e[t++]=128|63&i}else if(i<55296||i>=57344){e[t++]=224|i>>12;e[t++]=128|i>>6&63;e[t++]=128|63&i}else{r++;i=65536+((1023&i)<<10|1023&n.charCodeAt(r));e[t++]=240|i>>18;e[t++]=128|i>>12&63;e[t++]=128|i>>6&63;e[t++]=128|63&i}}t.utf8Write=r;function s(e,t){e.push(255&t)}t.int8=s;function o(e,t){e.push(255&t)}t.uint8=o;function a(e,t){e.push(255&t);e.push(t>>8&255)}t.int16=a;function c(e,t){e.push(255&t);e.push(t>>8&255)}t.uint16=c;function l(e,t){e.push(255&t);e.push(t>>8&255);e.push(t>>16&255);e.push(t>>24&255)}t.int32=l;function u(e,t){var n=t>>24,i=t>>16,r=t>>8,s=t;e.push(255&s);e.push(255&r);e.push(255&i);e.push(255&n)}t.uint32=u;function h(e,t){var n=Math.floor(t/Math.pow(2,32)),i;u(e,t>>>0);u(e,n)}t.int64=h;function d(e,t){var n=t/Math.pow(2,32)>>0,i;u(e,t>>>0);u(e,n)}t.uint64=d;function p(e,t){S(e,t)}t.float32=p;function f(e,t){b(e,t)}t.float64=f;var g=1,m=new Int32Array(2),y=new Float32Array(m.buffer),v=new Float64Array(m.buffer);function S(e,t){y[0]=t;l(e,m[0])}t.writeFloat32=S;function b(e,t){v[0]=t;l(e,m[g?0:1]);l(e,m[g?1:0])}t.writeFloat64=b;function w(e,t){return o(e,t?1:0)}t.boolean=w;function _(e,t){t||(t="");var n=i(t),s=0;if(n<32){e.push(160|n);s=1}else if(n<256){e.push(217);o(e,n);s=2}else if(n<65536){e.push(218);c(e,n);s=3}else{if(!(n<4294967296))throw new Error("String too long");e.push(219);u(e,n);s=5}r(e,e.length,t);return s+n}t.string=_;function T(e,t){if(isNaN(t))return T(e,0);if(!isFinite(t))return T(e,t>0?Number.MAX_SAFE_INTEGER:-Number.MAX_SAFE_INTEGER);if(t!==(0|t)){e.push(203);b(e,t);return 9}if(t>=0){if(t<128){o(e,t);return 1}if(t<256){e.push(204);o(e,t);return 2}if(t<65536){e.push(205);c(e,t);return 3}if(t<4294967296){e.push(206);u(e,t);return 5}e.push(207);d(e,t);return 9}if(t>=-32){e.push(t);return 1}if(t>=-128){e.push(208);s(e,t);return 2}if(t>=-32768){e.push(209);a(e,t);return 3}if(t>=-2147483648){e.push(210);l(e,t);return 5}e.push(211);h(e,t);return 9}t.number=T},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.indexChangeCheck=t.nilCheck=t.arrayCheck=t.numberCheck=t.number=t.stringCheck=t.string=t.boolean=t.readFloat64=t.readFloat32=t.uint64=t.int64=t.float64=t.float32=t.uint32=t.int32=t.uint16=t.int16=t.uint8=t.int8=void 0;var i=n(42);function r(e,t,n){for(var i="",r=0,s=t,o=t+n;s<o;s++){var a=e[s];if(0!=(128&a))if(192!=(224&a))if(224!=(240&a)){if(240!=(248&a))throw new Error("Invalid byte "+a.toString(16));if((r=(7&a)<<18|(63&e[++s])<<12|(63&e[++s])<<6|(63&e[++s])<<0)>=65536){r-=65536;i+=String.fromCharCode(55296+(r>>>10),56320+(1023&r))}else i+=String.fromCharCode(r)}else i+=String.fromCharCode((15&a)<<12|(63&e[++s])<<6|(63&e[++s])<<0);else i+=String.fromCharCode((31&a)<<6|63&e[++s]);else i+=String.fromCharCode(a)}return i}function s(e,t){return o(e,t)<<24>>24}t.int8=s;function o(e,t){return e[t.offset++]}t.uint8=o;function a(e,t){return c(e,t)<<16>>16}t.int16=a;function c(e,t){return e[t.offset++]|e[t.offset++]<<8}t.uint16=c;function l(e,t){return e[t.offset++]|e[t.offset++]<<8|e[t.offset++]<<16|e[t.offset++]<<24}t.int32=l;function u(e,t){return l(e,t)>>>0}t.uint32=u;function h(e,t){return S(e,t)}t.float32=h;function d(e,t){return b(e,t)}t.float64=d;function p(e,t){var n=u(e,t),i;return l(e,t)*Math.pow(2,32)+n}t.int64=p;function f(e,t){var n=u(e,t),i;return u(e,t)*Math.pow(2,32)+n}t.uint64=f;var g=1,m=new Int32Array(2),y=new Float32Array(m.buffer),v=new Float64Array(m.buffer);function S(e,t){m[0]=l(e,t);return y[0]}t.readFloat32=S;function b(e,t){m[g?0:1]=l(e,t);m[g?1:0]=l(e,t);return v[0]}t.readFloat64=b;function w(e,t){return o(e,t)>0}t.boolean=w;function _(e,t){var n=e[t.offset++],i;n<192?i=31&n:217===n?i=o(e,t):218===n?i=c(e,t):219===n&&(i=u(e,t));var s=r(e,t.offset,i);t.offset+=i;return s}t.string=_;function T(e,t){var n=e[t.offset];return n<192&&n>160||217===n||218===n||219===n}t.stringCheck=T;function C(e,t){var n=e[t.offset++];return n<128?n:202===n?S(e,t):203===n?b(e,t):204===n?o(e,t):205===n?c(e,t):206===n?u(e,t):207===n?f(e,t):208===n?s(e,t):209===n?a(e,t):210===n?l(e,t):211===n?p(e,t):n>223?-1*(255-n+1):void 0}t.number=C;function P(e,t){var n=e[t.offset];return n<128||n>=202&&n<=211}t.numberCheck=P;function E(e,t){return e[t.offset]<160}t.arrayCheck=E;function R(e,t){return e[t.offset]===i.NIL}t.nilCheck=R;function I(e,t){return e[t.offset]===i.INDEX_CHANGE}t.indexChangeCheck=I},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.TYPE_ID=t.INDEX_CHANGE=t.NIL=t.END_OF_STRUCTURE=void 0;t.END_OF_STRUCTURE=193;t.NIL=192;t.INDEX_CHANGE=212;t.TYPE_ID=213},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))},r=this&&this.__generator||function(e,t){var n={label:0,sent:function(){if(1&s[0])throw s[1];return s[1]},trys:[],ops:[]},i,r,s,o;return o={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function a(e){return function(t){return c([e,t])}}function c(o){if(i)throw new TypeError("Generator is already executing.");for(;n;)try{if(i=1,r&&(s=2&o[0]?r["return"]:o[0]?r["throw"]||((s=r["return"])&&s.call(r),0):r.next)&&!(s=s.call(r,o[1])).done)return s;(r=0,s)&&(o=[2&o[0],s.value]);switch(o[0]){case 0:case 1:s=o;break;case 4:n.label++;return{value:o[1],done:0};case 5:n.label++;r=o[1];o=[0];continue;case 7:o=n.ops.pop();n.trys.pop();continue;default:if(!(s=n.trys,s=s.length>0&&s[s.length-1])&&(6===o[0]||2===o[0])){n=0;continue}if(3===o[0]&&(!s||o[1]>s[0]&&o[1]<s[3])){n.label=o[1];break}if(6===o[0]&&n.label<s[1]){n.label=s[1];s=o;break}if(s&&n.label<s[2]){n.label=s[2];n.ops.push(o);break}s[2]&&n.ops.pop();n.trys.pop();continue}o=t.call(e,n)}catch(e){o=[6,e];r=0}finally{i=s=0}if(5&o[0])throw o[1];return{value:o[0]?o[1]:void 0,done:1}}},s=this&&this.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.hasOwnProperty.call(e,n)&&(t[n]=e[n]);t["default"]=e;return t};Object.defineProperty(t,"__esModule",{value:1});var o=s(n(35)),a=n(78),c="colyseus-auth-token",l;(function(e){e["ios"]="ios";e["android"]="android"})(l=t.Platform||(t.Platform={}));var u=function(){function e(e){var t=this;this._id=void 0;this.username=void 0;this.displayName=void 0;this.avatarUrl=void 0;this.isAnonymous=void 0;this.email=void 0;this.lang=void 0;this.location=void 0;this.timezone=void 0;this.metadata=void 0;this.devices=void 0;this.facebookId=void 0;this.twitterId=void 0;this.googleId=void 0;this.gameCenterId=void 0;this.steamId=void 0;this.friendIds=void 0;this.blockedUserIds=void 0;this.createdAt=void 0;this.updatedAt=void 0;this.token=void 0;this.endpoint=e.replace("ws","http");a.getItem(c,(function(e){return t.token=e}))}Object.defineProperty(e.prototype,"hasToken",{get:function(){return!!this.token},enumerable:1,configurable:1});e.prototype.login=function(e){void 0===e&&(e={});return i(this,void 0,void 0,(function(){var t,n,i;return r(this,(function(r){switch(r.label){case 0:t=Object.assign({},e);this.hasToken&&(t.token=this.token);return[4,this.request("post","/auth",t)];case 1:n=r.sent();this.token=n.token;a.setItem(c,this.token);for(i in n)this.hasOwnProperty(i)&&(this[i]=n[i]);this.registerPingService();return[2,this]}}))}))};e.prototype.save=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:return[4,this.request("put","/auth",{},{username:this.username,displayName:this.displayName,avatarUrl:this.avatarUrl,lang:this.lang,location:this.location,timezone:this.timezone})];case 1:e.sent();return[2,this]}}))}))};e.prototype.getFriends=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:return[4,this.request("get","/friends/all")];case 1:return[2,e.sent()]}}))}))};e.prototype.getOnlineFriends=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:return[4,this.request("get","/friends/online")];case 1:return[2,e.sent()]}}))}))};e.prototype.getFriendRequests=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:return[4,this.request("get","/friends/requests")];case 1:return[2,e.sent()]}}))}))};e.prototype.sendFriendRequest=function(e){return i(this,void 0,void 0,(function(){return r(this,(function(t){switch(t.label){case 0:return[4,this.request("post","/friends/requests",{userId:e})];case 1:return[2,t.sent()]}}))}))};e.prototype.acceptFriendRequest=function(e){return i(this,void 0,void 0,(function(){return r(this,(function(t){switch(t.label){case 0:return[4,this.request("put","/friends/requests",{userId:e})];case 1:return[2,t.sent()]}}))}))};e.prototype.declineFriendRequest=function(e){return i(this,void 0,void 0,(function(){return r(this,(function(t){switch(t.label){case 0:return[4,this.request("del","/friends/requests",{userId:e})];case 1:return[2,t.sent()]}}))}))};e.prototype.blockUser=function(e){return i(this,void 0,void 0,(function(){return r(this,(function(t){switch(t.label){case 0:return[4,this.request("post","/friends/block",{userId:e})];case 1:return[2,t.sent()]}}))}))};e.prototype.unblockUser=function(e){return i(this,void 0,void 0,(function(){return r(this,(function(t){switch(t.label){case 0:return[4,this.request("put","/friends/block",{userId:e})];case 1:return[2,t.sent()]}}))}))};e.prototype.request=function(e,t,n,s,a){void 0===n&&(n={});void 0===a&&(a={});return i(this,void 0,void 0,(function(){var i,c,l,u;return r(this,(function(r){switch(r.label){case 0:a["Accept"]="application/json";this.hasToken&&(a["Authorization"]="Bearer "+this.token);i=[];for(c in n)i.push(c+"="+n[c]);l=i.length>0?"?"+i.join("&"):"";u={headers:a};s&&(u.body=s);return[4,o[e](""+this.endpoint+t+l,u)];case 1:return[2,r.sent().data]}}))}))};e.prototype.logout=function(){this.token=void 0;a.removeItem(c);this.unregisterPingService()};e.prototype.registerPingService=function(e){var t=this;void 0===e&&(e=15e3);this.unregisterPingService();this.keepOnlineInterval=setInterval((function(){return t.request("get","/auth")}),e)};e.prototype.unregisterPingService=function(){clearInterval(this.keepOnlineInterval)};return e}();t.Auth=u},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=n(13);Object.defineProperty(t,"Schema",{enumerable:1,get:function(){return i.Schema}});var r=n(11);Object.defineProperty(t,"MapSchema",{enumerable:1,get:function(){return r.MapSchema}});var s=n(10);Object.defineProperty(t,"ArraySchema",{enumerable:1,get:function(){return s.ArraySchema}});var o=n(87);Object.defineProperty(t,"dumpChanges",{enumerable:1,get:function(){return o.dumpChanges}});var a=n(88);Object.defineProperty(t,"Reflection",{enumerable:1,get:function(){return a.Reflection}});Object.defineProperty(t,"ReflectionType",{enumerable:1,get:function(){return a.ReflectionType}});Object.defineProperty(t,"ReflectionField",{enumerable:1,get:function(){return a.ReflectionField}});var c=n(46);Object.defineProperty(t,"type",{enumerable:1,get:function(){return c.type}});Object.defineProperty(t,"deprecated",{enumerable:1,get:function(){return c.deprecated}});Object.defineProperty(t,"filter",{enumerable:1,get:function(){return c.filter}});Object.defineProperty(t,"defineTypes",{enumerable:1,get:function(){return c.defineTypes}});Object.defineProperty(t,"Context",{enumerable:1,get:function(){return c.Context}})},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.ChangeTree=void 0;var i=n(13),r=n(10),s=n(11),o=function(){function e(e,t,n){void 0===e&&(e={});void 0===t&&(t=null);this.changed=0;this.changes=new Set;this.allChanges=new Set;this.deletedKeys={};this.fieldIndexes=e;this.parent=n;this.parentField=t}e.prototype.change=function(e,t){void 0===t&&(t=0);var n=this.fieldIndexes[e],i="number"==typeof n?n:e;if(t){if(t){this.changed=1;this.changes.add(i);this.allChanges.delete(i)}}else{this.changed=1;this.changes.add(i);this.allChanges.add(i)}this.parent&&this.parent.change(this.parentField)};e.prototype.mapIndex=function(e,t){if("object"==typeof e){if(!this.indexMap){this.indexMap=new Map;this.indexChange=new Map}this.indexMap.set(e,t)}};e.prototype.getIndex=function(e){return this.indexMap&&this.indexMap.get(e)};e.prototype.deleteIndex=function(e){if("object"==typeof e){this.deletedKeys[this.indexMap.get(e)]=1;this.indexMap.delete(e)}};e.prototype.isDeleted=function(e){return void 0!==this.deletedKeys[e]};e.prototype.mapIndexChange=function(e,t){"object"!=typeof e||this.indexChange.has(e)||this.indexChange.set(e,t)};e.prototype.getIndexChange=function(e){return this.indexChange&&this.indexChange.get(e)};e.prototype.deleteIndexChange=function(e){"object"==typeof e&&this.indexChange.delete(e)};e.prototype.changeAll=function(e){if(e instanceof i.Schema){var t=e["_schema"];for(var n in t){(e[n]instanceof i.Schema||e[n]instanceof r.ArraySchema||e[n]instanceof s.MapSchema)&&!e[n].$changes.parent.parent&&(e[n].$changes.parent=this);void 0!==e[n]&&this.change(n)}}else for(var o,a=0,c=Object.keys(e);a<c.length;a++){var l=c[a];void 0!==e[l]&&this.change(l)}};e.prototype.discard=function(){this.changed=0;this.changes.clear();this.deletedKeys={};this.indexChange&&this.indexChange.clear()};e.prototype.clone=function(){return new e(this.fieldIndexes,this.parentField,void 0)};return e}();t.ChangeTree=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.defineTypes=t.deprecated=t.filter=t.type=t.globalContext=t.Context=void 0;var i=n(45),r=n(13),s=function(){function e(){this.types={};this.schemas=new Map}e.prototype.has=function(e){return this.schemas.has(e)};e.prototype.get=function(e){return this.types[e]};e.prototype.add=function(e){e._typeid=this.schemas.size;this.types[e._typeid]=e;this.schemas.set(e,e._typeid)};return e}();t.Context=s;t.globalContext=new s;function o(e,n){void 0===n&&(n=t.globalContext);return function(t,s){var o=t.constructor;o._context=n;if(!n.has(o)){n.add(o);o._schema=Object.assign({},o._schema||{});o._indexes=Object.assign({},o._indexes||{});o._fieldsByIndex=Object.assign({},o._fieldsByIndex||{});o._descriptors=Object.assign({},o._descriptors||{});o._deprecated=Object.assign({},o._deprecated||{})}var a=Object.keys(o._schema).length;o._fieldsByIndex[a]=s;o._indexes[s]=a;o._schema[s]=e;if(!o._descriptors[s]){var c=Array.isArray(e),l=!c&&e.map,u="function"==typeof o._schema[s],h="_"+s;o._descriptors[h]={enumerable:0,configurable:0,writable:1};o._descriptors[s]={get:function(){return this[h]},set:function(e){(c||l)&&(e=new Proxy(e,{get:function(e,t){return e[t]},set:function(e,t,n){if("length"!==t&&0!==t.indexOf("$")){var s=c?Number(t):String(t);if(!e.$sorting){var o=e.$changes.getIndex(n);void 0!==o&&e.$changes.mapIndexChange(n,o);e.$changes.mapIndex(n,s)}if(n instanceof r.Schema){if(!n.$changes.parent){n.$changes=new i.ChangeTree(n._indexes,s,e.$changes);n.$changes.changeAll(n)}}else e[t]=n;e.$changes.change(s)}else n!==e[t];e[t]=n;return 1},deleteProperty:function(e,t){var n=e[t];if(l&&void 0!==n){e.$changes.deleteIndex(n);e.$changes.deleteIndexChange(n);n.$changes&&delete n.$changes.parent}delete e[t];var i=c?Number(t):String(t);e.$changes.change(i,1);return 1}}));if(e!==this[h]){this[h]=e;if(c){this.$changes.change(s);e.$changes=new i.ChangeTree({},s,this.$changes);for(var t=0;t<e.length;t++){if(e[t]instanceof r.Schema){e[t].$changes=new i.ChangeTree(e[t]._indexes,t,e.$changes);e[t].$changes.changeAll(e[t])}e.$changes.mapIndex(e[t],t);e.$changes.change(t)}}else if(l){e.$changes=new i.ChangeTree({},s,this.$changes);this.$changes.change(s);for(var n in e){if(e[n]instanceof r.Schema){e[n].$changes=new i.ChangeTree(e[n]._indexes,n,e.$changes);e[n].$changes.changeAll(e[n])}e.$changes.mapIndex(e[n],n);e.$changes.change(n)}}else if(u){this.$changes.change(s);if(e){e.$changes=new i.ChangeTree(e._indexes,s,this.$changes);e.$changes.changeAll(e)}}else this.$changes.change(s)}},enumerable:1,configurable:1}}}}t.type=o;function a(e){return function(t,n){var i=t.constructor;i._filters||(i._filters={});i._filters[n]=e}}t.filter=a;function c(e,n){void 0===e&&(e=1);void 0===n&&(n=t.globalContext);return function(t,n){var i=t.constructor;i._deprecated[n]=1;e&&(i._descriptors[n]={get:function(){throw new Error(n+" is deprecated.")},set:function(e){},enumerable:0,configurable:1})}}t.deprecated=c;function l(e,n,i){void 0===i&&(i=t.globalContext);for(var r in n)o(n[r],i)(e.prototype,r);return e}t.defineTypes=l},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))},r=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:1});const s=n(48),o=n(65),a=n(66),c=n(6),l=n(5),u=n(2),h=n(0),d=n(4),p=r(n(21)),f=n(89),g=n(90),m=n(91),y=n(1);engine["PRODI"]=1;const v=p.default.CostumeGame,S=2222222231;console.log("META_SAMMICH");const b=(e,{lobbyRoom:t,trackSeed:n,minGames:r,alreadyStarted:s=0})=>i(void 0,void 0,void 0,(function*(){console.log("createSpectatorTrackHandler",e,t,{trackSeed:n,minGames:r});const i=yield o.createSpectatorTrack(e,{lobbyRoom:t,trackSeed:n,minGames:r,alreadyStarted:s})})),w=(e,{gameRoom:t,lobbyRoom:n,user:r,trackSeed:o,player:a,minGames:l})=>i(void 0,void 0,void 0,(function*(){const i=yield s.createTrack(e,{gameRoom:t,lobbyRoom:n,user:r,trackSeed:o,minGames:l});i.onScore((...e)=>{console.log("onScore",e)});i.onFinish(()=>{console.log("gameTrack.onFinish")});t.state.onChange=e=>{console.log("gameRoom state change",e,t.state);if(t.state.player1&&t.state.player2&&t.state.minGames<=t.state.currentGameIndex&&t.state.score.player1!==t.state.score.player2){const e=(t.state.score.player1||0)>(t.state.score.player2||0)?1:2,i=1===e?2:1,r=`${n.state["player"+e].displayName}\npwned\n${n.state["player"+i].displayName}`;t.state.player1.skipEnd||t.state.player2.skipEnd?c.updateTextPanel({value:"One player still have to click\nto skip end screen.\n\n"+r}):c.updateTextPanel({value:"Players must click to skip end screen\n\n"+r})}![t.state.player1.readyNext,t.state.player2.readyNext].every(e=>e)&&(t.state.player1.readyNext||t.state.player2.readyNext)&&t.state["player"+a].readyNext?c.updateTextPanel({value:"Waiting for other player"}):"Waiting for other player"===c.getTextPanelValue()&&c.updateTextPanel({value:""})};t.onMessage("*",(...e)=>{console.log("gameRoom onMessage *",...e)});const u=undefined;return()=>{t.dispose();t=null}}));let _;class T{constructor(e,t){this.state={countToCheckCamera:0};(()=>i(this,void 0,void 0,(function*(){const{position:n,rotation:i,scale:r,hideFrame:s,hideBoard:o,hideAd:p,soundDistance:v,showJoinVoice:S,voiceChannel:b,showScenario:w,serverWs:_,serverHttp:T}=JSON.parse(t.host_data).sammichgame,C=JSON.parse(t.host_data).sammichgame.gameID.replace(",","_"),P=new a.Client(""+(_||f.WS_HOST));console.log("ws connecting to "+(_||f.WS_HOST));yield d.sleep(0);y.loadTexture();u.loadSounds();const E=e.getUserData?yield e.getUserData():e.user.data,R=yield m.getLand();g.setHostData({land:R,gameID:C,position:n,rotation:i,scale:r,hideFrame:s,hideBoard:o,hideAd:p,soundDistance:v,showJoinVoice:S,voiceChannel:b,showScenario:w,serverWs:_,serverHttp:T});console.log("META_LAND",R);console.log("uuuser",E);const I=new Entity;c.createTextPanel(I,"");l.createSpritePanel(I);l.updateSpritePanel({uvs:h.getSpriteUv(1,0,192,128)});this.rootTransform=new Transform({position:new Vector3(n.x,n.y,n.z),scale:new Vector3(r.x,r.y,r.z)});this.rootTransform.rotation.setEuler(i.x,i.y,i.z);I.addComponent(this.rootTransform);engine.addEntity(I)})))()}update(e){}refreshHost(e){}}t.default=T},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))};Object.defineProperty(t,"__esModule",{value:1});t.createTrack=void 0;const r=n(6),s=n(2),o=n(5),a=n(17),c=n(0),l=n(18);let u=0;t.createTrack=(e,{gameRoom:t,lobbyRoom:n,user:p,trackSeed:f,minGames:g})=>i(void 0,void 0,void 0,(function*(){const m={onScore:null,onFinish:null},y=l.generateTrack(f,g);console.log("gameTrackDefinition",y);const v={currentIndex:0,currentPlayer:0,currentRoundIndex:0,score1:0,score2:0};n.state.player1.userId===p.userId&&(v.currentPlayer=1);n.state.player2.userId===p.userId&&(v.currentPlayer=2);s.stopSound("music2");yield d(100);s.playOnce("vs",{volume:1});o.updateSpritePanel({uvs:c.getSpriteUv(10,0,192,128)});r.updateTextPanel({value:`${n.state.player1.displayName} (left)\nVS\n${n.state.player2.displayName} (right)`,bottom:0,color:Color3.White()});yield d(3e3);a.reproduceVideo(e,y[0].Game.id);o.hideSpritePanel();r.updateTextPanel({value:y[0].Game.instructions+"\n\nClick when ready to play\nor waiting 20 seconds"});let S=new y[v.currentIndex].Game(e,{seed:f,currentPlayer:v.currentPlayer,level:1,gameIndex:0});P(S,t);C(t);const b=()=>{t.send("READY_NEXT",{senderPlayer:v.currentPlayer,games:(y||[]).map(e=>e.Game.id)});Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,b);r.updateTextPanel({value:"waiting for other user"})};Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,b);return{onScore:w,onFinish:_,dispose:()=>{console.log("//TODO dispose")}};function w(e){m.onScore=e;return()=>m.onScore=null}function _(e){m.onFinish=e;return()=>m.onFinish=null}function T(){m.onFinish=m.onScore=null}function C(t){t.onMessage("SHARE_STATE",e=>{S&&S.shareState(e||{})});t.onLeave(e=>{console.log("leave",e);S&&S.destroy();S=null;a.removeVideoPanel();o.updateSpritePanel({uvs:c.getSpriteUv(1,0,192,128)});o.showSpritePanel()});t.onMessage("FINSIH_AGREE",({winner:s,nextSeed:o,nextIndex:c})=>i(this,void 0,void 0,(function*(){console.log("received FINSIH_AGREE",{winner:s,nextSeed:o,nextIndex:c});S.finish&&S.finish({winner:s});m.onScore({score1:v.score1,score2:v.score2});const i=n.state["player"+s].displayName;r.updateTextPanel({value:`(${s}) ${i} wins`});yield d(2e3);S.destroy();S=null;if(v.currentIndex+1>=y.length&&v.score1===v.score2){y.push(l.generateTrack(o,1)[0]);console.log("tie-breaker",y)}if(v.currentIndex<y.length){v.currentIndex=c;E({nextSeed:o});P(S,t);const n=y[c].Game.instructions||"ERROR: MISSING_INSTRUCTIONS";a.reproduceVideo(e,y[c].Game.id);r.updateTextPanel({value:n+"\n\nClick when ready to play\n or waiting 20 seconds"});const i=()=>{Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,i);r.updateTextPanel({value:"waiting for other user"});t.send("READY_NEXT",{senderPlayer:v.currentPlayer,games:y.map(e=>e.Game.id)})};Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,i)}})));t.onMessage("NEXT_GAME",({serverTime:e,startTime:t})=>{v.currentRoundIndex=0;Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,b);console.log("NEXT_GAME",e,t);r.updateTextPanel({value:""});s.stopAllSounds();S&&S.init();a.removeVideoPanel();u=e-Date.now();S.setStartTime(h(t))});t.onMessage("NEXT_ROUND",({winner:e,serverTime:t,startTime:n,roundIndex:i})=>{v.currentRoundIndex++;console.log("NEXT_ROUND",e,t,n);u=t-Date.now();S.finishRound&&S.finishRound({winner:e});const r=h(n);console.log("localRoundStartTime",r,new Date(r).getMinutes(),new Date(r).getSeconds());console.log("now",Date.now(),(new Date).getMinutes(),(new Date).getSeconds());S.setRoundStartTime&&S.setRoundStartTime(r)});t.onMessage("FINISH_TRACK",({score:e})=>i(this,void 0,void 0,(function*(){console.log("receive FINISH_TRACK",e);S.destroy();S=null;s.playOnce("pwned");const n=(e.player1||0)>(e.player2||0)?1:2;o.updateSpritePanel({uvs:c.getSpriteUv(8,0,192,128),scale:new Vector3(1===n?6:-6,4,1)});o.showSpritePanel();m.onFinish({score:e});const i=()=>{t.send("SKIP_END",{senderPlayer:v.currentPlayer})};Input.instance.subscribe("BUTTON_DOWN",ActionButton.POINTER,0,i);t.onLeave(()=>Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.POINTER,i))})))}function P(e,t){e.onFinish(({time:n,isWinner:i,score:r,gameIndex:s,roundIndex:o})=>{console.log("onFinish");e.block();const a=1===v.currentPlayer?2:1,c=i?v.currentPlayer:a;console.log("sending FINISH_GAME",{winner:c,time:n,score:r,senderPlayer:v.currentPlayer,userId:p.userId});t.send("FINISH_GAME",{winner:c,time:n,score:r,senderPlayer:v.currentPlayer,userId:p.userId,currentGameIndex:s,currentRoundIndex:o,gameName:e.id})});e.onFinishRound&&e.onFinishRound(({player:n,time:i,score:r,isWinner:s,roundIndex:o,gameIndex:a})=>{const c=1===v.currentPlayer?2:1,l=s?v.currentPlayer:c;t.send("READY_ROUND",{player:n,time:i,score:r,winner:l,currentGameIndex:a,currentRoundIndex:o,gameName:e.id})});e.onShareState(e=>{t.send("SHARE_STATE",{sharedState:e,userId:p.userId,senderPlayer:v.currentPlayer,currentGameIndex:v.currentIndex,currentRoundIndex:v.currentRoundIndex})})}function E({nextSeed:t}){console.log(`\n            createGame\n            state.currentIndex: ${v.currentIndex}\n            gameTrackDefinition[state.currentIndex]: ${y[v.currentIndex]&&y[v.currentIndex].Game.id}\n  \n        `);if(S){S.destroy();S=null}const n=y[v.currentIndex].Game;S=new n(e,{seed:t,currentPlayer:v.currentPlayer,level:1,gameIndex:v.currentIndex})}function R(){var e;return n.state.player1&&n.state.player2&&(n.state.player1.userId===p.userId||(null===(e=n.state.player2)||void 0===e?void 0:e.userId)===p.userId)}}));function h(e){return e-u}function d(e){return new Promise(t=>setTimeout(t,e))}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createModel=void 0;const i=n(50),r=n(51),s=n(52),o=n(53),a=n(1),c=n(0);t.createModel=(e,{modelDefinition:t,position:n,scale:l,showLabel:u=""})=>{const h=new Entity;h.addComponent(new Transform({position:n,scale:l}));const d=new Entity,p=new PlaneShape;p.withCollisions=0;p.isPointerBlocker=0;p.uvs=c.getSpriteUv(16,112,64,128);const f=undefined;(new Material).albedoColor=new Color3(1,0,0);const g=new Transform({scale:new Vector3(-1,2,-1),position:new Vector3(0,0,0)});g.rotation.setEuler(0,180,0);d.addComponent(g);d.addComponent(a.spriteMaterial);d.addComponent(p);d.setParent(h);h.setParent(e);const m={glasses:null,hair:null,shirt:null,pants:null};m.glasses=r.createGlasses(h,{partDefinition:{type:"glasses",index:t.glasses}});m.hair=i.createHair(h,{partDefinition:{type:"hair",index:t.hair}});m.pants=o.createPants(h,{partDefinition:{type:"pants",index:t.pants}});m.shirt=s.createShirt(h,{partDefinition:{type:"shirt",index:t.shirt}});if(u){const e=new Entity;e.setParent(h);const t=new TextShape("model");t.fontSize=2;t.font=new Font(Fonts.SanFrancisco_Heavy);e.addComponent(t);e.addComponent(new Transform({position:new Vector3(0,1.3,0)}))}const y=({partDefinition:e})=>{};return{entity:h,update:e=>{if(!e)debugger;m[e.type].updateIndex(e.index)},dispose:()=>{}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createHair=void 0;const i=n(8),r=n(1),s=n(0);t.createHair=(e,{partDefinition:t})=>{const n=4/128/2,o=new Entity,a=new PlaneShape;a.withCollisions=0;const c=new Transform({position:new Vector3(.25-15*n,.375+23*n,-3e-4),scale:new Vector3(1,1,1)});o.addComponent(a);o.addComponent(c);o.addComponent(r.spriteMaterial);o.setParent(e);a.uvs=s.getSpriteUv(t.index,i.PART_OFFSET_INDEX["hair"],i.PART_SIZE_WIDTH["hair"]);return{dispose:()=>{e.setParent(null);engine.removeEntity(o)},updateIndex:e=>{a.uvs=s.getSpriteUv(e,i.PART_OFFSET_INDEX["hair"],i.PART_SIZE_WIDTH["hair"])}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createGlasses=void 0;const i=n(8),r=n(1),s=n(0);t.createGlasses=(e,{partDefinition:t})=>{const n=4/128/2,o=new Entity,a=new PlaneShape;a.withCollisions=0;const c=new Transform({position:new Vector3(.25-15*n,.375+8*n,-5e-4),scale:new Vector3(1,1,1)});o.addComponent(a);o.addComponent(c);o.addComponent(r.spriteMaterial);o.setParent(e);a.uvs=s.getSpriteUv(t.index,i.PART_OFFSET_INDEX["glasses"],i.PART_SIZE_WIDTH["glasses"],i.PART_SIZE_HEIGHT["glasses"]);return{dispose:()=>{e.setParent(null);engine.removeEntity(o)},updateIndex:e=>{a.uvs=s.getSpriteUv(e,i.PART_OFFSET_INDEX["glasses"],i.PART_SIZE_WIDTH["glasses"],i.PART_SIZE_HEIGHT["glasses"])}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createShirt=void 0;const i=n(8),r=n(1),s=n(0);t.createShirt=(e,{partDefinition:t})=>{const n=4/128/2,o=new Entity,a=new PlaneShape;a.withCollisions=0;const c=new Transform({position:new Vector3(4*n,.5-15*n,-.002),scale:new Vector3(1,1,1)});o.addComponent(a);o.addComponent(c);o.addComponent(r.spriteMaterial);o.setParent(e);a.uvs=s.getSpriteUv(t.index,i.PART_OFFSET_INDEX["shirt"],i.PART_SIZE_WIDTH["shirt"]);return{dispose:()=>{e.setParent(null);engine.removeEntity(o)},updateIndex:e=>{a.uvs=s.getSpriteUv(e,i.PART_OFFSET_INDEX["shirt"],i.PART_SIZE_WIDTH["shirt"])}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createPants=void 0;const i=n(8),r=n(1),s=n(0);t.createPants=(e,{partDefinition:t})=>{const n=4/128/2,o=new Entity,a=new PlaneShape;a.withCollisions=0;const c=new Transform({position:new Vector3(5*n,2*n-.5,-.001),scale:new Vector3(1,1,1)});o.addComponent(a);o.addComponent(c);o.addComponent(r.spriteMaterial);o.setParent(e);a.uvs=s.getSpriteUv(t.index,i.PART_OFFSET_INDEX["pants"],i.PART_SIZE_WIDTH["pants"]);return{dispose:()=>{e.setParent(null);engine.removeEntity(o)},updateIndex:e=>{a.uvs=s.getSpriteUv(e,i.PART_OFFSET_INDEX["pants"],i.PART_SIZE_WIDTH["pants"])}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createCollection=t.MAX_INDEX=void 0;t.MAX_INDEX={hair:10,glasses:5,shirt:5,pants:5};const i=["hair","glasses","shirt","pants"];t.createCollection=(e,n)=>{console.log("createCollection",n);const r=Object.keys(n).map(e=>({type:e,index:n[e]})),s=[...r];i.forEach(n=>{let i=3;for(;i--;){let i=e(1,t.MAX_INDEX[n]);const o=r.find(e=>e.type===n);for(;i===o.index||s.find(e=>e.type===n&&e.index===i);)i=e(1,t.MAX_INDEX[n]);s.push({type:n,index:i})}});return o(s);function o(t){for(var n=t.length,i,r;0!==n;){r=Math.floor(e(1,100)/100*n);i=t[n-=1];t[n]=t[r];t[r]=i}return t}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createCollectionControl=void 0;const i=n(8),r=n(20),s=n(1),o=n(0),a=n(2),c=.7,l=0,u=-.7;t.createCollectionControl=(e,{collection:t,side:n,avoidAdd:h=0})=>{const d=new Entity,p=new Entity,f=new Entity,g=new Entity,m=new Entity,y=new TextShape("E");y.fontSize=2;m.addComponent(y);m.addComponent(new Transform({position:new Vector3(1===n?-.3:.3,.8,-.002)}));m.setParent(d);const v=new Entity,S=new TextShape("F");S.fontSize=2;v.addComponent(S);v.addComponent(new Transform({position:new Vector3(1===n?-.3:.3,-.75,-.002)}));v.setParent(d);p.setParent(d);f.setParent(d);g.setParent(d);const b=t[0],w=t[1],_=t[2];let T=1;const C=new PlaneShape,P=new PlaneShape,E=new PlaneShape,R=new Vector3(.5,.5,.5);p.addComponent(new Transform({position:new Vector3(0,c,0),scale:R}));g.addComponent(new Transform({position:new Vector3(0,l,0),scale:new Vector3(1,1,1)}));f.addComponent(new Transform({position:new Vector3(0,u,0),scale:R}));p.addComponent(C);g.addComponent(E);f.addComponent(P);if(!b||!w||!_)debugger;C.uvs=o.getSpriteUv(b.index,i.PART_OFFSET_INDEX[b.type],i.PART_SIZE_WIDTH[b.type],i.PART_SIZE_HEIGHT[b.type]);E.uvs=o.getSpriteUv(w.index,i.PART_OFFSET_INDEX[w.type],i.PART_SIZE_WIDTH[w.type],i.PART_SIZE_HEIGHT[w.type]);P.uvs=o.getSpriteUv(_.index,i.PART_OFFSET_INDEX[_.type],i.PART_SIZE_WIDTH[_.type],i.PART_SIZE_HEIGHT[_.type]);p.addComponent(s.spriteMaterial);g.addComponent(s.spriteMaterial);f.addComponent(s.spriteMaterial);d.addComponent(new Transform({position:new Vector3(1===n?-2.5:2.5,2,-.001)}));h||d.setParent(e);const I=r.createCross(d,{position:new Vector3(0,0,-.003),scale:R});I.hide();x(T);return{entity:d,hide:()=>{d.setParent(null);engine.removeEntity(d)},show:()=>{d.setParent(e)},dispose:()=>{d.setParent(null);engine.removeEntity(d);d.children},getCurrent:()=>t[T],next:()=>{a.playOnce("swing");T=O(T);x(T)},previous:()=>{a.playOnce("swing");T=A(T);x(T)},showError:()=>{I.show()},hideError:()=>{I.hide()}};function A(e){return e-1<0?t.length-1:e-1}function O(e){return e+1>t.length-1?0:e+1}function x(e){const n=A(e),r=O(e),s=t[n],a=t[e],h=t[r],d=g.getComponent(Transform),m=d.position;if(!s||!a||!h)debugger;m.set(m.x,l-i.PART_TYPE_OFFSET_Y[a.type]*d.scale.y,m.z);const y=p.getComponent(Transform),v=y.position;v.set(v.x,c-i.PART_TYPE_OFFSET_Y[s.type]*y.scale.y,v.z);const S=f.getComponent(Transform),b=S.position;b.set(b.x,u-i.PART_TYPE_OFFSET_Y[h.type]*S.scale.y,b.z);C.uvs=o.getSpriteUv(s.index,i.PART_OFFSET_INDEX[s.type],i.PART_SIZE_WIDTH[s.type],i.PART_SIZE_HEIGHT[s.type]);E.uvs=o.getSpriteUv(a.index,i.PART_OFFSET_INDEX[a.type],i.PART_SIZE_WIDTH[a.type],i.PART_SIZE_HEIGHT[a.type]);P.uvs=o.getSpriteUv(h.index,i.PART_OFFSET_INDEX[h.type],i.PART_SIZE_WIDTH[h.type],i.PART_SIZE_HEIGHT[h.type])}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});const i=n(15),r=n(23),s=n(24),o=n(25),a=n(26),c=n(7),l=n(12),u=n(57),h=n(27),d=n(29),p=n(28),f=n(58),g=n(59);t.default={TransformSystem:c.TransformSystem,MoveTransformComponent:i.MoveTransformComponent,RotateTransformComponent:r.RotateTransformComponent,ScaleTransformComponent:s.ScaleTransformComponent,FollowPathComponent:o.FollowPathComponent,KeepRotatingComponent:a.KeepRotatingComponent,Interpolate:l.Interpolate,InterpolationType:l.InterpolationType,ToggleComponent:u.ToggleComponent,ToggleState:u.ToggleState,Delay:h.Delay,ExpireIn:d.ExpireIn,Interval:p.Interval,TriggerComponent:f.TriggerComponent,TriggerSystem:f.TriggerSystem,TriggerSphereShape:f.TriggerSphereShape,TriggerBoxShape:f.TriggerBoxShape,ActionsSequenceSystem:g.ActionsSequenceSystem}},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s},r;Object.defineProperty(t,"__esModule",{value:1});t.ToggleComponent=t.ToggleState=void 0;(function(e){e[e["Off"]=0]="Off";e[e["On"]=1]="On"})(r=t.ToggleState||(t.ToggleState={}));let s=class e{constructor(e=r.On,t){this.enabled=1;this.state=r.Off;this.set(e);t&&this.setCallback(t)}set(e){this.state=e;this.onValueChangedCallback&&this.onValueChangedCallback(e)}toggle(){this.enabled&&this.set(1-this.state)}isOn(){return this.state==r.On}setCallback(e){this.onValueChangedCallback=e}};s=i([Component("toggle")],s);t.ToggleComponent=s;t.default={ToggleComponent:s,ToggleState:r}},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.TriggerSphereShape=t.TriggerBoxShape=t.TriggerComponent=t.TriggerSystem=void 0;class r{constructor(){this._triggers={};r._instance=this;this._cameraTriggerWrapper=new o(new c(new Vector3(.5,1.8,.5),new Vector3(0,.91,0)))}static get instance(){return this.createAndAddToEngine()}static createAndAddToEngine(){if(null==this._instance){this._instance=new r;engine.addSystem(this._instance)}return this._instance}setCameraTriggerShape(e){this._cameraTriggerWrapper.setShape(e)}update(){let e;engine.getComponentGroup(a).entities.forEach(e=>{this.shouldWrapTriggerEntity(e)&&this.wrapTriggerEntity(e)});for(const e in this._triggers)if(this._triggers.hasOwnProperty(e)){let t=this._triggers[e];t.isDebugging()&&t.updateDebugEntity();if(t.isInEngine()){if(null!=t.trigger&&t.trigger.enabled){t.wasEnabled||t.isDebugging()&&t.addDebugEntity();t.wasEnabled=1;(t.trigger.onCameraEnter||t.trigger.onCameraExit)&&this.checkCollisionAgainstCamera(t);(t.trigger.onTriggerEnter||t.trigger.onTriggerExit)&&this.checkCollisionAgainstOtherTriggers(t)}else if(t.wasEnabled){t.wasEnabled=0;t.isDebugging()&&t.removeDebugEntity();r.removeTriggerFromSystem(t)}}else{t.isDebugging()&&t.removeDebugEntity();r.removeTriggerFromSystem(t);delete this._triggers[e]}}}shouldWrapTriggerEntity(e){return null==this._triggers[e.uuid]||null==this._triggers[e.uuid]}wrapTriggerEntity(e){this._triggers[e.uuid]=new s(e)}static removeTriggerFromSystem(e){let t=e.getActiveCollisions();for(let n=0;n<t.length;n++){t[n].trigger.onTriggerExit&&e.entity&&t[n].trigger.onTriggerExit(e.entity);t[n].disengageActiveCollision(e);e.disengageActiveCollision(t[n])}}static disengageCollision(e,t){e.disengageActiveCollision(t);t.disengageActiveCollision(e);e.trigger.onTriggerExit&&t.entity&&e.trigger.onTriggerExit(t.entity);t.trigger.onTriggerExit&&e.entity&&t.trigger.onTriggerExit(e.entity)}static engageCollision(e,t){e.engageCollision(t);t.engageCollision(e);e.trigger.onTriggerEnter&&t.entity&&e.trigger.onTriggerEnter(t.entity);t.trigger.onTriggerEnter&&e.entity&&t.trigger.onTriggerEnter(e.entity)}checkCollisionAgainstCamera(e){let t=e.hasActiveCollision(this._cameraTriggerWrapper),n=r.areColliding(e,this._cameraTriggerWrapper);if(t&&!n){e.disengageActiveCollision(this._cameraTriggerWrapper);e.trigger.onCameraExit&&e.trigger.onCameraExit()}else if(!t&&n){e.engageCollision(this._cameraTriggerWrapper);e.trigger.onCameraEnter&&e.trigger.onCameraEnter()}}checkCollisionAgainstOtherTriggers(e){for(const t in this._triggers)if(this._triggers.hasOwnProperty(t)&&t!=e.uuid&&this._triggers[t].trigger.enabled&&r.canTriggersCollide(e,this._triggers[t])){let n=e.hasActiveCollision(this._triggers[t]),i=r.areColliding(e,this._triggers[t]);n&&!i?r.disengageCollision(e,this._triggers[t]):!n&&i&&r.engageCollision(e,this._triggers[t])}}static canTriggersCollide(e,t){return 0==e.trigger.triggeredByLayer?1:0!=(t.trigger.layer&e.trigger.triggeredByLayer)}static areColliding(e,t){return e.getShape()instanceof c&&t.getShape()instanceof c?r.areCollidingAABB(e.getGlobalPosition(),e.getShape(),t.getGlobalPosition(),t.getShape()):e.getShape()instanceof l&&t.getShape()instanceof l?r.areCollidingSphere(e.getGlobalPosition(),e.getShape(),t.getGlobalPosition(),t.getShape()):e.getShape()instanceof c&&t.getShape()instanceof l?r.areCollidingAABBSphere(e.getGlobalPosition(),e.getShape(),t.getGlobalPosition(),t.getShape()):e.getShape()instanceof l&&t.getShape()instanceof c?r.areCollidingAABBSphere(t.getGlobalPosition(),t.getShape(),e.getGlobalPosition(),e.getShape()):0}static areCollidingAABB(e,t,n,i){let s=r.getBoxShapeValues(e,t),o=r.getBoxShapeValues(n,i);return s.min.x<=o.max.x&&s.max.x>=o.min.x&&s.min.y<=o.max.y&&s.max.y>=o.min.y&&s.min.z<=o.max.z&&s.max.z>=o.min.z}static areCollidingSphere(e,t,n,i){let r;return Vector3.DistanceSquared(e.add(t.position),n.add(i.position))<t.radius*t.radius+i.radius*i.radius}static areCollidingAABBSphere(e,t,n,i){let s=r.getBoxShapeValues(e,t),o={center:n.add(i.position),radius:i.radius},a=0;o.center.x<s.min.x&&(a+=(s.min.x-o.center.x)*(s.min.x-o.center.x));o.center.x>s.max.x&&(a+=(o.center.x-s.max.x)*(o.center.x-s.max.x));o.center.y<s.min.y&&(a+=(s.min.y-o.center.y)*(s.min.y-o.center.y));o.center.y>s.max.y&&(a+=(o.center.y-s.max.y)*(o.center.y-s.max.y));o.center.z<s.min.z&&(a+=(s.min.z-o.center.z)*(s.min.z-o.center.z));o.center.z>s.max.z&&(a+=(o.center.z-s.max.z)*(o.center.z-s.max.z));return a<o.radius*o.radius}static getBoxShapeValues(e,t){let n=e.add(t.position);return{center:n,min:n.subtract(t.size.scale(.5)),max:n.add(t.size.scale(.5))}}}t.TriggerSystem=r;r._instance=null;class s{constructor(e){this.wasEnabled=1;this._uuid="";this._collidingWith={};this._isDebug=0;this._debugEntity=null;this._entity=e;if(e){this._trigger=e.getComponent(a);this._uuid=e.uuid;this._isDebug=this._trigger.debugEnabled;this._isDebug&&this.addDebugEntity()}}get entity(){return this._entity}get trigger(){return this._trigger}get uuid(){return this._uuid}getGlobalPosition(){return this._entity?s.getEntityWorldPosition(this._entity):Vector3.Zero()}getShape(){return this._trigger.shape}isInEngine(){return null!=this._entity&&this._entity.isAddedToEngine()}getActiveCollisions(){let e=[];for(const t in this._collidingWith)this._collidingWith.hasOwnProperty(t)&&e.push(this._collidingWith[t]);return e}hasActiveCollision(e){return null!=this._collidingWith[e.uuid]&&null!=this._collidingWith[e.uuid]}disengageActiveCollision(e){delete this._collidingWith[e.uuid]}engageCollision(e){this._collidingWith[e.uuid]=e}isDebugging(){return this._isDebug}addDebugEntity(){if(!s._debugMaterial){s._debugMaterial=new Material;s._debugMaterial.alphaTest=.5}if(null==this._debugEntity){this._debugEntity=new Entity;const e=new Transform;this._debugEntity.addComponent(e);this._debugEntity.addComponent(s._debugMaterial);if(this.getShape()instanceof c){const t=new BoxShape;t.withCollisions=0;this._debugEntity.addComponent(t);e.scale=this.getShape().size}if(this.getShape()instanceof l){const t=new SphereShape;t.withCollisions=0;this._debugEntity.addComponent(t);let n=this.getShape().radius;e.scale=new Vector3(n,n,n)}}engine.addEntity(this._debugEntity)}removeDebugEntity(){null!=this._debugEntity&&engine.removeEntity(this._debugEntity)}updateDebugEntity(){this._debugEntity&&(this._debugEntity.getComponent(Transform).position=this.getGlobalPosition().add(this.getShape().position))}static getEntityWorldPosition(e){let t=e.hasComponent(Transform)?e.getComponent(Transform).position:Vector3.Zero(),n=e.getParent();if(null!=n){let e=n.hasComponent(Transform)?n.getComponent(Transform).rotation:Quaternion.Identity;return this.getEntityWorldPosition(n).add(t.rotate(e))}return t}}s._debugMaterial=null;class o extends s{constructor(e){super();this._shape=e;this._uuid="cameraTrigger"}getGlobalPosition(){return Camera.instance.position}getShape(){return this._shape}setShape(e){this._shape=e}isInEngine(){return 0}hasActiveCollision(e){return 0}disengageActiveCollision(e){}engageCollision(e){}isDebugging(){return 0}}let a=class e{constructor(e,t=0,n=0,i,s,o,a,c=0){this.enabled=1;this.layer=0;this.triggeredByLayer=0;r.createAndAddToEngine();this.shape=e;this.layer=t;this.triggeredByLayer=n;this.onTriggerEnter=i;this.onTriggerExit=s;this.onCameraEnter=o;this.onCameraExit=a;this._debugEnabled=c}get debugEnabled(){return this._debugEnabled}};a=i([Component("triggerComponent")],a);t.TriggerComponent=a;class c{constructor(e,t){this.size=e;this.position=t}}t.TriggerBoxShape=c;class l{constructor(e,t){this.radius=e;this.position=t}}t.TriggerSphereShape=l},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.ActionsSequenceSystem=void 0;class i{constructor(e){this.beginSequenceNode=null;this.currentSequenceNode=null;this.running=0;this.started=0;e&&this.startSequence(e)}startSequence(e){this.beginSequenceNode=e.beginSequenceNode;this.currentSequenceNode=this.beginSequenceNode;this.running=1;this.started=0}setOnFinishCallback(e){this.onFinishCallback=e}isRunning(){return this.running}stop(){this.running=0}resume(){null!=this.beginSequenceNode&&(this.running=1)}reset(){this.currentSequenceNode=this.beginSequenceNode;this.running=1;this.started=0}getRunningAction(){let e=this.currentSequenceNode;if(this.currentSequenceNode instanceof s)do{e=e.currentInnerSequence}while(e instanceof s);return e.action}update(e){if(this.running)if(this.started)if(this.currentSequenceNode.hasFinish()){this.currentSequenceNode.onFinish();this.currentSequenceNode=this.currentSequenceNode.next;if(this.currentSequenceNode)this.currentSequenceNode.onStart();else{this.running=0;this.onFinishCallback&&this.onFinishCallback()}}else this.currentSequenceNode.update(e);else{this.currentSequenceNode.onStart();this.started=1}}}t.ActionsSequenceSystem=i;(function(e){class t{constructor(){this.currentSequenceNode=null;this.beginSequenceNode=null;this.whileNodeStack=[]}then(e){if(null==this.currentSequenceNode){this.currentSequenceNode=new r;this.currentSequenceNode.action=e;this.beginSequenceNode=this.currentSequenceNode}else{let t=new r;t.action=e;this.currentSequenceNode=this.currentSequenceNode.then(t)}return this}if(e){let t=new o(e);if(null==this.currentSequenceNode){this.currentSequenceNode=t;this.beginSequenceNode=t}else this.currentSequenceNode=this.currentSequenceNode.then(t);return this}else(){let e=this.currentSequenceNode.getSequence();if(!(e instanceof o))throw new Error("IF statement is needed to be called before ELSE statement.");{e.closed=1;let t=new a(e);this.currentSequenceNode=this.currentSequenceNode.then(t)}return this}endIf(){let e=this.currentSequenceNode.getSequence();if(!(e instanceof o||e instanceof a))throw new Error("IF statement is needed to be called before ENDIF statement.");e.closed=1;return this}while(e){let t=new c(e);if(null==this.currentSequenceNode){this.currentSequenceNode=t;this.beginSequenceNode=t}else this.currentSequenceNode=this.currentSequenceNode.then(t);this.whileNodeStack.push(t);return this}endWhile(){let e=this.currentSequenceNode.getSequence();if(!(e instanceof c))throw new Error("WHILE statement is needed to be called before ENDWHILE statement.");e.closed=1;this.whileNodeStack.length>0&&this.whileNodeStack.splice(this.whileNodeStack.length-1,1);return this}breakWhile(){if(!(this.whileNodeStack.length>0))throw new Error("WHILE statement is needed to be called before BREAKWHILE statement.");this.currentSequenceNode=this.currentSequenceNode.then(new l(this.whileNodeStack[this.whileNodeStack.length-1]));return this}}e.SequenceBuilder=t})(i=t.ActionsSequenceSystem||(t.ActionsSequenceSystem={}));class r{constructor(){this.action=null;this.next=null}then(e){this.next=e;return e}onStart(){this.action&&this.action.onStart()}update(e){this.action&&this.action.update(e)}onFinish(){this.action&&this.action.onFinish()}hasFinish(){return this.action?this.action.hasFinished:1}getSequence(){return this}}class s extends r{constructor(){super(...arguments);this.currentInnerSequence=null;this.startingInnerSequence=null;this.closed=0}then(e){if(null==this.currentInnerSequence){this.currentInnerSequence=e;this.startingInnerSequence=e}else{if(this.closed){this.next=e;return e}this.currentInnerSequence=this.currentInnerSequence.then(e)}return this}onStart(){this.currentInnerSequence=this.startingInnerSequence;this.currentInnerSequence&&this.currentInnerSequence.onStart()}update(e){if(this.currentInnerSequence)if(this.currentInnerSequence.hasFinish()){this.currentInnerSequence.onFinish();this.currentInnerSequence=this.currentInnerSequence.next;this.currentInnerSequence&&this.currentInnerSequence.onStart()}else this.currentInnerSequence.update(e)}onFinish(){this.currentInnerSequence&&this.currentInnerSequence.onFinish()}hasFinish(){return null==this.currentInnerSequence}getSequence(){if(this.currentInnerSequence){let e=this.currentInnerSequence.getSequence();if(e instanceof s&&!e.closed)return e}return this}}class o extends s{constructor(e){super();this.result=0;this.condition=e}onStart(){this.result=this.condition();this.result?super.onStart():this.currentInnerSequence=null}}class a extends s{constructor(e){super();this.ifSequence=null;this.ifSequence=e}onStart(){this.ifSequence&&!this.ifSequence.result?super.onStart():this.currentInnerSequence=null}}class c extends s{constructor(e){super();this.breakWhile=0;this.condition=e}onStart(){this.breakWhile=0;this.condition()?super.onStart():this.currentInnerSequence=null}update(e){if(this.currentInnerSequence)if(this.currentInnerSequence.hasFinish()){this.currentInnerSequence.onFinish();this.currentInnerSequence=this.currentInnerSequence.next;null==this.currentInnerSequence&&(this.currentInnerSequence=this.startingInnerSequence);this.currentInnerSequence&&this.currentInnerSequence.onStart()}else this.currentInnerSequence.update(e)}hasFinish(){return this.breakWhile||!this.condition()}}class l extends r{constructor(e){super();this.whileNode=e}onStart(){this.whileNode.breakWhile=1}}},function(e,t,n){var i=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.createScreen=void 0;const r=n(1),s=n(0),o=n(20),a=.3;let c=class e{constructor(e,t){this.index=e;this.isObstacle=t}};c=i([Component("ObstacleGame-step")],c);let l=class e{};l=i([Component("ObstacleGame-player")],l);t.createScreen=(e,{player:t,track:n})=>{let i=new TextShape("E");i.withCollisions=0;i.fontSize=4;i.font=new Font(Fonts.SanFrancisco_Heavy);i.shadowOffsetX=1;i.shadowOffsetY=1;i.shadowColor=Color3.FromHexString("#000000");const l={onMove:null,onFinish:null},u={moving:0,jumping:0,moveCount:0,currentStep:0,jumps:0};let h;h=new Entity;h.setParent(e);const d=o.createCross(h,{position:new Vector3(1.5,3,-.001),scale:new Vector3(1,1,1)});d.hide();h.addComponent(new Transform({position:new Vector3(2===t?0:-3,0,0)}));const p=new Entity,f=new PlaneShape;f.withCollisions=0;f.uvs=s.getSpriteUv(2,11,96,128);p.addComponent(r.spriteMaterial);p.addComponent(f);p.addComponent(new Transform({position:new Vector3(1.5,2,0),scale:new Vector3(3,4,1)}));p.setParent(h);const g=2060,m=new s.SpriteAnimationSystem(h,{frames:[{uvs:s.getSpriteUv(8,g,16,16)},{uvs:s.getSpriteUv(1,g,16,16)},{uvs:s.getSpriteUv(2,g,16,16)},{uvs:s.getSpriteUv(3,g,16,16)},{uvs:s.getSpriteUv(4,g,16,16)},{uvs:s.getSpriteUv(4,g,16,16)},{uvs:s.getSpriteUv(5,g,16,16)},{uvs:s.getSpriteUv(6,g,16,16)},{uvs:s.getSpriteUv(7,g,16,16)},{uvs:s.getSpriteUv(8,g,16,16)},{uvs:s.getSpriteUv(8,g+64,16,16)}],scale:new Vector3(.5,.5,1),position:new Vector3(.3*3+.15,1.9,-.002),time:.1});m.init();const y=[];n.forEach((e,i)=>{const r=new Entity;r.addComponent(new c(i,e));const s=new PlaneShape;s.withCollisions=0;const o=new Material;o.transparencyMode=TransparencyMode.ALPHA_BLEND;o.albedoColor=e?new Color4(1,0,0,0):1===t?new Color4(0,0,1,0):new Color4(1,1,0,0);o.emissiveColor=e?new Color3(1,0,0):1===t?Color3.FromHexString("#0000ff"):Color3.FromHexString("#ffff00");o.emissiveIntensity=3;if(i===n.length-1){o.albedoColor=new Color4(0,1,0,0);o.emissiveColor=new Color3(0,1,0)}r.addComponent(s);r.addComponent(o);e?r.addComponent(new Transform({position:new Vector3(.3*i+.15-.1,1.75,-.001),scale:new Vector3(.1,.1,1)})):r.addComponent(new Transform({position:new Vector3(.3*i+.15,1.95,-.001),scale:new Vector3(.02,.02,1)}));y.push(r);r.setParent(h)});const v=new Entity;v.addComponent(i);v.addComponent(new Transform({position:new Vector3(1,1.3,-.002)}));v.setParent(h);const S=e=>e>a?Math.max(0,.4-u.moveCount/a*.4/2):Math.min(.4,u.moveCount/a*.4),b=()=>{Object.values(y).forEach((e,t)=>{e.visible=0})},w=undefined,_=undefined,T=undefined,C=undefined,P=undefined,E=()=>{y.forEach((e,i)=>{const r=e.getComponent(Transform),s=e.getComponent(PlaneShape),o=e.getComponent(Material),a=e.getComponent(c).isObstacle;if(r.position.x<.2||r.position.x>=2.999)o.albedoColor=a?new Color4(1,0,0,0):1===t?new Color4(0,0,1,0):new Color4(1,1,0,0);else{o.albedoColor=a?new Color4(1,0,0,1):1===t?new Color4(0,0,1,1):new Color4(1,1,0,1);if(i===n.length-1){o.albedoColor=new Color4(0,1,0,1);o.emissiveColor=new Color3(0,1,0)}}});n[u.currentStep+4]?i.value="CLICK":u.currentStep%2==0?i.value="E":i.value="F"},R=e=>{if(u.moving){u.moveCount+=e;y.forEach((e,t)=>{const n=undefined,i=e.getComponent(Transform).position,r=.3*t+.15,s=.3*u.currentStep,o=u.moveCount/a*.3;i.set(r-s-o,i.y,i.z)});if(u.jumping){const e=m.globalOptions.position,t=S(u.moveCount);e.set(e.x,t+1.9,e.z)}}if(u.moveCount>=(u.jumping?2*a:a)){u.jumping&&u.jumps++;u.currentStep+=u.jumping?2:1;u.moving=u.jumping=0;u.moveCount=0;l.onMove&&l.onMove(u.currentStep);l.onFinish&&u.currentStep+3===n.length-1&&l.onFinish();E()}},I=undefined;return{getNextStepValue:()=>n[u.currentStep+1+3],moveScreen:e=>{u.moving=1;u.jumping=!!e;m.state.playing||(e?m.play([9,0,1],{loop:0,time:.2}):u.currentStep%2==0?m.play([1,2,3],{loop:0,time:.1}):m.play([5,6,7],{loop:0,time:.1}))},getScreenState:()=>u,onMove:e=>{l.onMove=e;return()=>l.onMove=null},onFinishScreen:e=>{l.onFinish=e;return()=>l.onFinish=null},handleVisibility:E,updateScreen:R,destroy:()=>{h.setParent(null);engine.removeEntity(h);l.onFinish=null;l.onMove=null},getTotalSteps:()=>n.length,showCross:()=>d.show(),hideCross:()=>d.hide()}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.SammichGame=void 0;const i=n(62),r=n(2),s=n(4),o=5;class a{constructor(e,{currentPlayer:t,seed:n,level:r,gameIndex:o}){this.gameSetup={level:1,currentPlayer:0,seed:null};this.callbacks={onFinish:null,onShareState:null,onFinishRound:null};this.state={started:0,initialized:0,blocked:0,startTime:Number.MAX_VALUE,roundStartTime:Number.MAX_VALUE,lastRoundStartTime:Number.MAX_VALUE,waitingRound:0,round:0,score:0,score1:0,score2:0};this.scene=new Entity;this.scene.addComponent(new Transform({position:new Vector3(0,2,-.001)}));this.ui=s.createUI(this.scene,{position:new Vector3(0,-2,0)});this.root=e;this.gameSetup={currentPlayer:t,seed:n,level:r,gameIndex:o};this.screen1=i.createScreen(this.scene,{player:1,seed:n,owner:1===t});this.screen2=i.createScreen(this.scene,{player:2,seed:n,owner:2===t});t&&this["screen"+t].onStateChange(e=>{console.log("global score",this.state.score);console.log("onStateChange",e.score,e);this.ui.updateScore({player:this.gameSetup.currentPlayer,score:e.score+this.state.score});this.callbacks.onShareState({player:t,state:e,score:e.score+this.state.score})});engine.addSystem(this);this.roundResult1=s.createRoundResult(this.scene,{player:1});this.roundResult2=s.createRoundResult(this.scene,{player:2});const a=this.roundResult1.getTransform().position,c=this.roundResult2.getTransform().position;a.set(a.x,a.y-2,a.z);c.set(c.x,c.y-2,c.z);this.roundResult1.hide();this.roundResult2.hide()}startRound(){this.state.round++;this.state.lastRoundStartTime=this.state.roundStartTime;this.state.roundStartTime=Number.MAX_VALUE;this.state.waitingRound=0;this.gameSetup.currentPlayer&&this["screen"+this.gameSetup.currentPlayer].start({level:this.state.round})}setRoundStartTime(e){this.state.roundStartTime=e}setStartTime(e){this.state.startTime=e}block(){this.state.blocked=1}init(){this.scene.setParent(this.root);this.state.initialized=1;r.playLoop("music2",{volume:.5})}start(){console.log("sammichGame start");this.state.started=1;this.state.startTime=Number.MAX_VALUE;this.state.roundStartTime=Number.MAX_VALUE;this.screen1.start({level:this.state.round+1});this.screen2.start({level:this.state.round+1});this.gameSetup.currentPlayer&&this["screen"+this.gameSetup.currentPlayer].onComplete(e=>{e>=6?r.playOnce("wow"):e>=4;this.state.score+=e;this.state["score"+this.gameSetup.currentPlayer]=this.state.score;const t=this.state["score"+this.gameSetup.currentPlayer];this.ui.updateScore({player:this.gameSetup.currentPlayer,score:t});console.log("Compelted costume",JSON.stringify(this.state,null,"  "));setTimeout(()=>{console.log("Compelted costume timeout",JSON.stringify(this.state,null,"  "));if(this.state.round<o-1||this.state.score1===this.state.score2)this.callbacks.onFinishRound({player:this.gameSetup.currentPlayer,score:t,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round});else{console.log("CALLING onFinish",this.state.round,this.state.score1,this.state.score2,this.state.score1===this.state.score2);r.stopSound("music2");this.callbacks.onFinish({isWinner:1,time:-1*t,score:t,gameIndex:this.gameSetup.gameIndex,roundIndex:this.state.round})}},1e3)})}finish({winner:e}){const t=1===e?2:1;this.roundResult1.show();this.roundResult2.show();this["roundResult"+e].update(1);this["roundResult"+t].update(0)}finishRound({winner:e}){this.state.waitingRound=1;this.screen1.reset();this.screen2.reset()}destroy(){this.screen1.dispose();this.screen2.dispose();this.scene.setParent(null);engine.removeEntity(this.scene);engine.removeSystem(this)}shareState(e){const t=e.state,n=e.player;console.log("shareState",e.score,e);this.ui.updateScore({player:n,score:e.score});this["screen"+n].setState(t);this.state["score"+n]=e.score}onShareState(e){this.callbacks.onShareState=e;return()=>this.callbacks.onShareState=null}onFinish(e){this.callbacks.onFinish=e;return()=>this.callbacks.onFinish=null}onFinishRound(e){this.callbacks.onFinishRound=e;return()=>this.callbacks.onFinishRound=null}update(e){if(this.state.initialized)if(!this.state.waitingRound&&!this.state.started&&Date.now()>=this.state.startTime)this.start();else{this.state.started&&this.state.waitingRound&&Date.now()>=this.state.roundStartTime&&this.startRound();if(!this.state.waitingRound&&this.state.started){this.getPlayerScreen(1).getScreenState().idle||this.getPlayerScreen(1).updateScreen(e);this.getPlayerScreen(2).getScreenState().idle||this.getPlayerScreen(2).updateScreen(e)}}}getPlayerScreen(e){return this["screen"+e]}}t.SammichGame=a;a.id="Sammich";a.instructions="Move to sides with E and F\nto build the perfect sammich"},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createScreen=void 0;const i=n(1),r=n(0),s=n(2),o=n(3),a=[1,2,3,4,6,7,8],c=(e,{spriteIndex:t,position:n})=>{const s=new Entity;s.setParent(e);const o=new PlaneShape;o.withCollisions=0;s.addComponent(i.spriteMaterial);s.addComponent(o);const a=new Transform({scale:new Vector3(.5,.5,.5),position:n});s.addComponent(a);o.uvs=r.getSpriteUv(t,2048,16,16);const c={onBase:0,baseX:0,currentRound:1};return{setX:e=>{a.position.set(e,a.position.y,a.position.z)},setY:e=>{a.position.set(a.position.x,e,a.position.z)},getX:()=>a.position.x,getY:()=>a.position.y,isOnBase:()=>c.onBase,getBaseX:()=>c.baseX,setOnBase:(e,t)=>{c.onBase=e;c.baseX=t},dispose:()=>{s.setParent(null);s.removeComponent(Transform);s.removeComponent(i.spriteMaterial);s.removeComponent(PlaneShape);engine.removeEntity(s)}}};t.createScreen=(e,{seed:t,player:n,owner:l})=>{const u=new Entity,h={dtCount:0,idle:1,level:1,basePosition:0,layers:[],score:0},d=o.seedGen.create(t.toString()),p=new PlaneShape;p.withCollisions=0;p.uvs=r.getSpriteUv(1,11,96,128);u.setParent(e);u.addComponent(new Transform({position:new Vector3(1===n?-1.5:1.5,0,-0)}));const f=new Entity,g=new Transform({scale:new Vector3(3,4,1)});f.addComponent(p);f.addComponent(i.spriteMaterial);f.addComponent(g);f.setParent(u);const m=c(u,{spriteIndex:9,position:new Vector3(0,-1.125,-.002)}),y=.25,v=e=>{Object.assign(h,e);m.setX(h.basePosition);h.layers.forEach((e,t)=>{R[t].setX(m.getX()+e);const n=m.getY()+t*T+C;R[t].setY(n)})},S=e=>{Object.assign(h,e);x.onStateChange&&x.onStateChange(h)},b=e=>{x.onStateChange=e;return()=>x.onStateChange=null},w=()=>{if(h.idle&&!l)return;const e=m.getX()===+y?+y:m.getX()+y;m.setX(e);R.forEach(e=>{e.isOnBase()&&e.setX(m.getX()-e.getBaseX())});S({basePosition:m.getX()})},_=()=>{if(h.idle&&!l)return;const e=m.getX()===-y?-y:m.getX()-y;m.setX(e);R.forEach((e,t)=>{e.isOnBase()&&e.setX(m.getX()-e.getBaseX())});S({basePosition:m.getX()})};if(l){Input.instance.subscribe("BUTTON_DOWN",ActionButton.PRIMARY,0,_);Input.instance.subscribe("BUTTON_DOWN",ActionButton.SECONDARY,0,w)}const T=.05,C=.1,P=7,E=e=>{if(h.idle)return;const t=.7*Math.min(h.level,P)+.2,n=1.75;h.dtCount+=e;R.forEach((e,i)=>{const r=i/t+.03*i*t;if(h.dtCount>=r){const o=m.getY()+i*T+C;if(e.getY()<=o){if(!l)return;if(!e.isOnBase()){e.setOnBase(1,m.getX()-e.getX());if(0!==e.getBaseX())s.playOnce("fail");else{s.playOnce("ok");h.score++}S({score:h.score,layers:[...h.layers,e.getX()-m.getX()]})}}else e.setY(Math.max(o,n-(h.dtCount-r)*t))}});if(l&&R.every((e,t)=>e.isOnBase())){h.idle=1;let e=0;R.forEach((t,n)=>{0===t.getBaseX()&&e++});x.onComplete&&x.onComplete(e);h.score=0}};let R=[];const I=()=>{R=Array(5).fill(null).map((e,t)=>{const n=d.random();let i=Math.floor(3*n-1)*y;const r=a[Math.floor(n*a.length)],s=new Vector3(i,1.75,-.001*t-.004),o=undefined;return c(u,{spriteIndex:r,position:s})});const e=d.random();let t=Math.floor(3*e-1)*y;R.push(c(u,{spriteIndex:5,position:new Vector3(t,1.75,-.005-.004)}))};I();const A=undefined,O=undefined,x={onComplete:null,onStateChange:null},k=undefined,M=undefined,N=undefined;return{getScreenState:()=>h,start:({level:e})=>{h.idle=0;h.level=e},updateScreen:E,onComplete:e=>{x.onComplete=e;return()=>x.onComplete=null},reset:()=>{h.idle=1;h.dtCount=0;h.layers=[];h.basePosition=0;h.score=0;R.forEach((e,t)=>{e.dispose()});I()},setState:v,onStateChange:b,dispose:()=>{Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.PRIMARY,_);Input.instance.unsubscribe("BUTTON_DOWN",ActionButton.SECONDARY,w)}}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createScreen=void 0;const i=n(0),r=n(1),s=n(15),o=n(3),a=n(2),c=n(64),l=4/128,u=36*-l,h={UP:ActionButton.POINTER,LEFT:ActionButton.PRIMARY,RIGHT:ActionButton.SECONDARY},d=[12*l-1.5+8*l/2,28*l-1.5+8*l/2,44*l-1.5+8*l/2,60*l-1.5+8*l/2,76*l-1.5+8*l/2],p=(e,{x:t,index:n})=>{let r=0;const s={onTake:null},o=i.createSpriteEntity(e,{position:new Vector3(t,2-15*l+8*l/2,-.001),scale:new Vector3(8*l,8*l,1),uvs:i.getSpriteUv(2,8448,8,8)}),c=()=>{r=1;o.getShape().visible=0},u=e=>{if(r)return 0;if(e.y<2-15*l)return 0;if(e.x===t){c();a.playOnce("ok");return 1}},h=undefined,d=undefined;return{spriteEntity:o,take:c,checkFrog:u,onTake:e=>{s.onTake=e;return()=>s.onTake=null},isTaken:()=>r,index:n}},f=5;t.createScreen=(e,{player:t,seed:n})=>{const g={blocked:0,lastKey:h.UP,movingFrog:0,countDt:0,frogPosition:new Vector3(0,0+u,-.009),score:0,takenSammiches:[0,0,0,0,0]},m=new Entity,y=new Entity;y.setParent(m);m.setParent(e);const v=o.seedGen.create(n),S=Array(9).fill(null).map((e,t)=>c.createCarPool(m,{track:t,randomizer:v})),b=[0,1,2,3,4],w=Array(f).fill(null).map((e,t)=>p(m,{x:d[b[t]],index:t}));m.addComponent(new Transform({position:new Vector3(1===t?-1.5:1.5,2,-0)}));y.addComponent(new Transform({scale:new Vector3(3,4,1)}));const _=new PlaneShape;_.uvs=i.getSpriteUv(9,11,96,128);y.addComponent(_);y.addComponent(r.spriteMaterial);const T=new i.SpriteAnimationSystem(m,{frames:[{uvs:i.getSpriteUv(1,8448,8,8)},{uvs:i.getSpriteUv(1,8576,8,8)}],scale:new Vector3(8*l,8*l,1),position:g.frogPosition,time:.1});T.init();const C=(e,n)=>{g.countDt+=e;S.forEach(t=>t.update(e));if(n){const e=T.getPosition(),n=w.find((t,n)=>{if(t.checkFrog(e))return{index:n}});if(n){g.takenSammiches[n.index]=1;g.score++;console.log("triggering onStateChange",t,JSON.stringify(g));x.onStateChange&&x.onStateChange(g);return}S.forEach(t=>{if(t.isCollidingFrog(e)){a.playOnce("fail");g.blocked=1;setTimeout(()=>{g.blocked=0;e.set(0,u,e.z);x.onStateChange&&x.onStateChange(g)},200)}})}},P=undefined,E=e=>{if(g.movingFrog||g.blocked)return;a.playOnce("swing");g.movingFrog=1;T.setRotation(e===h.UP?0:e===h.LEFT?90:270);T.play([0,1,0],{loop:0,time:.1});const t=T.getPosition();T.addComponentOrReplace(new s.MoveTransformComponent(t,new Vector3(e===h.LEFT?t.x-8*l:e===h.RIGHT?t.x+8*l:t.x,e===h.UP?t.y+8*l:t.y,t.z),.1,()=>{g.movingFrog=0;const e=T.getPosition();if(e.y>=1.625)if((e.x+1.5)/(8*l)%2)e.y=u+8*l*10;else{g.blocked=1;setTimeout(()=>{g.blocked=0;e.set(e.x,u,e.z);g.frogPosition=e;x.onStateChange&&x.onStateChange(g)},300)}e.x<=8*l-1.5?e.x=8*l-1.5:e.x>=1.5-8*l&&(e.x=1.5-8*l);g.frogPosition=e;x.onStateChange&&x.onStateChange(g)}))},R=undefined,I=undefined,A=undefined,O=undefined,x={onStateChange:null},k=undefined,M=undefined;return{updateScreen:C,getScreenState:()=>g,up:()=>E(h.UP),left:()=>E(h.LEFT),right:()=>E(h.RIGHT),onStateChange:e=>{x.onStateChange=e;return()=>x.onStateChange=null},setFrogPosition:(e,t,n)=>{T.getPosition().set(e,t,n)},setTakenSammiches:e=>{console.log("setTakemSammiches",t,JSON.stringify(e));e.forEach((e,t)=>g.takenSammiches[t]=e);w.forEach((t,n)=>{e[n]&&t.spriteEntity.hide()})},block:()=>g.blocked=1};function N(e,t,n,i){const r=Math.floor(e.random()*(n-t+1))+t;return i&&i.find(e=>e===r)?N(e,t,n,i):r}}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createCarPool=void 0;const i=4/128,r=36*-i,s=8*i,o=new Material;o.albedoColor=Color3.Blue();const a=new PlaneShape;t.createCarPool=(e,{track:t,randomizer:n})=>{const r=3,c={countDt:0,nextCarAt:Number.MAX_VALUE,currentPoolIndex:0},l=e=>e+1.5;let u,h=0;const d=Array(r).fill(null).reduce((e,t)=>{let r=3*n.random()-1.5;for(;!u&&e.find(e=>l(e)-l(r)<s+i);){r=3*n.random()-1.5;h++;if(h>1e4){console.error("Tell the author he did something wrong in the code",h);u=1}}e.push(r);return e},[]),p=new Array(r).fill(null).map((n,r)=>{const c=new Entity,l=new Transform({position:new Vector3(d[r],28*-i+t*i*8+(t>=4?8*i:0),-.001),scale:new Vector3(s,4*i,.1)});c.addComponent(o);c.addComponent(a);c.addComponent(l);c.setParent(e);return{entity:c,transform:l,spawned:1}}),f=e=>Math.floor(1e3*e)/1e3,g=()=>{p.filter(e=>e.spawned).forEach(e=>{const t=e.transform.position.x;t>1.5-s/2||t<s/2-1.5?e.transform.scale.set(.01,e.transform.scale.y,e.transform.scale.z):e.transform.scale.set(s,e.transform.scale.y,e.transform.scale.z)})},m=e=>{p.filter(e=>e.spawned).forEach((n,i)=>{const r=n.transform.position.x;t%2==0?r<=-1.5?n.transform.position.set(1.5,n.transform.position.y,n.transform.position.z):n.transform.position.set(f(r-.5*e),n.transform.position.y,n.transform.position.z):r>=1.5?n.transform.position.set(-1.5,n.transform.position.y,n.transform.position.z):n.transform.position.set(f(r+.5*e),n.transform.position.y,n.transform.position.z)})},y=undefined,v=undefined;return{update:e=>{c.countDt+=e;m(e)},isCollidingFrog:e=>{const t=6*i,n=4*i,r=8*i;let s=p.length;for(;s--;){const i=p[s].transform.position,o=i.x-r/2,a=i.x+r/2,c=i.y+n/2,l=i.y-n/2,u=e.x-t/2,h=e.x+t/2,d=e.y-t/2,f=e.y+t/2;if(o<=h&&a>=u&&c<=f&&l>=d){console.log("COLLISION");return 1}}}}}},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))};Object.defineProperty(t,"__esModule",{value:1});t.createSpectatorTrack=void 0;const r=n(6),s=n(2),o=n(5),a=n(17),c=n(0),l=n(18);let u=0;t.createSpectatorTrack=(e,{lobbyRoom:t,trackSeed:n,minGames:p,alreadyStarted:f})=>i(void 0,void 0,void 0,(function*(){console.log("alreadyStarted",f);console.log("createSpectatorTrack",e,t,n,p,f);let g=l.generateTrack(n,p);const m={currentIndex:0,currentPlayer:0,score1:0,score2:0};let y=null;if(!f){console.log("spectator from start");s.stopSound("music2");yield d(100);s.playOnce("vs",{volume:1});r.updateTextPanel({value:`${t.state.player1.displayName}\nVS\n${t.state.player2.displayName}`,bottom:1,color:Color3.Black()});yield d(1e3);a.reproduceVideo(e,g[0].Game.id);o.hideSpritePanel();r.updateTextPanel({value:g[0].Game.instructions});if(y){y.destroy();y=null}y=new g[m.currentIndex].Game(e,{seed:n,currentPlayer:0,level:1})}v(t);function v(t){let n=[];n.push(t.onMessage("NEXT_GAME",({serverTime:e,startTime:t,gameIndex:n})=>{console.log("spectator NEXT_GAME",{serverTime:e,startTime:t,gameIndex:n});u=e-Date.now();r.updateTextPanel({value:""});a.removeVideoPanel();s.stopAllSounds();y&&y.init();y&&y.block();y&&y.setStartTime(h(t))}));n.push(t.onMessage("SHARE_STATE",e=>{y&&y.shareState(e||{})}));n.push(t.onMessage("NEXT_ROUND",({winner:e,startTime:t,serverTime:n})=>{u=n-Date.now();y&&y.finishRound&&y.finishRound({winner:e});const i=h(t);y&&y.setRoundStartTime&&y.setRoundStartTime(i)}));n.push(t.onMessage("FINSIH_AGREE",({winner:n,nextSeed:s,nextIndex:c})=>i(this,void 0,void 0,(function*(){console.log("spectator FINSIH_AGREE ",n,s,c);y&&y.finish&&y.finish({winner:n});const i=t.state["player"+n].displayName;r.updateTextPanel({value:`(${n}) ${i} wins`});yield d(2e3);y&&y.destroy();y=null;if(m.currentIndex+1>=g.length&&m.score1===m.score2){g.push(l.generateTrack(s,1)[0]);console.log("tie-breaker",g)}if(m.currentIndex<g.length){m.currentIndex=c;const t=g[c].Game.instructions||"ERROR: MISSING_INSTRUCTIONS";o.hideSpritePanel();a.reproduceVideo(e,g[c].Game.id);r.updateTextPanel({value:t+"\n"});yield d(1500);y&&y.destroy();y=null;S({nextSeed:s})}}))));n.push(t.onMessage("FINISH_TRACK",({score:e})=>{console.log("receive FINISH_TRACK",e);y&&y.destroy();y=null;s.stopAllSounds();s.playOnce("pwned");const t=(e.player1||0)>(e.player2||0)?1:2;o.updateSpritePanel({uvs:c.getSpriteUv(8,0,192,128),scale:new Vector3(1===t?6:-6,4,1)});o.showSpritePanel()}));n.push(t.onMessage("PLAYER_LEFT",()=>{if(y){y.destroy();y=null}}));n.push(t.onMessage("GAME_DISPOSE",()=>{console.log("GAME_DISPOSE");n.forEach(e=>{e()});n=[]}))}function S({nextSeed:t}){console.log(`\n            createGame\n            state.currentIndex: ${m.currentIndex}\n            gameTrackDefinition[state.currentIndex]: ${g[m.currentIndex]&&g[m.currentIndex].Game.id}\n  \n        `);const n=g[m.currentIndex].Game;if(y){y.destroy();y=null}y=new n(e,{seed:t,currentPlayer:0,level:1})}}));function h(e){return e-u}function d(e){return new Promise(t=>setTimeout(t,e))}},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});n(67);var i=n(68);t.Client=i.Client;var r=n(39);t.Protocol=r.Protocol;t.ErrorCode=r.ErrorCode;var s=n(36);t.Room=s.Room;var o=n(43);t.Auth=o.Auth;t.Platform=o.Platform;var a=n(80);t.FossilDeltaSerializer=a.FossilDeltaSerializer;var c=n(85);t.SchemaSerializer=c.SchemaSerializer;var l=n(38);t.registerSerializer=l.registerSerializer;l.registerSerializer("fossil-delta",a.FossilDeltaSerializer);l.registerSerializer("schema",c.SchemaSerializer)},function(e,t){ArrayBuffer.isView||(ArrayBuffer.isView=function(e){return null!==e&&"object"==typeof e&&e.buffer instanceof ArrayBuffer})},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}(),r=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))},s=this&&this.__generator||function(e,t){var n={label:0,sent:function(){if(1&s[0])throw s[1];return s[1]},trys:[],ops:[]},i,r,s,o;return o={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function a(e){return function(t){return c([e,t])}}function c(o){if(i)throw new TypeError("Generator is already executing.");for(;n;)try{if(i=1,r&&(s=2&o[0]?r["return"]:o[0]?r["throw"]||((s=r["return"])&&s.call(r),0):r.next)&&!(s=s.call(r,o[1])).done)return s;(r=0,s)&&(o=[2&o[0],s.value]);switch(o[0]){case 0:case 1:s=o;break;case 4:n.label++;return{value:o[1],done:0};case 5:n.label++;r=o[1];o=[0];continue;case 7:o=n.ops.pop();n.trys.pop();continue;default:if(!(s=n.trys,s=s.length>0&&s[s.length-1])&&(6===o[0]||2===o[0])){n=0;continue}if(3===o[0]&&(!s||o[1]>s[0]&&o[1]<s[3])){n.label=o[1];break}if(6===o[0]&&n.label<s[1]){n.label=s[1];s=o;break}if(s&&n.label<s[2]){n.label=s[2];n.ops.push(o);break}s[2]&&n.ops.pop();n.trys.pop();continue}o=t.call(e,n)}catch(e){o=[6,e];r=0}finally{i=s=0}if(5&o[0])throw o[1];return{value:o[0]?o[1]:void 0,done:1}}};Object.defineProperty(t,"__esModule",{value:1});var o=n(35),a=n(69),c=n(36),l=n(43),u=n(79),h=function(e){i(t,e);function t(n,i){var r=e.call(this,n)||this;r.code=i;Object.setPrototypeOf(r,t.prototype);return r}return t}(Error);t.MatchMakeError=h;var d=function(){function e(e){void 0===e&&(e=location.protocol.replace("http","ws")+"//"+location.hostname+(location.port&&":"+location.port));this.endpoint=e;this.auth=new l.Auth(this.endpoint);this.push=new u.Push(this.endpoint)}e.prototype.joinOrCreate=function(e,t,n){void 0===t&&(t={});return r(this,void 0,void 0,(function(){return s(this,(function(i){switch(i.label){case 0:return[4,this.createMatchMakeRequest("joinOrCreate",e,t,n)];case 1:return[2,i.sent()]}}))}))};e.prototype.create=function(e,t,n){void 0===t&&(t={});return r(this,void 0,void 0,(function(){return s(this,(function(i){switch(i.label){case 0:return[4,this.createMatchMakeRequest("create",e,t,n)];case 1:return[2,i.sent()]}}))}))};e.prototype.join=function(e,t,n){void 0===t&&(t={});return r(this,void 0,void 0,(function(){return s(this,(function(i){switch(i.label){case 0:return[4,this.createMatchMakeRequest("join",e,t,n)];case 1:return[2,i.sent()]}}))}))};e.prototype.joinById=function(e,t,n){void 0===t&&(t={});return r(this,void 0,void 0,(function(){return s(this,(function(i){switch(i.label){case 0:return[4,this.createMatchMakeRequest("joinById",e,t,n)];case 1:return[2,i.sent()]}}))}))};e.prototype.reconnect=function(e,t,n){return r(this,void 0,void 0,(function(){return s(this,(function(i){switch(i.label){case 0:return[4,this.createMatchMakeRequest("joinById",e,{sessionId:t},n)];case 1:return[2,i.sent()]}}))}))};e.prototype.getAvailableRooms=function(e){void 0===e&&(e="");return r(this,void 0,void 0,(function(){var t;return s(this,(function(n){switch(n.label){case 0:t=this.endpoint.replace("ws","http")+"/matchmake/"+e;return[4,o.get(t,{headers:{Accept:"application/json"}})];case 1:return[2,n.sent().data]}}))}))};e.prototype.consumeSeatReservation=function(e,t){return r(this,void 0,void 0,(function(){var n;return s(this,(function(i){(n=this.createRoom(e.room.name,t)).id=e.room.roomId;n.sessionId=e.sessionId;n.connect(this.buildEndpoint(e.room,{sessionId:n.sessionId}));return[2,new Promise((function(e,t){var i=function(e,n){return t(new a.ServerError(e,n))};n.onError.once(i);n.onJoin.once((function(){n.onError.remove(i);e(n)}))}))]}))}))};e.prototype.createMatchMakeRequest=function(e,t,n,i){void 0===n&&(n={});return r(this,void 0,void 0,(function(){var r,a;return s(this,(function(s){switch(s.label){case 0:r=this.endpoint.replace("ws","http")+"/matchmake/"+e+"/"+t;this.auth.hasToken&&(n.token=this.auth.token);return[4,o.post(r,{headers:{Accept:"application/json","Content-Type":"application/json"},body:JSON.stringify(n)})];case 1:if((a=s.sent().data).error)throw new h(a.error,a.code);return[2,this.consumeSeatReservation(a,i)]}}))}))};e.prototype.createRoom=function(e,t){return new c.Room(e,t)};e.prototype.buildEndpoint=function(e,t){void 0===t&&(t={});var n=[];for(var i in t)t.hasOwnProperty(i)&&n.push(i+"="+t[i]);return this.endpoint+"/"+e.processId+"/"+e.roomId+"?"+n.join("&")};return e}();t.Client=d},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}();Object.defineProperty(t,"__esModule",{value:1});var r=function(e){i(t,e);function t(t,n){var i=e.call(this,n)||this;i.name="ServerError";i.code=t;return i}return t}(Error);t.ServerError=r},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});function i(e,t){this._offset=t;if(e instanceof ArrayBuffer){this._buffer=e;this._view=new DataView(this._buffer)}else{if(!ArrayBuffer.isView(e))throw new Error("Invalid argument");this._buffer=e.buffer;this._view=new DataView(this._buffer,e.byteOffset,e.byteLength)}}function r(e,t,n){for(var i="",r=0,s=t,o=t+n;s<o;s++){var a=e.getUint8(s);if(0!=(128&a))if(192!=(224&a))if(224!=(240&a)){if(240!=(248&a))throw new Error("Invalid byte "+a.toString(16));if((r=(7&a)<<18|(63&e.getUint8(++s))<<12|(63&e.getUint8(++s))<<6|(63&e.getUint8(++s))<<0)>=65536){r-=65536;i+=String.fromCharCode(55296+(r>>>10),56320+(1023&r))}else i+=String.fromCharCode(r)}else i+=String.fromCharCode((15&a)<<12|(63&e.getUint8(++s))<<6|(63&e.getUint8(++s))<<0);else i+=String.fromCharCode((31&a)<<6|63&e.getUint8(++s));else i+=String.fromCharCode(a)}return i}i.prototype._array=function(e){for(var t=new Array(e),n=0;n<e;n++)t[n]=this._parse();return t};i.prototype._map=function(e){for(var t="",n={},i=0;i<e;i++)n[t=this._parse()]=this._parse();return n};i.prototype._str=function(e){var t=r(this._view,this._offset,e);this._offset+=e;return t};i.prototype._bin=function(e){var t=this._buffer.slice(this._offset,this._offset+e);this._offset+=e;return t};i.prototype._parse=function(){var e=this._view.getUint8(this._offset++),t,n=0,i=0,r=0,s=0;if(e<192)return e<128?e:e<144?this._map(15&e):e<160?this._array(15&e):this._str(31&e);if(e>223)return-1*(255-e+1);switch(e){case 192:return null;case 194:return 0;case 195:return 1;case 196:n=this._view.getUint8(this._offset);this._offset+=1;return this._bin(n);case 197:n=this._view.getUint16(this._offset);this._offset+=2;return this._bin(n);case 198:n=this._view.getUint32(this._offset);this._offset+=4;return this._bin(n);case 199:n=this._view.getUint8(this._offset);i=this._view.getInt8(this._offset+1);this._offset+=2;return[i,this._bin(n)];case 200:n=this._view.getUint16(this._offset);i=this._view.getInt8(this._offset+2);this._offset+=3;return[i,this._bin(n)];case 201:n=this._view.getUint32(this._offset);i=this._view.getInt8(this._offset+4);this._offset+=5;return[i,this._bin(n)];case 202:t=this._view.getFloat32(this._offset);this._offset+=4;return t;case 203:t=this._view.getFloat64(this._offset);this._offset+=8;return t;case 204:t=this._view.getUint8(this._offset);this._offset+=1;return t;case 205:t=this._view.getUint16(this._offset);this._offset+=2;return t;case 206:t=this._view.getUint32(this._offset);this._offset+=4;return t;case 207:r=this._view.getUint32(this._offset)*Math.pow(2,32);s=this._view.getUint32(this._offset+4);this._offset+=8;return r+s;case 208:t=this._view.getInt8(this._offset);this._offset+=1;return t;case 209:t=this._view.getInt16(this._offset);this._offset+=2;return t;case 210:t=this._view.getInt32(this._offset);this._offset+=4;return t;case 211:r=this._view.getInt32(this._offset)*Math.pow(2,32);s=this._view.getUint32(this._offset+4);this._offset+=8;return r+s;case 212:i=this._view.getInt8(this._offset);this._offset+=1;if(0===i){this._offset+=1;return}return[i,this._bin(1)];case 213:i=this._view.getInt8(this._offset);this._offset+=1;return[i,this._bin(2)];case 214:i=this._view.getInt8(this._offset);this._offset+=1;return[i,this._bin(4)];case 215:i=this._view.getInt8(this._offset);this._offset+=1;if(0===i){r=this._view.getInt32(this._offset)*Math.pow(2,32);s=this._view.getUint32(this._offset+4);this._offset+=8;return new Date(r+s)}return[i,this._bin(8)];case 216:i=this._view.getInt8(this._offset);this._offset+=1;return[i,this._bin(16)];case 217:n=this._view.getUint8(this._offset);this._offset+=1;return this._str(n);case 218:n=this._view.getUint16(this._offset);this._offset+=2;return this._str(n);case 219:n=this._view.getUint32(this._offset);this._offset+=4;return this._str(n);case 220:n=this._view.getUint16(this._offset);this._offset+=2;return this._array(n);case 221:n=this._view.getUint32(this._offset);this._offset+=4;return this._array(n);case 222:n=this._view.getUint16(this._offset);this._offset+=2;return this._map(n);case 223:n=this._view.getUint32(this._offset);this._offset+=4;return this._map(n)}throw new Error("Could not parse")};function s(e,t){void 0===t&&(t=0);var n=new i(e,t),r=n._parse();if(n._offset!==e.byteLength)throw new Error(e.byteLength-n._offset+" trailing bytes");return r}t.default=s},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});function i(e,t,n){for(var i=0,r=0,s=n.length;r<s;r++)if((i=n.charCodeAt(r))<128)e.setUint8(t++,i);else if(i<2048){e.setUint8(t++,192|i>>6);e.setUint8(t++,128|63&i)}else if(i<55296||i>=57344){e.setUint8(t++,224|i>>12);e.setUint8(t++,128|i>>6&63);e.setUint8(t++,128|63&i)}else{r++;i=65536+((1023&i)<<10|1023&n.charCodeAt(r));e.setUint8(t++,240|i>>18);e.setUint8(t++,128|i>>12&63);e.setUint8(t++,128|i>>6&63);e.setUint8(t++,128|63&i)}}function r(e){for(var t=0,n=0,i=0,r=e.length;i<r;i++)if((t=e.charCodeAt(i))<128)n+=1;else if(t<2048)n+=2;else if(t<55296||t>=57344)n+=3;else{i++;n+=4}return n}function s(e,t,n){var i=typeof n,o=0,a=0,c=0,l=0,u=0,h=0;if("string"===i){if((u=r(n))<32){e.push(160|u);h=1}else if(u<256){e.push(217,u);h=2}else if(u<65536){e.push(218,u>>8,u);h=3}else{if(!(u<4294967296))throw new Error("String too long");e.push(219,u>>24,u>>16,u>>8,u);h=5}t.push({_str:n,_length:u,_offset:e.length});return h+u}if("number"===i){if(Math.floor(n)!==n||!isFinite(n)){e.push(203);t.push({_float:n,_length:8,_offset:e.length});return 9}if(n>=0){if(n<128){e.push(n);return 1}if(n<256){e.push(204,n);return 2}if(n<65536){e.push(205,n>>8,n);return 3}if(n<4294967296){e.push(206,n>>24,n>>16,n>>8,n);return 5}c=n/Math.pow(2,32)>>0;l=n>>>0;e.push(207,c>>24,c>>16,c>>8,c,l>>24,l>>16,l>>8,l);return 9}if(n>=-32){e.push(n);return 1}if(n>=-128){e.push(208,n);return 2}if(n>=-32768){e.push(209,n>>8,n);return 3}if(n>=-2147483648){e.push(210,n>>24,n>>16,n>>8,n);return 5}c=Math.floor(n/Math.pow(2,32));l=n>>>0;e.push(211,c>>24,c>>16,c>>8,c,l>>24,l>>16,l>>8,l);return 9}if("object"===i){if(null===n){e.push(192);return 1}if(Array.isArray(n)){if((u=n.length)<16){e.push(144|u);h=1}else if(u<65536){e.push(220,u>>8,u);h=3}else{if(!(u<4294967296))throw new Error("Array too large");e.push(221,u>>24,u>>16,u>>8,u);h=5}for(o=0;o<u;o++)h+=s(e,t,n[o]);return h}if(n instanceof Date){var d=n.getTime();c=Math.floor(d/Math.pow(2,32));l=d>>>0;e.push(215,0,c>>24,c>>16,c>>8,c,l>>24,l>>16,l>>8,l);return 10}if(n instanceof ArrayBuffer){if((u=n.byteLength)<256){e.push(196,u);h=2}else if(u<65536){e.push(197,u>>8,u);h=3}else{if(!(u<4294967296))throw new Error("Buffer too large");e.push(198,u>>24,u>>16,u>>8,u);h=5}t.push({_bin:n,_length:u,_offset:e.length});return h+u}if("function"==typeof n.toJSON)return s(e,t,n.toJSON());var p=[],f="",g=Object.keys(n);for(o=0,a=g.length;o<a;o++)"function"!=typeof n[f=g[o]]&&p.push(f);if((u=p.length)<16){e.push(128|u);h=1}else if(u<65536){e.push(222,u>>8,u);h=3}else{if(!(u<4294967296))throw new Error("Object too large");e.push(223,u>>24,u>>16,u>>8,u);h=5}for(o=0;o<u;o++){h+=s(e,t,f=p[o]);h+=s(e,t,n[f])}return h}if("boolean"===i){e.push(n?195:194);return 1}if("undefined"===i){e.push(212,0,0);return 3}throw new Error("Could not encode")}function o(e){var t=[],n=[],r=s(t,n,e),o=new ArrayBuffer(r),a=new DataView(o),c=0,l=0,u=-1;n.length>0&&(u=n[0]._offset);for(var h,d=0,p=0,f=0,g=t.length;f<g;f++){a.setUint8(l+f,t[f]);if(f+1===u){d=(h=n[c])._length;p=l+u;if(h._bin)for(var m=new Uint8Array(h._bin),y=0;y<d;y++)a.setUint8(p+y,m[y]);else h._str?i(a,p,h._str):void 0!==h._float&&a.setFloat64(p,h._float);l+=d;n[++c]&&(u=n[c]._offset)}}return o}t.default=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=function(){function e(){this.handlers=[]}e.prototype.register=function(e,t){void 0===t&&(t=0);this.handlers.push(e);return this};e.prototype.invoke=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];this.handlers.forEach((function(t){return t.apply(void 0,e)}))};e.prototype.invokeAsync=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return Promise.all(this.handlers.map((function(t){return t.apply(void 0,e)})))};e.prototype.remove=function(e){var t=this.handlers.indexOf(e);this.handlers[t]=this.handlers[this.handlers.length-1];this.handlers.pop()};e.prototype.clear=function(){this.handlers=[]};return e}();t.EventEmitter=i;function r(){var e=new i;function t(t){return e.register(t,null===this)}t.once=function(t){var n=function(){for(var i=[],r=0;r<arguments.length;r++)i[r]=arguments[r];t.apply(void 0,i);e.remove(n)};e.register(n)};t.remove=function(t){return e.remove(t)};t.invoke=function(){for(var t=[],n=0;n<arguments.length;n++)t[n]=arguments[n];return e.invoke.apply(e,t)};t.invokeAsync=function(){for(var t=[],n=0;n<arguments.length;n++)t[n]=arguments[n];return e.invokeAsync.apply(e,t)};t.clear=function(){return e.clear()};return t}t.createSignal=r},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createNanoEvents=void 0;let i=()=>({events:{},emit(e,...t){for(let n of this.events[e]||[])n(...t)},on(e,t){(this.events[e]=this.events[e]||[]).push(t);return()=>this.events[e]=this.events[e].filter(e=>e!==t)}});t.createNanoEvents=i},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}(),r=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:1});var s=r(n(75)),o=function(e){i(t,e);function t(t,n){void 0===n&&(n=1);var i=e.call(this,t,void 0,{connect:n})||this;i._enqueuedCalls=[];return i}t.prototype.onOpenCallback=function(t){e.prototype.onOpenCallback.call(this);this.binaryType="arraybuffer";if(this._enqueuedCalls.length>0){for(var n=0,i=this._enqueuedCalls;n<i.length;n++){var r=i[n],s=r[0],o=r[1];this[s].apply(this,o)}this._enqueuedCalls=[]}};t.prototype.send=function(t){if(this.ws.readyState===s.default.OPEN){if(t instanceof ArrayBuffer)return e.prototype.send.call(this,t);if(Array.isArray(t))return e.prototype.send.call(this,new Uint8Array(t).buffer)}else this._enqueuedCalls.push(["send",[t]])};return t}(s.default);t.Connection=o},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=function(){function e(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||0;i.configurable=1;"value"in i&&(i.writable=1);Object.defineProperty(e,i.key,i)}}return function(t,n,i){n&&e(t.prototype,n);i&&e(t,i);return t}}();function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var s=n(76).createBackoff,o="undefined"!=typeof WebSocket?WebSocket:n(77),a=function(){function e(t,n,i){var o=arguments.length>2&&void 0!==i?arguments[2]:{};r(this,e);this.url=t;this.protocols=n;this.reconnectEnabled=1;this.listeners={};this.backoff=s(o.backoff||"exponential",o);this.backoff.onReady=this.onBackoffReady.bind(this);("undefined"==typeof o.connect||o.connect)&&this.open()}i(e,[{key:"open",value:function e(t){var n=arguments.length>0&&void 0!==t?arguments[0]:0;this.isReconnect=n;var i=this.ws&&this.ws.binaryType;this.ws=new o(this.url,this.protocols);this.ws.onclose=this.onCloseCallback.bind(this);this.ws.onerror=this.onErrorCallback.bind(this);this.ws.onmessage=this.onMessageCallback.bind(this);this.ws.onopen=this.onOpenCallback.bind(this);i&&(this.ws.binaryType=i)}},{key:"onBackoffReady",value:function e(t,n){this.open(1)}},{key:"onCloseCallback",value:function e(t){!this.isReconnect&&this.listeners["onclose"]&&this.listeners["onclose"].apply(null,arguments);this.reconnectEnabled&&t.code<3e3&&this.backoff.backoff()}},{key:"onErrorCallback",value:function e(){this.listeners["onerror"]&&this.listeners["onerror"].apply(null,arguments)}},{key:"onMessageCallback",value:function e(){this.listeners["onmessage"]&&this.listeners["onmessage"].apply(null,arguments)}},{key:"onOpenCallback",value:function e(){this.listeners["onopen"]&&this.listeners["onopen"].apply(null,arguments);this.isReconnect&&this.listeners["onreconnect"]&&this.listeners["onreconnect"].apply(null,arguments);this.isReconnect=0}},{key:"close",value:function e(t,n){"undefined"==typeof t&&(t=1e3);this.reconnectEnabled=0;this.ws.close(t,n)}},{key:"send",value:function e(t){this.ws.send(t)}},{key:"bufferedAmount",get:function e(){return this.ws.bufferedAmount}},{key:"readyState",get:function e(){return this.ws.readyState}},{key:"binaryType",get:function e(){return this.ws.binaryType},set:function e(t){this.ws.binaryType=t}},{key:"extensions",get:function e(){return this.ws.extensions},set:function e(t){this.ws.extensions=t}},{key:"protocol",get:function e(){return this.ws.protocol},set:function e(t){this.ws.protocol=t}},{key:"onclose",set:function e(t){this.listeners["onclose"]=t},get:function e(){return this.listeners["onclose"]}},{key:"onerror",set:function e(t){this.listeners["onerror"]=t},get:function e(){return this.listeners["onerror"]}},{key:"onmessage",set:function e(t){this.listeners["onmessage"]=t},get:function e(){return this.listeners["onmessage"]}},{key:"onopen",set:function e(t){this.listeners["onopen"]=t},get:function e(){return this.listeners["onopen"]}},{key:"onreconnect",set:function e(t){this.listeners["onreconnect"]=t},get:function e(){return this.listeners["onreconnect"]}}]);return e}();a.CONNECTING=o.CONNECTING;a.OPEN=o.OPEN;a.CLOSING=o.CLOSING;a.CLOSED=o.CLOSED;t.default=a},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.createBackoff=r;var i={exponential:function e(t,n){return Math.floor(Math.random()*Math.pow(2,t)*n)},fibonacci:function e(t,n){var i;if(t>(i=1))for(var r=1,i=2,s=2;s<t;s++){var o=r+i;r=i;i=o}return Math.floor(Math.random()*i*n)}};function r(e,t){return new s(i[e],t)}function s(e,t){this.func=e;this.attempts=0;this.delay="undefined"!=typeof t.initialDelay?t.initialDelay:100}s.prototype.backoff=function(){setTimeout(this.onReady,this.func(++this.attempts,this.delay))}},function(e,t){},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i;function r(){i||(i="undefined"!=typeof cc&&cc.sys&&cc.sys.localStorage?cc.sys.localStorage:"undefined"!=typeof window&&window.localStorage?window.localStorage:{cache:{},setItem:function(e,t){this.cache[e]=t},getItem:function(e){this.cache[e]},removeItem:function(e){delete this.cache[e]}});return i}function s(e,t){r().setItem(e,t)}t.setItem=s;function o(e){r().removeItem(e)}t.removeItem=o;function a(e,t){var n=r().getItem(e);"undefined"!=typeof Promise&&n instanceof Promise?n.then((function(e){return t(e)})):t(n)}t.getItem=a},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))},r=this&&this.__generator||function(e,t){var n={label:0,sent:function(){if(1&s[0])throw s[1];return s[1]},trys:[],ops:[]},i,r,s,o;return o={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(o[Symbol.iterator]=function(){return this}),o;function a(e){return function(t){return c([e,t])}}function c(o){if(i)throw new TypeError("Generator is already executing.");for(;n;)try{if(i=1,r&&(s=2&o[0]?r["return"]:o[0]?r["throw"]||((s=r["return"])&&s.call(r),0):r.next)&&!(s=s.call(r,o[1])).done)return s;(r=0,s)&&(o=[2&o[0],s.value]);switch(o[0]){case 0:case 1:s=o;break;case 4:n.label++;return{value:o[1],done:0};case 5:n.label++;r=o[1];o=[0];continue;case 7:o=n.ops.pop();n.trys.pop();continue;default:if(!(s=n.trys,s=s.length>0&&s[s.length-1])&&(6===o[0]||2===o[0])){n=0;continue}if(3===o[0]&&(!s||o[1]>s[0]&&o[1]<s[3])){n.label=o[1];break}if(6===o[0]&&n.label<s[1]){n.label=s[1];s=o;break}if(s&&n.label<s[2]){n.label=s[2];n.ops.push(o);break}s[2]&&n.ops.pop();n.trys.pop();continue}o=t.call(e,n)}catch(e){o=[6,e];r=0}finally{i=s=0}if(5&o[0])throw o[1];return{value:o[0]?o[1]:void 0,done:1}}};Object.defineProperty(t,"__esModule",{value:1});var s=function(){function e(e){this.endpoint=e.replace("ws","http")}e.prototype.register=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:this.check();return[4,this.registerServiceWorker()];case 1:e.sent();return[4,this.requestNotificationPermission()];case 2:e.sent();return[2]}}))}))};e.prototype.registerServiceWorker=function(){return i(this,void 0,void 0,(function(){return r(this,(function(e){switch(e.label){case 0:return[4,navigator.serviceWorker.register(this.endpoint+"/push")];case 1:return[2,e.sent()]}}))}))};e.prototype.requestNotificationPermission=function(){return i(this,void 0,void 0,(function(){var e;return r(this,(function(t){switch(t.label){case 0:return[4,window["Notification"].requestPermission()];case 1:if("granted"!==(e=t.sent()))throw new Error("Permission not granted for Notification");return[2]}}))}))};e.prototype.check=function(){if(!("serviceWorker"in navigator))throw new Error("No Service Worker support!");if(!("PushManager"in window))throw new Error("No Push API Support!")};return e}();t.Push=s},function(e,t,n){var i=this&&this.__importStar||function(e){if(e&&e.__esModule)return e;var t={};if(null!=e)for(var n in e)Object.hasOwnProperty.call(e,n)&&(t[n]=e[n]);t["default"]=e;return t};Object.defineProperty(t,"__esModule",{value:1});var r=n(81),s=i(n(84)),o=i(n(37)),a=function(){function e(){this.api=new r.StateContainer({})}e.prototype.getState=function(){return this.api.state};e.prototype.setState=function(e){this.previousState=new Uint8Array(e);this.api.set(o.decode(this.previousState))};e.prototype.patch=function(e){this.previousState=new Uint8Array(s.apply(this.previousState,e));this.api.set(o.decode(this.previousState))};e.prototype.teardown=function(){this.api.removeAllListeners()};return e}();t.FossilDeltaSerializer=a},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=n(82);t.StateContainer=i.StateContainer},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=n(83),r=function(){function e(e){this.listeners=[];this.matcherPlaceholders={":id":/^([a-zA-Z0-9\-_]+)$/,":number":/^([0-9]+)$/,":string":/^(\w+)$/,":axis":/^([xyz])$/,":*":/(.*)/};this.state=e;this.reset()}e.prototype.set=function(e){var t=i.compare(this.state,e);this.state=e;this.checkPatches(t,this.listeners,this.defaultListener);return t};e.prototype.registerPlaceholder=function(e,t){this.matcherPlaceholders[e]=t};e.prototype.listen=function(e,t,n){var r=this,s;if("function"==typeof e){s=[];t=e}else s=e.split("/");t.length>1&&console.warn(".listen() accepts only one parameter.");var o={callback:t,rawRules:s,rules:s.map((function(e){return"string"==typeof e?0===e.indexOf(":")?r.matcherPlaceholders[e]||r.matcherPlaceholders[":*"]:new RegExp("^"+e+"$"):e}))};0===s.length?this.defaultListener=o:this.listeners.push(o);n&&this.checkPatches(i.compare({},this.state),[o]);return o};e.prototype.removeListener=function(e){for(var t=this.listeners.length-1;t>=0;t--)this.listeners[t]===e&&this.listeners.splice(t,1)};e.prototype.removeAllListeners=function(){this.reset()};e.prototype.checkPatches=function(e,t,n){for(var i=0,r=t.length;i<r;i++)for(var s=t[i],o=e.length-1;o>=0;o--){var a=s&&this.getPathVariables(e[o],s);if(a){s.callback({path:a,rawPath:e[o].path,operation:e[o].operation,value:e[o].value});e[o].matched=1}}if(n)for(var o=e.length-1;o>=0;o--)e[o].matched||n.callback(e[o])};e.prototype.getPathVariables=function(e,t){if(e.path.length!==t.rules.length)return 0;for(var n={},i=0,r=t.rules.length;i<r;i++){var s=e.path[i].match(t.rules[i]);if(!s||0===s.length||s.length>2)return 0;":"===t.rawRules[i].substr(0,1)&&(n[t.rawRules[i].substr(1)]=s[1])}return n};e.prototype.reset=function(){this.listeners=[]};return e}();t.StateContainer=r},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});function i(e,t){var n=[];o(e,t,n,[]);return n}t.compare=i;function r(e,t){var n=e.slice();n.push(t);return n}function s(e){if(Array.isArray(e)){for(var t=new Array(e.length),n=0;n<t.length;n++)t[n]=""+n;return t}if(Object.keys)return Object.keys(e);var i=[];for(var r in e)e.hasOwnProperty(r)&&i.push(r);return i}function o(e,t,n,i){for(var a=s(t),c=s(e),l=0,u=c.length-1;u>=0;u--){var h,d=e[h=c[u]];if(!t.hasOwnProperty(h)||void 0===t[h]&&void 0!==d&&0==Array.isArray(t)){n.push({operation:"remove",path:r(i,h)});l=1}else{var p=t[h];"object"==typeof d&&null!=d&&"object"==typeof p&&null!=p?o(d,p,n,r(i,h)):d!==p&&n.push({operation:"replace",path:r(i,h),value:p,previousValue:d})}}if(l||a.length!=c.length)for(var u=a.length-1;u>=0;u--){var h=a[u];if(!e.hasOwnProperty(h)&&void 0!==t[h]){var p=t[h],f=r(i,h);"object"==typeof p&&null!=p&&o({},p,n,f);n.push({operation:"add",path:f,value:p})}}}},function(e,t,n){(function(t,n){1,e.exports?e.exports=n():t.fossilDelta=n()})(this,(function(){var e={},t=16;function n(){this.a=0;this.b=0;this.i=0;this.z=new Array(t)}n.prototype.init=function(e,n){var i=0,r=0,s,o;for(s=0;s<t;s++){i=i+(o=e[n+s])&65535;r=r+(t-s)*o&65535;this.z[s]=o}this.a=65535&i;this.b=65535&r;this.i=0};n.prototype.next=function(e){var n=this.z[this.i];this.z[this.i]=e;this.i=this.i+1&t-1;this.a=this.a-n+e&65535;this.b=this.b-t*n+this.a&65535};n.prototype.value=function(){return(65535&this.a|(65535&this.b)<<16)>>>0};var i="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~".split("").map((function(e){return e.charCodeAt(0)})),r=[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,1,2,3,4,5,6,7,8,9,-1,-1,-1,-1,-1,-1,-1,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,-1,-1,-1,-1,36,-1,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,-1,-1,-1,63,-1];function s(e){this.a=e;this.pos=0}s.prototype.haveBytes=function(){return this.pos<this.a.length};s.prototype.getByte=function(){var e=this.a[this.pos];this.pos++;if(this.pos>this.a.length)throw new RangeError("out of bounds");return e};s.prototype.getChar=function(){return String.fromCharCode(this.getByte())};s.prototype.getInt=function(){for(var e=0,t;this.haveBytes()&&(t=r[127&this.getByte()])>=0;)e=(e<<6)+t;this.pos--;return e>>>0};function o(){this.a=[]}o.prototype.toArray=function(){return this.a};o.prototype.putByte=function(e){this.a.push(255&e)};o.prototype.putChar=function(e){this.putByte(e.charCodeAt(0))};o.prototype.putInt=function(e){var t,n,r=[];if(0!==e){for(t=0;e>0;t++,e>>>=6)r.push(i[63&e]);for(n=t-1;n>=0;n--)this.putByte(r[n])}else this.putChar("0")};o.prototype.putArray=function(e,t,n){for(var i=t;i<n;i++)this.a.push(e[i])};function a(e){var t,n;for(t=1,n=64;e>=n;t++,n<<=6);return t}function c(e){for(var t=0,n=0,i=0,r=0,s=0,o=e.length;o>=16;){t=t+e[s+0]|0;n=n+e[s+1]|0;i=i+e[s+2]|0;r=r+e[s+3]|0;t=t+e[s+4]|0;n=n+e[s+5]|0;i=i+e[s+6]|0;r=r+e[s+7]|0;t=t+e[s+8]|0;n=n+e[s+9]|0;i=i+e[s+10]|0;r=r+e[s+11]|0;t=t+e[s+12]|0;n=n+e[s+13]|0;i=i+e[s+14]|0;r=r+e[s+15]|0;s+=16;o-=16}for(;o>=4;){t=t+e[s+0]|0;n=n+e[s+1]|0;i=i+e[s+2]|0;r=r+e[s+3]|0;s+=4;o-=4}r=((r+(i<<8)|0)+(n<<16)|0)+(t<<24)|0;switch(o){case 3:r=r+(e[s+2]<<8)|0;case 2:r=r+(e[s+1]<<16)|0;case 1:r=r+(e[s+0]<<24)|0}return r>>>0}e.create=function(e,i){var r=new o,s=i.length,l=e.length,u,h=-1;r.putInt(s);r.putChar("\n");if(l<=t){r.putInt(s);r.putChar(":");r.putArray(i,0,s);r.putInt(c(i));r.putChar(";");return r.toArray()}var d=Math.ceil(l/t),p=new Array(d),f=new Array(d);for(u=0;u<p.length;u++)p[u]=-1;for(u=0;u<f.length;u++)f[u]=-1;var g,m=new n;for(u=0;u<l-t;u+=t){m.init(e,u);g=m.value()%d;p[u/t]=f[g];f[g]=u/t}for(var y=0,v,S,b,w,_;y+t<s;){w=0;_=0;m.init(i,y);u=0;b=0;for(;;){var T=250;S=f[g=m.value()%d];for(;S>=0&&T-- >0;){var C,P,E,R,I,A,O,x;for(R=0,A=v=S*t,O=y+u;A<l&&O<s&&e[A]===i[O];R++,A++,O++);R--;for(I=1;I<v&&I<=u&&e[v-I]===i[y+u-I];I++);P=v- --I;E=u-I;if((C=R+I+1)>=(x=a(u-I)+a(C)+a(P)+3)&&C>b){b=C;w=v-I;_=E}S=p[S]}if(b>0){if(_>0){r.putInt(_);r.putChar(":");r.putArray(i,y,y+_);y+=_}y+=b;r.putInt(b);r.putChar("@");r.putInt(w);r.putChar(",");w+b-1>h&&(h=w+b-1);b=0;break}if(y+u+t>=s){r.putInt(s-y);r.putChar(":");r.putArray(i,y,y+s-y);y=s;break}m.next(i[y+u+t]);u++}}if(y<s){r.putInt(s-y);r.putChar(":");r.putArray(i,y,y+s-y)}r.putInt(c(i));r.putChar(";");return r.toArray()};e.outputSize=function(e){var t=new s(e),n=t.getInt();if("\n"!==t.getChar())throw new Error("size integer not terminated by '\\n'");return n};e.apply=function(e,t,n){var i,r=0,a=new s(t),l=e.length,u=t.length;i=a.getInt();if("\n"!==a.getChar())throw new Error("size integer not terminated by '\\n'");for(var h=new o;a.haveBytes();){var d,p;d=a.getInt();switch(a.getChar()){case"@":p=a.getInt();if(a.haveBytes()&&","!==a.getChar())throw new Error("copy command not terminated by ','");if((r+=d)>i)throw new Error("copy exceeds output file size");if(p+d>l)throw new Error("copy extends past end of input");h.putArray(e,p,p+d);break;case":":if((r+=d)>i)throw new Error("insert command gives an output larger than predicted");if(d>u)throw new Error("insert count exceeds size of delta");h.putArray(a.a,a.pos,a.pos+d);a.pos+=d;break;case";":var f=h.toArray();if((!n||0!=n.verifyChecksum)&&d!==c(f))throw new Error("bad checksum");if(r!==i)throw new Error("generated size does not match predicted size");return f;default:throw new Error("unknown delta operator")}}throw new Error("unterminated delta")};return e}))},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});var i=n(44),r=function(){function e(){}e.prototype.setState=function(e){this.state.decode(e)};e.prototype.getState=function(){return this.state};e.prototype.patch=function(e){this.state.decode(e)};e.prototype.teardown=function(){};e.prototype.handshake=function(e,t){if(this.state){var n;(new i.Reflection).decode(e,t)}else this.state=i.Reflection.decode(e)};return e}();t.SchemaSerializer=r},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.EventEmitter=void 0;var i=function(){function e(){this.handlers=[]}e.prototype.register=function(e,t){void 0===t&&(t=0);this.handlers.push(e);return this};e.prototype.invoke=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];this.handlers.forEach((function(t){return t.apply(void 0,e)}))};e.prototype.invokeAsync=function(){for(var e=[],t=0;t<arguments.length;t++)e[t]=arguments[t];return Promise.all(this.handlers.map((function(t){return t.apply(void 0,e)})))};e.prototype.remove=function(e){var t=this.handlers.indexOf(e);this.handlers[t]=this.handlers[this.handlers.length-1];this.handlers.pop()};e.prototype.clear=function(){this.handlers=[]};return e}();t.EventEmitter=i},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.dumpChanges=void 0;var i=n(44),r=n(11),s=n(10);function o(e){for(var t={},n=e.$changes,a=e["_fieldsByIndex"]||{},c=0,l=Array.from(n.changes);c<l.length;c++){var u=l[c],h=a[u]||u;e[h]instanceof r.MapSchema||e[h]instanceof s.ArraySchema||e[h]instanceof i.Schema?t[h]=o(e[h]):t[h]=e[h]}return t}t.dumpChanges=o},function(e,t,n){var i=this&&this.__extends||function(){var e=function(t,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var n in t)t.hasOwnProperty(n)&&(e[n]=t[n])})(t,n)};return function(t,n){e(t,n);function i(){this.constructor=t}t.prototype=null===n?Object.create(n):(i.prototype=n.prototype,new i)}}(),r=this&&this.__decorate||function(e,t,n,i){var r=arguments.length,s=r<3?t:null===i?i=Object.getOwnPropertyDescriptor(t,n):i,o;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)s=Reflect.decorate(e,t,n,i);else for(var a=e.length-1;a>=0;a--)(o=e[a])&&(s=(r<3?o(s):r>3?o(t,n,s):o(t,n))||s);return r>3&&s&&Object.defineProperty(t,n,s),s};Object.defineProperty(t,"__esModule",{value:1});t.Reflection=t.ReflectionType=t.ReflectionField=void 0;var s=n(46),o=n(13),a=n(10),c=n(11),l=new s.Context,u=function(e){i(t,e);function t(){return null!==e&&e.apply(this,arguments)||this}r([s.type("string",l)],t.prototype,"name",void 0);r([s.type("string",l)],t.prototype,"type",void 0);r([s.type("uint8",l)],t.prototype,"referencedType",void 0);return t}(o.Schema);t.ReflectionField=u;var h=function(e){i(t,e);function t(){var t=null!==e&&e.apply(this,arguments)||this;t.fields=new a.ArraySchema;return t}r([s.type("uint8",l)],t.prototype,"id",void 0);r([s.type([u],l)],t.prototype,"fields",void 0);return t}(o.Schema);t.ReflectionType=h;var d=function(e){i(t,e);function t(){var t=null!==e&&e.apply(this,arguments)||this;t.types=new a.ArraySchema;return t}t.encode=function(e){var n=e.constructor,i=new t;i.rootType=n._typeid;var r=function(e,t){for(var n in t){var r=new u;r.name=n;var s=void 0;if("string"==typeof t[n])s=t[n];else{var o="function"==typeof t[n],a=Array.isArray(t[n]),c=!a&&t[n].map,l=void 0;if(o){s="ref";l=t[n]}else if(a){s="array";"string"==typeof t[n][0]?s+=":"+t[n][0]:l=t[n][0]}else if(c){s="map";"string"==typeof t[n].map?s+=":"+t[n].map:l=t[n].map}r.referencedType=l?l._typeid:255}r.type=s;e.fields.push(r)}i.types.push(e)},s=n._context.types;for(var o in s){var a=new h;a.id=Number(o);r(a,s[o]._schema)}return i.encodeAll()};t.decode=function(e){var n=new s.Context,r=new t;r.decode(e);var l=r.types.reduce((function(e,t){e[t.id]=function(e){i(t,e);function t(){return null!==e&&e.apply(this,arguments)||this}return t}(o.Schema);return e}),{});r.types.forEach((function(e,t){e.fields.forEach((function(t){var i=l[e.id];if(void 0!==t.referencedType){var r=l[t.referencedType];r||(r=t.type.split(":")[1]);0===t.type.indexOf("array")?s.type([r],n)(i.prototype,t.name):0===t.type.indexOf("map")?s.type({map:r},n)(i.prototype,t.name):"ref"===t.type&&s.type(r,n)(i.prototype,t.name)}else s.type(t.type,n)(i.prototype,t.name)}))}));var u=l[r.rootType],h=new u;for(var d in u._schema){var p=u._schema[d];if("string"!=typeof p){var f="function"==typeof p,g=Array.isArray(p),m=!g&&p.map;h[d]=g?new a.ArraySchema:m?new c.MapSchema:f?new p:void 0}}return h};r([s.type([h],l)],t.prototype,"types",void 0);r([s.type("uint8",l)],t.prototype,"rootType",void 0);return t}(o.Schema);t.Reflection=d},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.HTTP_HOST=t.WS_HOST=void 0;t.WS_HOST="ws://localhost:2567";t.HTTP_HOST="http://localhost:2567"},function(e,t,n){Object.defineProperty(t,"__esModule",{value:1});t.getHostData=t.setHostData=void 0;let i=null;t.setHostData=e=>{i=e};t.getHostData=()=>i},function(e,t,n){var i=this&&this.__awaiter||function(e,t,n,i){function r(e){return e instanceof n?e:new n((function(t){t(e)}))}return new(n||(n=Promise))((function(n,s){function o(e){try{c(i.next(e))}catch(e){s(e)}}function a(e){try{c(i["throw"](e))}catch(e){s(e)}}function c(e){e.done?n(e.value):r(e.value).then(o,a)}c((i=i.apply(e,t||[])).next())}))};Object.defineProperty(t,"__esModule",{value:1});t.getLand=void 0;t.getLand=()=>i(void 0,void 0,void 0,(function*(){var e,t,n;yield dcl.loadModule("ParcelIdentity");const i=yield dcl.callRpc("ParcelIdentity","getParcel",[]);console.log("LAND_DATA",i);return null===(n=null===(t=null===(e=null==i?void 0:i.land)||void 0===e?void 0:e.sceneJsonData)||void 0===t?void 0:t.scene)||void 0===n?void 0:n.base}))}]));
+export default 
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSpriteUv = exports.SpriteAnimationSystem = exports.createSpriteEntity = void 0;
+const SpriteMaterial_1 = __webpack_require__(1);
+const defaultOptions = {
+    time: 0.5,
+    frames: [],
+    init: true,
+    position: undefined,
+    scale: undefined
+};
+exports.createSpriteEntity = (parent, { position = new Vector3(0, 0, 0), scale = new Vector3(1, 1, 1), uvs }) => {
+    const entity = new Entity();
+    const plane = new PlaneShape();
+    plane.withCollisions = false;
+    plane.isPointerBlocker = false;
+    const transform = new Transform({
+        position,
+        scale
+    });
+    plane.uvs = uvs;
+    entity.addComponent(plane);
+    entity.addComponent(SpriteMaterial_1.spriteMaterial);
+    entity.addComponent(transform);
+    entity.setParent(parent);
+    return {
+        show: () => {
+            plane.visible = true;
+        },
+        hide: () => {
+            plane.visible = false;
+        },
+        getEntity: () => entity,
+        getShape: () => plane,
+        getTransform: () => transform,
+        updateUvs: (uvs) => plane.uvs = uvs
+    };
+};
+class SpriteAnimationSystem {
+    constructor(root, globalOptions = defaultOptions) {
+        const { scale, time, position, frames, init } = globalOptions;
+        this.globalOptions = Object.assign(Object.assign({}, defaultOptions), globalOptions);
+        this.root = root;
+        this.setInitialState();
+        this.sprite = new Entity();
+        this.plane = new PlaneShape();
+        this.sprite.addComponent(SpriteMaterial_1.spriteMaterial);
+        this.sprite.addComponent(this.plane);
+        if (position || scale)
+            this.sprite.addComponent(new Transform({ scale, position }));
+        this.plane.uvs = frames[0].uvs;
+        engine.addSystem(this);
+    }
+    setPosition(vector) {
+        this.sprite.getComponent(Transform).position.set(vector.x, vector.y, vector.z);
+    }
+    getPosition() {
+        return this.sprite.getComponent(Transform).position;
+    }
+    setRotation(angle) {
+        this.sprite.getComponent(Transform).rotation.setEuler(0, 0, angle);
+    }
+    addComponentOrReplace(Component) {
+        this.sprite.addComponentOrReplace(Component);
+    }
+    addComponent(Component) {
+        this.sprite.addComponent(Component);
+    }
+    removeComponent(Component) {
+        this.sprite.removeComponent(Component);
+    }
+    init() {
+        this.state.initialized = true;
+        this.sprite.setParent(this.root);
+    }
+    nextFrame() {
+        this.state.currentFrame++;
+        if (this.state.currentFrame >= this.state.playtrack.length - 1 && this.state.playing && !this.state.loop)
+            this.state.playing = false;
+        if (this.state.currentFrame >= this.state.playtrack.length) {
+            if (this.state.loop) {
+                this.state.currentFrame = 0;
+            }
+            else {
+                this.state.currentFrame = this.state.playtrack.length - 1;
+            }
+        }
+        this.plane.uvs = this.globalOptions.frames[this.state.playtrack[this.state.currentFrame]].uvs;
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        if (this.state.playing) {
+            this.state.dtCount += dt;
+            if (this.state.dtCount >= this.state.time) {
+                this.state.dtCount = 0;
+                this.nextFrame();
+            }
+        }
+        else {
+            this.state.dtCount = 0;
+        }
+    }
+    play(frames, options) {
+        this.state.playtrack = frames;
+        this.state.dtCount = 0;
+        this.state.currentFrame = -1;
+        this.state.initialized = true;
+        this.state.playing = true;
+        this.state.end = frames.length - 1;
+        this.state.time = (options === null || options === void 0 ? void 0 : options.time) || this.globalOptions.time;
+        this.state.loop = (options === null || options === void 0 ? void 0 : options.loop) || false;
+        this.nextFrame();
+    }
+    stop(frame = 0) {
+        this.plane.uvs = this.globalOptions.frames[0].uvs;
+        this.state.playing = false;
+    }
+    destroy() {
+        engine.removeSystem(this);
+    }
+    setInitialState() {
+        this.state = {
+            initialized: false,
+            playing: false,
+            currentFrame: 0,
+            dtCount: 0,
+            start: 0,
+            end: 0,
+            loop: false,
+            time: this.globalOptions.time || 0.5,
+            playtrack: [0]
+        };
+    }
+    resetState() {
+        this.state = Object.assign(Object.assign({}, this.state), { playing: false });
+    }
+}
+exports.SpriteAnimationSystem = SpriteAnimationSystem;
+exports.getSpriteUv = (index, offsetIndex = 0, width = 64, height = width) => {
+    let spriteCols = 1024 / width;
+    let spriteRows = 1024 / height;
+    let currentSpriteCell = index + offsetIndex;
+    let colFactor = 1 / spriteCols;
+    let rowFactor = 1 / spriteRows;
+    let currRowStart = spriteRows - Math.floor((currentSpriteCell - 1) / spriteCols);
+    let currColStart = Math.floor((currentSpriteCell - 1) % spriteCols);
+    const A = (currColStart) * (colFactor);
+    const B = (currColStart + 1) * (colFactor);
+    const C = (currRowStart - 1) * (rowFactor);
+    const D = (currRowStart) * (rowFactor);
+    return [
+        0, 0, 0, 0, 0, 0, 0, 0,
+        B,
+        C,
+        A,
+        C,
+        A,
+        D,
+        B,
+        D,
+    ];
+};
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.loadTexture = exports.spriteMaterial = void 0;
+exports.spriteMaterial = new Material();
+exports.loadTexture = () => {
+    const spriteUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}images/sprite3.png`;
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeSoundsFromEntity = exports.addSoundsToEntity = exports.stopAllSounds = exports.stopSound = exports.isMusic = exports.playOnce = exports.playLoop = exports.isPlaying = exports.toggleMusic = exports.setTotalMute = exports.loadSounds = void 0;
+let sources = {};
+let music = [];
+exports.loadSounds = () => {
+    const soundBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
+    const errorClip = new AudioClip(`${soundBaseUrl}sounds/error.mp3`);
+    const music2 = new AudioClip(`${soundBaseUrl}sounds/music2b.mp3`);
+    const vs = new AudioClip(`${soundBaseUrl}sounds/vs.mp3`);
+    const pwned = new AudioClip(`${soundBaseUrl}sounds/pwned.mp3`);
+    const race = new AudioClip(`${soundBaseUrl}sounds/race.mp3`);
+    const ok = new AudioClip(`${soundBaseUrl}sounds/ok.mp3`);
+    const wow = new AudioClip(`${soundBaseUrl}sounds/wow.mp3`);
+    const swing = new AudioClip(`${soundBaseUrl}sounds/swing.mp3`);
+    const battle = new AudioClip(`${soundBaseUrl}sounds/battle.mp3`);
+    const money = new AudioClip(`${soundBaseUrl}sounds/money.mp3`);
+    const jump = new AudioClip(`${soundBaseUrl}sounds/jump.mp3`);
+    const readygo = new AudioClip(`${soundBaseUrl}sounds/readygo.mp3`);
+    const hit = new AudioClip(`${soundBaseUrl}sounds/hit.mp3`);
+    const errorSrc = new AudioSource(errorClip);
+    const music2Src = new AudioSource(music2);
+    const vsSrc = new AudioSource(vs);
+    const pwnedSrc = new AudioSource(pwned);
+    const raceSrc = new AudioSource(race);
+    const okSrc = new AudioSource(ok);
+    const wowSrc = new AudioSource(wow);
+    const swingSrc = new AudioSource(swing);
+    const battleSrc = new AudioSource(battle);
+    const moneySrc = new AudioSource(money);
+    const jumpSrc = new AudioSource(jump);
+    const readygoSrc = new AudioSource(readygo);
+    const hitSrc = new AudioSource(hit);
+    sources = {
+        fail: errorSrc,
+        music2: music2Src,
+        vs: vsSrc,
+        pwned: pwnedSrc,
+        race: raceSrc,
+        ok: okSrc,
+        wow: wowSrc,
+        swing: swingSrc,
+        battle: battleSrc,
+        money: moneySrc,
+        jump: jumpSrc,
+        readygo: readygoSrc,
+        hit: hitSrc
+    };
+    music = [
+        sources.music2, sources.pwned, sources.race, sources.battle, sources.money
+    ];
+    music.forEach((src) => {
+        src.volume = 0.5;
+    });
+};
+const state = {
+    music: true,
+    fx: true,
+    totalMute: false
+};
+exports.setTotalMute = (value) => {
+    state.totalMute = value;
+    if (!value) {
+        Object.values(sources).forEach(source => {
+            if (exports.isMusic(source)) {
+                source.volume = (!state.music) ? 0 : 0.5;
+            }
+            else {
+                source.volume = 1;
+            }
+        });
+    }
+    else {
+        Object.values(sources).forEach(source => {
+            source.volume = 0;
+        });
+    }
+};
+exports.toggleMusic = () => {
+    state.music = !state.music;
+    music.forEach((src) => {
+        src.volume = (!state.music || state.totalMute) ? 0 : 0.5;
+    });
+};
+exports.isPlaying = (type) => sources[type].playing;
+exports.playLoop = (type, { volume } = { volume: undefined }) => {
+    sources[type].loop = true;
+    sources[type].playing = true;
+};
+exports.playOnce = (type, { volume } = { volume: undefined }) => {
+    sources[type].playOnce();
+    if (volume !== undefined && !(~music.indexOf(sources[type]))) {
+        sources[type].volume = volume;
+    }
+};
+exports.isMusic = (source) => {
+    return ~music.indexOf(source);
+};
+exports.stopSound = (type) => {
+    sources[type].playing = false;
+};
+exports.stopAllSounds = () => {
+    Object.values(sources).forEach(s => s.playing = false);
+};
+exports.addSoundsToEntity = (entity) => {
+    Object.values(sources).forEach((audioSrc) => {
+        const soundEntity = new Entity();
+        soundEntity.setParent(entity);
+        soundEntity.addComponent(audioSrc);
+        audioSrc.volume = 1;
+    });
+};
+exports.removeSoundsFromEntity = (entity) => {
+    Object.values(sources).forEach((audioSrc) => {
+    });
+};
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.seedGen = void 0;
+exports.seedGen = {
+    create: (seed) => {
+        let value = seed;
+        return {
+            random: () => {
+                value = value * 16807 % 2147483647;
+                return value / 2147483647;
+            }
+        };
+    }
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sleep = exports.createUI = exports.createRoundResult = exports.createTimeResult = exports.createPlayerAnswer = void 0;
+const SpriteAnimation_1 = __webpack_require__(0);
+const answerSpriteIndex = {
+    player1: {
+        correct: 1,
+        wrong: 3
+    },
+    player2: {
+        correct: 2,
+        wrong: 4
+    }
+};
+const offsetSpriteIndex = (512 / 16) * (1024 / 16) + (320 / 16);
+exports.createPlayerAnswer = (root, { player, size = 16 }) => {
+    const wrapperEntity = new Entity();
+    wrapperEntity.addComponent(new Transform({
+        scale: new Vector3(0.5, 0.5, 1),
+        position: new Vector3(player === 1 ? -0.3 : 0.3, -10, -0.01)
+    }));
+    const sprite = SpriteAnimation_1.createSpriteEntity(wrapperEntity, {
+        uvs: SpriteAnimation_1.getSpriteUv(answerSpriteIndex[`player${player}`].correct, offsetSpriteIndex, 16, 16),
+        position: new Vector3(0, 0, -0.001)
+    });
+    wrapperEntity.setParent(root);
+    const setSprite = (isCorrectAnswer) => {
+        let index = 5;
+        if (isCorrectAnswer) {
+            index = answerSpriteIndex[`player${player}`].correct;
+        }
+        else {
+            index = answerSpriteIndex[`player${player}`].wrong;
+        }
+        sprite.getShape().uvs = SpriteAnimation_1.getSpriteUv(index, offsetSpriteIndex, 16, 16);
+    };
+    const show = () => {
+        sprite.getShape().visible = true;
+    };
+    const hide = () => {
+        sprite.getShape().visible = false;
+    };
+    return {
+        wrapperEntity,
+        sprite,
+        setSprite,
+        show,
+        hide
+    };
+};
+exports.createTimeResult = (root, { player, position = new Vector3(player === 1 ? -2.4 : 2.4, 0.1, -0.007), fontSize = 2.5 }) => {
+    const entity = new Entity();
+    const text = new TextShape();
+    const clock = SpriteAnimation_1.createSpriteEntity(entity, {
+        uvs: SpriteAnimation_1.getSpriteUv(25, (512 / 16) * (1024 / 16), 16, 16),
+        scale: new Vector3(0.25, 0.25, 1),
+        position: new Vector3(player === 1 ? -0.25 : 0.25, 0.25 / 2, 0)
+    });
+    text.isPointerBlocker = false;
+    text.hTextAlign = player === 1 ? "left" : "right";
+    text.vTextAlign = "bottom";
+    text.fontSize = fontSize;
+    text.font = new Font(Fonts.SanFrancisco_Heavy);
+    text.shadowOffsetX = 2;
+    text.shadowOffsetY = 2;
+    text.shadowColor = Color3.FromHexString("#000000");
+    text.withCollisions = false;
+    const transform = new Transform({
+        position
+    });
+    entity.addComponent(transform);
+    entity.addComponent(text);
+    entity.setParent(root);
+    const show = () => {
+        text.visible = true;
+        clock.getShape().visible = true;
+    };
+    const hide = () => {
+        text.visible = false;
+        text.value = "";
+        clock.getShape().visible = false;
+    };
+    const update = (timeMs) => {
+        text.value = (Math.floor(timeMs * 10000) / 10000 / 1000).toString();
+    };
+    return {
+        show,
+        hide,
+        update,
+        getTransform: () => transform,
+        getEntity: () => entity
+    };
+};
+exports.createRoundResult = (root, { player, position = new Vector3(player === 1 ? -2 : 2, 3, -0.007) }) => {
+    const spriteOffset = ((416 / 32) * (1024 / 128));
+    const PIXEL = 4 / 128 / 2;
+    const sprite = SpriteAnimation_1.createSpriteEntity(root, {
+        uvs: SpriteAnimation_1.getSpriteUv(4 + 8, spriteOffset, 128, 32),
+        scale: new Vector3(PIXEL * 128, PIXEL * 32, 1),
+        position
+    });
+    const show = () => {
+        sprite.getShape().visible = true;
+    };
+    const hide = () => {
+        sprite.getShape().visible = false;
+    };
+    const update = (isWinner) => {
+        if (isWinner) {
+            sprite.getShape().uvs = SpriteAnimation_1.getSpriteUv(4 + 8, spriteOffset, 128, 32);
+        }
+        else {
+            sprite.getShape().uvs = SpriteAnimation_1.getSpriteUv(4, spriteOffset, 128, 32);
+        }
+    };
+    return {
+        show,
+        hide,
+        update,
+        getTransform: () => sprite.getTransform(),
+        getEntity: () => sprite.getEntity()
+    };
+};
+exports.createUI = (root, { position } = { position: undefined }) => {
+    const timeResult1 = exports.createTimeResult(root, { player: 1 });
+    const timeResult2 = exports.createTimeResult(root, { player: 2 });
+    timeResult1.hide();
+    timeResult2.hide();
+    const scoreText1 = new TextShape("0");
+    const scoreText2 = new TextShape("0");
+    scoreText1.withCollisions = scoreText2.withCollisions = false;
+    scoreText1.isPointerBlocker = scoreText2.isPointerBlocker = false;
+    scoreText1.font = scoreText2.font = new Font(Fonts.SanFrancisco_Heavy);
+    scoreText1.fontSize = scoreText2.fontSize = 2.5;
+    scoreText1.vTextAlign = scoreText2.vTextAlign = "bottom";
+    scoreText1.hTextAlign = "right";
+    scoreText2.hTextAlign = "left";
+    const score1 = new Entity();
+    const score2 = new Entity();
+    score1.addComponent(scoreText1);
+    score1.addComponent(new Transform({ position: new Vector3(-0.5, position ? 0.1 + position.y : 0.1, -0.003) }));
+    score2.addComponent(scoreText2);
+    score2.addComponent(new Transform({ position: new Vector3(0.5, position ? 0.1 + position.y : 0.1, -0.003) }));
+    score1.setParent(root);
+    score2.setParent(root);
+    const board = SpriteAnimation_1.createSpriteEntity(root, {
+        position: new Vector3(0, position ? 0.5 + position.y : 0.5, -0.001),
+        scale: new Vector3(6, 1, 1),
+        uvs: SpriteAnimation_1.getSpriteUv(2, (384 / 32) * (1024 / 192), 192, 32)
+    });
+    const updateTime = ({ player, time }) => {
+        if (player === 1) {
+            timeResult1.update(time);
+            timeResult1.show();
+        }
+        else {
+            timeResult2.update(time);
+            timeResult2.show();
+        }
+    };
+    const updateScore = ({ player, score }) => {
+        if (typeof score === "undefined")
+            return;
+        if (player === 1) {
+            scoreText1.value = score.toString();
+        }
+        else {
+            scoreText2.value = score.toString();
+        }
+    };
+    const hideScore = () => {
+        scoreText1.value = scoreText2.value = "";
+    };
+    const hideTime = () => {
+        timeResult1.hide();
+        timeResult2.hide();
+    };
+    const showTime = () => {
+    };
+    const show = () => {
+        board.getShape().visible = true;
+    };
+    const hide = () => {
+        board.getShape().visible = false;
+    };
+    return {
+        updateTime,
+        updateScore,
+        hideTime,
+        showTime,
+        hideScore,
+        show,
+        hide
+    };
+};
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+exports.sleep = sleep;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.showSpritePanel = exports.hideSpritePanel = exports.updateSpritePanel = exports.createSpritePanel = void 0;
+const SpriteAnimation_1 = __webpack_require__(0);
+const SpriteMaterial_1 = __webpack_require__(1);
+const spriteShape = new PlaneShape();
+spriteShape.withCollisions = false;
+spriteShape.isPointerBlocker = false;
+const spriteTransform = new Transform({ position: new Vector3(0, 2, -0.001), scale: new Vector3(6, 4, 1) });
+exports.createSpritePanel = (root) => {
+    const spritePanel = new Entity();
+    spritePanel.addComponent(spriteShape);
+    spritePanel.addComponent(SpriteMaterial_1.spriteMaterial);
+    spritePanel.addComponent(spriteTransform);
+    spritePanel.setParent(root);
+};
+exports.updateSpritePanel = ({ uvs = null, width = null, height = null, col = null, row = null, canvasWidth = null, scale = null }) => {
+    if (uvs) {
+        spriteShape.uvs = uvs;
+    }
+    else {
+        spriteShape.uvs = SpriteAnimation_1.getSpriteUv(1024 / width * row + col, 0, width, height);
+    }
+    if (canvasWidth) {
+        spriteTransform.scale.set(canvasWidth, spriteTransform.scale.y, spriteTransform.scale.z);
+    }
+    if (scale) {
+        spriteTransform.scale.set(scale.x, scale.y, scale.z);
+    }
+    else {
+        spriteTransform.scale.set(6, 4, 1);
+    }
+};
+exports.hideSpritePanel = () => {
+    spriteShape.visible = false;
+    spriteTransform.scale.set(6, 4, 1);
+};
+exports.showSpritePanel = () => {
+    spriteShape.visible = true;
+};
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTextPanelValue = exports.updateTextPanel = exports.createTextPanel = void 0;
+let text = null;
+const textTransform = new Transform({ position: new Vector3(0, 4, -0.01) });
+exports.createTextPanel = (root, textValue) => {
+    const panel = new Entity();
+    text = new TextShape();
+    text.value = textValue;
+    text.vTextAlign = "top";
+    text.fontSize = 3;
+    text.font = new Font(Fonts.SanFrancisco_Heavy);
+    text.shadowOffsetX = 2;
+    text.shadowOffsetY = 2;
+    text.shadowColor = Color3.FromHexString("#000000");
+    panel.addComponent(textTransform);
+    panel.addComponent(text);
+    panel.setParent(root);
+};
+exports.updateTextPanel = (options) => {
+    if (options.bottom) {
+        text.vTextAlign = "bottom";
+        textTransform.position.set(textTransform.position.x, 0, textTransform.position.z);
+    }
+    else {
+        text.vTextAlign = "top";
+        textTransform.position.set(textTransform.position.x, 4, textTransform.position.z);
+    }
+    if (options.hTextAlign === "left") {
+        text.hTextAlign = "left";
+        textTransform.position.set(-3, textTransform.position.y, textTransform.position.z);
+    }
+    else {
+        text.hTextAlign = "center";
+        textTransform.position.set(0, textTransform.position.y, textTransform.position.z);
+    }
+    text.color = options.color || Color3.White();
+    Object.assign(text, { hTextAlign: "center" }, options, { value: `${options.value}` });
+};
+exports.getTextPanelValue = () => text.value;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TransformSystem = void 0;
+const move_1 = __webpack_require__(15);
+const rotate_1 = __webpack_require__(23);
+const scale_1 = __webpack_require__(24);
+const followpath_1 = __webpack_require__(25);
+const keeprotating_1 = __webpack_require__(26);
+class TransformSystem {
+    constructor() {
+        this._components = [];
+        TransformSystem._instance = this;
+        this._components.push(move_1.MoveTransformComponent);
+        this._components.push(rotate_1.RotateTransformComponent);
+        this._components.push(scale_1.ScaleTransformComponent);
+        this._components.push(followpath_1.FollowPathComponent);
+        this._components.push(keeprotating_1.KeepRotatingComponent);
+    }
+    static createAndAddToEngine() {
+        if (this._instance == null) {
+            this._instance = new TransformSystem();
+            engine.addSystem(this._instance);
+        }
+        return this._instance;
+    }
+    static registerCustomComponent(component) {
+        this.createAndAddToEngine()._components.push(component);
+    }
+    update(dt) {
+        this._components.forEach(component => {
+            this.updateComponent(dt, component);
+        });
+    }
+    updateComponent(dt, component) {
+        const group = engine.getComponentGroup(component, Transform);
+        group.entities.forEach(entity => {
+            const transform = entity.getComponent(Transform);
+            const comp = entity.getComponent(component);
+            comp.update(dt);
+            comp.assignValueToTransform(transform);
+            if (comp.hasFinished()) {
+                entity.removeComponent(comp);
+                if (comp.onFinishCallback != null)
+                    comp.onFinishCallback();
+            }
+        });
+    }
+}
+exports.TransformSystem = TransformSystem;
+TransformSystem._instance = null;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PART_TYPE_OFFSET_Y = exports.PART_OFFSET_INDEX = exports.PART_SIZE_HEIGHT = exports.PART_SIZE_WIDTH = void 0;
+exports.PART_SIZE_WIDTH = {
+    shirt: 64,
+    pants: 64,
+    hair: 64,
+    glasses: 64
+};
+exports.PART_SIZE_HEIGHT = {
+    shirt: 64,
+    pants: 64,
+    hair: 64,
+    glasses: 64
+};
+exports.PART_OFFSET_INDEX = {
+    shirt: (256 / 64) * (1024 / 64),
+    pants: (320 / 64) * (1024 / 64),
+    hair: (896 / 64) * (1024 / 64),
+    glasses: (832 / 64) * (1024 / 64)
+};
+exports.PART_TYPE_OFFSET_Y = {
+    shirt: -0.2,
+    pants: +0.2,
+    hair: 0,
+    glasses: 0
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTimeSinceStart = void 0;
+exports.getTimeSinceStart = (startTime) => {
+    return Date.now() - startTime;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++)
+        s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ArraySchema = void 0;
+var ArraySchema = (function (_super) {
+    __extends(ArraySchema, _super);
+    function ArraySchema() {
+        var items = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            items[_i] = arguments[_i];
+        }
+        var _this = _super.apply(this, items) || this;
+        Object.setPrototypeOf(_this, Object.create(ArraySchema.prototype));
+        Object.defineProperties(_this, {
+            $sorting: { value: undefined, enumerable: false, writable: true },
+            $changes: { value: undefined, enumerable: false, writable: true },
+            onAdd: { value: undefined, enumerable: false, writable: true },
+            onRemove: { value: undefined, enumerable: false, writable: true },
+            onChange: { value: undefined, enumerable: false, writable: true },
+            triggerAll: {
+                value: function () {
+                    if (!_this.onAdd) {
+                        return;
+                    }
+                    for (var i = 0; i < _this.length; i++) {
+                        _this.onAdd(_this[i], i);
+                    }
+                }
+            },
+            toJSON: {
+                value: function () {
+                    var arr = [];
+                    for (var i = 0; i < _this.length; i++) {
+                        var objAt = _this[i];
+                        arr.push((typeof (objAt.toJSON) === "function")
+                            ? objAt.toJSON()
+                            : objAt);
+                    }
+                    return arr;
+                }
+            },
+            clone: {
+                value: function (isDecoding) {
+                    var cloned;
+                    if (isDecoding) {
+                        cloned = ArraySchema.of.apply(ArraySchema, _this);
+                        cloned.onAdd = _this.onAdd;
+                        cloned.onRemove = _this.onRemove;
+                        cloned.onChange = _this.onChange;
+                    }
+                    else {
+                        cloned = new (ArraySchema.bind.apply(ArraySchema, __spreadArrays([void 0], _this.map(function (item) {
+                            if (typeof (item) === "object") {
+                                return item.clone();
+                            }
+                            else {
+                                return item;
+                            }
+                        }))))();
+                    }
+                    return cloned;
+                }
+            }
+        });
+        return _this;
+    }
+    Object.defineProperty(ArraySchema, Symbol.species, {
+        get: function () { return ArraySchema; },
+        enumerable: false,
+        configurable: true
+    });
+    ArraySchema.prototype.sort = function (compareFn) {
+        this.$sorting = true;
+        _super.prototype.sort.call(this, compareFn);
+        if (this.$changes) {
+            var changes = Array.from(this.$changes.changes);
+            for (var _i = 0, changes_1 = changes; _i < changes_1.length; _i++) {
+                var key = changes_1[_i];
+                var previousIndex = this.$changes.getIndex(this[key]);
+                if (previousIndex !== undefined) {
+                    this.$changes.mapIndexChange(this[key], previousIndex);
+                }
+                this.$changes.mapIndex(this[key], key);
+            }
+        }
+        this.$sorting = false;
+        return this;
+    };
+    ArraySchema.prototype.filter = function (callbackfn, thisArg) {
+        var filtered = _super.prototype.filter.call(this, callbackfn);
+        filtered.$changes = this.$changes.clone();
+        return filtered;
+    };
+    ArraySchema.prototype.splice = function (start, deleteCount) {
+        var insert = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            insert[_i - 2] = arguments[_i];
+        }
+        var removedItems = Array.prototype.splice.apply(this, arguments);
+        var movedItems = Array.prototype.filter.call(this, function (item, idx) {
+            return idx >= start + deleteCount - 1;
+        });
+        removedItems.map(function (removedItem) {
+            var $changes = removedItem && removedItem.$changes;
+            if ($changes && $changes.parent) {
+                $changes.parent.deleteIndex(removedItem);
+                delete $changes.parent;
+            }
+        });
+        movedItems.forEach(function (movedItem) {
+            var $changes = movedItem && movedItem.$changes;
+            if ($changes) {
+                $changes.parentField--;
+            }
+        });
+        return removedItems;
+    };
+    return ArraySchema;
+}(Array));
+exports.ArraySchema = ArraySchema;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MapSchema = void 0;
+var MapSchema = (function () {
+    function MapSchema(obj) {
+        var _this = this;
+        if (obj === void 0) {
+            obj = {};
+        }
+        for (var key in obj) {
+            this[key] = obj[key];
+        }
+        Object.defineProperties(this, {
+            $changes: { value: undefined, enumerable: false, writable: true },
+            onAdd: { value: undefined, enumerable: false, writable: true },
+            onRemove: { value: undefined, enumerable: false, writable: true },
+            onChange: { value: undefined, enumerable: false, writable: true },
+            clone: {
+                value: function (isDecoding) {
+                    var cloned;
+                    if (isDecoding) {
+                        cloned = Object.assign(new MapSchema(), _this);
+                        cloned.onAdd = _this.onAdd;
+                        cloned.onRemove = _this.onRemove;
+                        cloned.onChange = _this.onChange;
+                    }
+                    else {
+                        var cloned_1 = new MapSchema();
+                        for (var key in _this) {
+                            if (typeof (_this[key]) === "object") {
+                                cloned_1[key] = _this[key].clone();
+                            }
+                            else {
+                                cloned_1[key] = _this[key];
+                            }
+                        }
+                    }
+                    return cloned;
+                }
+            },
+            triggerAll: {
+                value: function () {
+                    if (!_this.onAdd) {
+                        return;
+                    }
+                    for (var key in _this) {
+                        _this.onAdd(_this[key], key);
+                    }
+                }
+            },
+            toJSON: {
+                value: function () {
+                    var map = {};
+                    for (var key in _this) {
+                        map[key] = (typeof (_this[key].toJSON) === "function")
+                            ? _this[key].toJSON()
+                            : _this[key];
+                    }
+                    return map;
+                }
+            },
+            _indexes: { value: new Map(), enumerable: false, writable: true },
+            _updateIndexes: {
+                value: function (allKeys) {
+                    var index = 0;
+                    var indexes = new Map();
+                    for (var _i = 0, allKeys_1 = allKeys; _i < allKeys_1.length; _i++) {
+                        var key = allKeys_1[_i];
+                        indexes.set(key, index++);
+                    }
+                    _this._indexes = indexes;
+                }
+            },
+        });
+    }
+    return MapSchema;
+}());
+exports.MapSchema = MapSchema;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Interpolate = exports.InterpolationType = void 0;
+var InterpolationType;
+(function (InterpolationType) {
+    InterpolationType[InterpolationType["LINEAR"] = 0] = "LINEAR";
+    InterpolationType[InterpolationType["EASEINQUAD"] = 1] = "EASEINQUAD";
+    InterpolationType[InterpolationType["EASEOUTQUAD"] = 2] = "EASEOUTQUAD";
+    InterpolationType[InterpolationType["EASEQUAD"] = 3] = "EASEQUAD";
+})(InterpolationType = exports.InterpolationType || (exports.InterpolationType = {}));
+function Interpolate(type, t) {
+    switch (type) {
+        case InterpolationType.LINEAR:
+            return InterpolateLinear(t);
+        case InterpolationType.EASEINQUAD:
+            return InterpolateEaseInQuad(t);
+        case InterpolationType.EASEOUTQUAD:
+            return InterpolateEaseOutQuad(t);
+        case InterpolationType.EASEQUAD:
+            return InterpolateEaseQuad(t);
+        default:
+            return InterpolateLinear(t);
+    }
+}
+exports.Interpolate = Interpolate;
+function InterpolateLinear(t) {
+    return t;
+}
+function InterpolateEaseInQuad(t) {
+    return t * t;
+}
+function InterpolateEaseOutQuad(t) {
+    return t * (2 - t);
+}
+function InterpolateEaseQuad(t) {
+    return (t * t) / (2.0 * (t * t - t) + 1.0);
+}
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Schema = void 0;
+var spec_1 = __webpack_require__(42);
+var encode = __webpack_require__(40);
+var decode = __webpack_require__(41);
+var ArraySchema_1 = __webpack_require__(10);
+var MapSchema_1 = __webpack_require__(11);
+var ChangeTree_1 = __webpack_require__(45);
+var EventEmitter_1 = __webpack_require__(86);
+var EncodeSchemaError = (function (_super) {
+    __extends(EncodeSchemaError, _super);
+    function EncodeSchemaError() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return EncodeSchemaError;
+}(Error));
+function assertType(value, type, klass, field) {
+    var typeofTarget;
+    var allowNull = false;
+    switch (type) {
+        case "number":
+        case "int8":
+        case "uint8":
+        case "int16":
+        case "uint16":
+        case "int32":
+        case "uint32":
+        case "int64":
+        case "uint64":
+        case "float32":
+        case "float64":
+            typeofTarget = "number";
+            if (isNaN(value)) {
+                console.log("trying to encode \"NaN\" in " + klass.constructor.name + "#" + field);
+            }
+            break;
+        case "string":
+            typeofTarget = "string";
+            allowNull = true;
+            break;
+        case "boolean":
+            return;
+    }
+    if (typeof (value) !== typeofTarget && (!allowNull || (allowNull && value !== null))) {
+        var foundValue = "'" + JSON.stringify(value) + "'" + (value && value.constructor && " (" + value.constructor.name + ")");
+        throw new EncodeSchemaError("a '" + typeofTarget + "' was expected, but " + foundValue + " was provided in " + klass.constructor.name + "#" + field);
+    }
+}
+function assertInstanceType(value, type, klass, field) {
+    if (!(value instanceof type)) {
+        throw new EncodeSchemaError("a '" + type.name + "' was expected, but '" + value.constructor.name + "' was provided in " + klass.constructor.name + "#" + field);
+    }
+}
+function encodePrimitiveType(type, bytes, value, klass, field) {
+    assertType(value, type, klass, field);
+    var encodeFunc = encode[type];
+    if (encodeFunc) {
+        encodeFunc(bytes, value);
+    }
+    else {
+        throw new EncodeSchemaError("a '" + type + "' was expected, but " + value + " was provided in " + klass.constructor.name + "#" + field);
+    }
+}
+function decodePrimitiveType(type, bytes, it) {
+    return decode[type](bytes, it);
+}
+var Schema = (function () {
+    function Schema() {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        Object.defineProperties(this, {
+            $changes: {
+                value: new ChangeTree_1.ChangeTree(this._indexes),
+                enumerable: false,
+                writable: true
+            },
+            $listeners: {
+                value: {},
+                enumerable: false,
+                writable: true
+            },
+        });
+        var descriptors = this._descriptors;
+        if (descriptors) {
+            Object.defineProperties(this, descriptors);
+        }
+    }
+    Schema.onError = function (e) {
+        console.error(e);
+    };
+    Object.defineProperty(Schema.prototype, "_schema", {
+        get: function () { return this.constructor._schema; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "_descriptors", {
+        get: function () { return this.constructor._descriptors; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "_indexes", {
+        get: function () { return this.constructor._indexes; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "_fieldsByIndex", {
+        get: function () { return this.constructor._fieldsByIndex; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "_filters", {
+        get: function () { return this.constructor._filters; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "_deprecated", {
+        get: function () { return this.constructor._deprecated; },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Schema.prototype, "$changed", {
+        get: function () { return this.$changes.changed; },
+        enumerable: false,
+        configurable: true
+    });
+    Schema.prototype.listen = function (attr, callback) {
+        var _this = this;
+        if (!this.$listeners[attr]) {
+            this.$listeners[attr] = new EventEmitter_1.EventEmitter();
+        }
+        this.$listeners[attr].register(callback);
+        return function () {
+            return _this.$listeners[attr].remove(callback);
+        };
+    };
+    Schema.prototype.decode = function (bytes, it) {
+        if (it === void 0) {
+            it = { offset: 0 };
+        }
+        var changes = [];
+        var schema = this._schema;
+        var fieldsByIndex = this._fieldsByIndex;
+        var totalBytes = bytes.length;
+        if (bytes[it.offset] === spec_1.TYPE_ID) {
+            it.offset += 2;
+        }
+        var _loop_1 = function () {
+            var isNil = decode.nilCheck(bytes, it) && ++it.offset;
+            var index = bytes[it.offset++];
+            if (index === spec_1.END_OF_STRUCTURE) {
+                return "break";
+            }
+            var field = fieldsByIndex[index];
+            var _field = "_" + field;
+            var type = schema[field];
+            var value = void 0;
+            var hasChange = false;
+            if (!field) {
+                return "continue";
+            }
+            else if (isNil) {
+                value = null;
+                hasChange = true;
+            }
+            else if (type._schema) {
+                value = this_1[_field] || this_1.createTypeInstance(bytes, it, type);
+                value.decode(bytes, it);
+                hasChange = true;
+            }
+            else if (Array.isArray(type)) {
+                type = type[0];
+                var valueRef_1 = this_1[_field] || new ArraySchema_1.ArraySchema();
+                value = valueRef_1.clone(true);
+                var newLength_1 = decode.number(bytes, it);
+                var numChanges = Math.min(decode.number(bytes, it), newLength_1);
+                var hasRemoval = (value.length > newLength_1);
+                hasChange = (numChanges > 0) || hasRemoval;
+                var hasIndexChange = false;
+                if (hasRemoval) {
+                    Array.prototype.splice.call(value, newLength_1).forEach(function (itemRemoved, i) {
+                        if (itemRemoved && itemRemoved.onRemove) {
+                            try {
+                                itemRemoved.onRemove();
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                        if (valueRef_1.onRemove) {
+                            try {
+                                valueRef_1.onRemove(itemRemoved, newLength_1 + i);
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                    });
+                }
+                for (var i = 0; i < numChanges; i++) {
+                    var newIndex = decode.number(bytes, it);
+                    var indexChangedFrom = void 0;
+                    if (decode.indexChangeCheck(bytes, it)) {
+                        decode.uint8(bytes, it);
+                        indexChangedFrom = decode.number(bytes, it);
+                        hasIndexChange = true;
+                    }
+                    var isNew = (!hasIndexChange && value[newIndex] === undefined) || (hasIndexChange && indexChangedFrom === undefined);
+                    if (type.prototype instanceof Schema) {
+                        var item = void 0;
+                        if (isNew) {
+                            item = this_1.createTypeInstance(bytes, it, type);
+                        }
+                        else if (indexChangedFrom !== undefined) {
+                            item = valueRef_1[indexChangedFrom];
+                        }
+                        else {
+                            item = valueRef_1[newIndex];
+                        }
+                        if (!item) {
+                            item = this_1.createTypeInstance(bytes, it, type);
+                            isNew = true;
+                        }
+                        item.decode(bytes, it);
+                        value[newIndex] = item;
+                    }
+                    else {
+                        value[newIndex] = decodePrimitiveType(type, bytes, it);
+                    }
+                    if (isNew) {
+                        if (valueRef_1.onAdd) {
+                            try {
+                                valueRef_1.onAdd(value[newIndex], newIndex);
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                    }
+                    else if (valueRef_1.onChange) {
+                        try {
+                            valueRef_1.onChange(value[newIndex], newIndex);
+                        }
+                        catch (e) {
+                            Schema.onError(e);
+                        }
+                    }
+                }
+            }
+            else if (type.map) {
+                type = type.map;
+                var valueRef = this_1[_field] || new MapSchema_1.MapSchema();
+                value = valueRef.clone(true);
+                var length = decode.number(bytes, it);
+                hasChange = (length > 0);
+                var hasIndexChange = false;
+                var previousKeys = Object.keys(valueRef);
+                for (var i = 0; i < length; i++) {
+                    if (bytes[it.offset] === undefined ||
+                        bytes[it.offset] === spec_1.END_OF_STRUCTURE) {
+                        break;
+                    }
+                    var isNilItem = decode.nilCheck(bytes, it) && ++it.offset;
+                    var previousKey = void 0;
+                    if (decode.indexChangeCheck(bytes, it)) {
+                        decode.uint8(bytes, it);
+                        previousKey = previousKeys[decode.number(bytes, it)];
+                        hasIndexChange = true;
+                    }
+                    var hasMapIndex = decode.numberCheck(bytes, it);
+                    var isSchemaType = typeof (type) !== "string";
+                    var newKey = (hasMapIndex)
+                        ? previousKeys[decode.number(bytes, it)]
+                        : decode.string(bytes, it);
+                    var item = void 0;
+                    var isNew = (!hasIndexChange && valueRef[newKey] === undefined) || (hasIndexChange && previousKey === undefined && hasMapIndex);
+                    if (isNew && isSchemaType) {
+                        item = this_1.createTypeInstance(bytes, it, type);
+                    }
+                    else if (previousKey !== undefined) {
+                        item = valueRef[previousKey];
+                    }
+                    else {
+                        item = valueRef[newKey];
+                    }
+                    if (isNilItem) {
+                        if (item && item.onRemove) {
+                            try {
+                                item.onRemove();
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                        if (valueRef.onRemove) {
+                            try {
+                                valueRef.onRemove(item, newKey);
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                        delete value[newKey];
+                        continue;
+                    }
+                    else if (!isSchemaType) {
+                        value[newKey] = decodePrimitiveType(type, bytes, it);
+                    }
+                    else {
+                        item.decode(bytes, it);
+                        value[newKey] = item;
+                    }
+                    if (isNew) {
+                        if (valueRef.onAdd) {
+                            try {
+                                valueRef.onAdd(value[newKey], newKey);
+                            }
+                            catch (e) {
+                                Schema.onError(e);
+                            }
+                        }
+                    }
+                    else if (valueRef.onChange) {
+                        try {
+                            valueRef.onChange(value[newKey], newKey);
+                        }
+                        catch (e) {
+                            Schema.onError(e);
+                        }
+                    }
+                }
+            }
+            else {
+                value = decodePrimitiveType(type, bytes, it);
+                hasChange = (value !== this_1[_field]);
+            }
+            if (hasChange && (this_1.onChange || this_1.$listeners[field])) {
+                changes.push({
+                    field: field,
+                    value: value,
+                    previousValue: this_1[_field]
+                });
+            }
+            this_1[_field] = value;
+        };
+        var this_1 = this;
+        while (it.offset < totalBytes) {
+            var state_1 = _loop_1();
+            if (state_1 === "break")
+                break;
+        }
+        this._triggerChanges(changes);
+        return this;
+    };
+    Schema.prototype.encode = function (root, encodeAll, client, bytes) {
+        var _this = this;
+        if (root === void 0) {
+            root = this;
+        }
+        if (encodeAll === void 0) {
+            encodeAll = false;
+        }
+        if (bytes === void 0) {
+            bytes = [];
+        }
+        if (!this.$changes.changed && !encodeAll) {
+            this._encodeEndOfStructure(this, root, bytes);
+            return bytes;
+        }
+        var schema = this._schema;
+        var indexes = this._indexes;
+        var fieldsByIndex = this._fieldsByIndex;
+        var filters = this._filters;
+        var changes = Array.from((encodeAll)
+            ? this.$changes.allChanges
+            : this.$changes.changes).sort();
+        var _loop_2 = function (i, l) {
+            var field = fieldsByIndex[changes[i]] || changes[i];
+            var _field = "_" + field;
+            var type = schema[field];
+            var filter = (filters && filters[field]);
+            var value = this_2[_field];
+            var fieldIndex = indexes[field];
+            if (value === undefined) {
+                encode.uint8(bytes, spec_1.NIL);
+                encode.number(bytes, fieldIndex);
+            }
+            else if (type._schema) {
+                if (client && filter) {
+                    if (!filter.call(this_2, client, value, root)) {
+                        return "continue";
+                    }
+                }
+                if (!value) {
+                    encode.uint8(bytes, spec_1.NIL);
+                    encode.number(bytes, fieldIndex);
+                }
+                else {
+                    encode.number(bytes, fieldIndex);
+                    assertInstanceType(value, type, this_2, field);
+                    this_2.tryEncodeTypeId(bytes, type, value.constructor);
+                    value.encode(root, encodeAll, client, bytes);
+                }
+            }
+            else if (Array.isArray(type)) {
+                var $changes = value.$changes;
+                if (client && filter) {
+                    if (!filter.call(this_2, client, value, root)) {
+                        return "continue";
+                    }
+                }
+                encode.number(bytes, fieldIndex);
+                encode.number(bytes, value.length);
+                var arrayChanges = Array.from((encodeAll)
+                    ? $changes.allChanges
+                    : $changes.changes)
+                    .filter(function (index) { return _this[_field][index] !== undefined; })
+                    .sort(function (a, b) { return a - b; });
+                var numChanges = arrayChanges.length;
+                encode.number(bytes, numChanges);
+                var isChildSchema = typeof (type[0]) !== "string";
+                assertInstanceType(this_2[_field], ArraySchema_1.ArraySchema, this_2, field);
+                for (var j = 0; j < numChanges; j++) {
+                    var index = arrayChanges[j];
+                    var item = this_2[_field][index];
+                    if (isChildSchema) {
+                        encode.number(bytes, index);
+                        if (!encodeAll) {
+                            var indexChange = $changes.getIndexChange(item);
+                            if (indexChange !== undefined) {
+                                encode.uint8(bytes, spec_1.INDEX_CHANGE);
+                                encode.number(bytes, indexChange);
+                            }
+                        }
+                        assertInstanceType(item, type[0], this_2, field);
+                        this_2.tryEncodeTypeId(bytes, type[0], item.constructor);
+                        item.encode(root, encodeAll, client, bytes);
+                    }
+                    else if (item !== undefined) {
+                        encode.number(bytes, index);
+                        encodePrimitiveType(type[0], bytes, item, this_2, field);
+                    }
+                }
+                if (!encodeAll && !client) {
+                    $changes.discard();
+                }
+            }
+            else if (type.map) {
+                var $changes = value.$changes;
+                if (client && filter) {
+                    if (!filter.call(this_2, client, value, root)) {
+                        return "continue";
+                    }
+                }
+                encode.number(bytes, fieldIndex);
+                var keys = Array.from((encodeAll)
+                    ? $changes.allChanges
+                    : $changes.changes);
+                encode.number(bytes, keys.length);
+                var previousKeys = Array.from($changes.allChanges);
+                var isChildSchema = typeof (type.map) !== "string";
+                var numChanges = keys.length;
+                assertInstanceType(this_2[_field], MapSchema_1.MapSchema, this_2, field);
+                for (var i_1 = 0; i_1 < numChanges; i_1++) {
+                    var key = keys[i_1];
+                    var item = this_2[_field][key];
+                    var mapItemIndex = undefined;
+                    if (encodeAll) {
+                        if (item === undefined) {
+                            continue;
+                        }
+                    }
+                    else {
+                        var indexChange = $changes.getIndexChange(item);
+                        if (item && indexChange !== undefined) {
+                            encode.uint8(bytes, spec_1.INDEX_CHANGE);
+                            encode.number(bytes, this_2[_field]._indexes.get(indexChange));
+                        }
+                        mapItemIndex = (!$changes.isDeleted(key) || !item)
+                            ? this_2[_field]._indexes.get(key)
+                            : undefined;
+                    }
+                    var isNil = (item === undefined);
+                    if (isNil) {
+                        encode.uint8(bytes, spec_1.NIL);
+                    }
+                    if (mapItemIndex !== undefined) {
+                        encode.number(bytes, mapItemIndex);
+                    }
+                    else {
+                        encode.string(bytes, key);
+                    }
+                    if (item && isChildSchema) {
+                        assertInstanceType(item, type.map, this_2, field);
+                        this_2.tryEncodeTypeId(bytes, type.map, item.constructor);
+                        item.encode(root, encodeAll, client, bytes);
+                    }
+                    else if (!isNil) {
+                        encodePrimitiveType(type.map, bytes, item, this_2, field);
+                    }
+                }
+                if (!encodeAll && !client) {
+                    $changes.discard();
+                    this_2[_field]._updateIndexes(previousKeys);
+                }
+            }
+            else {
+                if (client && filter) {
+                    if (!filter.call(this_2, client, value, root)) {
+                        return "continue";
+                    }
+                }
+                encode.number(bytes, fieldIndex);
+                encodePrimitiveType(type, bytes, value, this_2, field);
+            }
+        };
+        var this_2 = this;
+        for (var i = 0, l = changes.length; i < l; i++) {
+            _loop_2(i, l);
+        }
+        this._encodeEndOfStructure(this, root, bytes);
+        if (!encodeAll && !client) {
+            this.$changes.discard();
+        }
+        return bytes;
+    };
+    Schema.prototype.encodeFiltered = function (client, bytes) {
+        return this.encode(this, false, client, bytes);
+    };
+    Schema.prototype.encodeAll = function (bytes) {
+        return this.encode(this, true, undefined, bytes);
+    };
+    Schema.prototype.encodeAllFiltered = function (client, bytes) {
+        return this.encode(this, true, client, bytes);
+    };
+    Schema.prototype.clone = function () {
+        var cloned = new (this.constructor);
+        var schema = this._schema;
+        for (var field in schema) {
+            if (typeof (this[field]) === "object" &&
+                typeof (this[field].clone) === "function") {
+                cloned[field] = this[field].clone();
+            }
+            else {
+                cloned[field] = this[field];
+            }
+        }
+        return cloned;
+    };
+    Schema.prototype.triggerAll = function () {
+        var changes = [];
+        var schema = this._schema;
+        for (var field in schema) {
+            if (this[field] !== undefined) {
+                changes.push({
+                    field: field,
+                    value: this[field],
+                    previousValue: undefined
+                });
+            }
+        }
+        try {
+            this._triggerChanges(changes);
+        }
+        catch (e) {
+            Schema.onError(e);
+        }
+    };
+    Schema.prototype.toJSON = function () {
+        var schema = this._schema;
+        var deprecated = this._deprecated;
+        var obj = {};
+        for (var field in schema) {
+            if (!deprecated[field] && this[field] !== null && typeof (this[field]) !== "undefined") {
+                obj[field] = (typeof (this[field].toJSON) === "function")
+                    ? this[field].toJSON()
+                    : this["_" + field];
+            }
+        }
+        return obj;
+    };
+    Schema.prototype.discardAllChanges = function () {
+        var schema = this._schema;
+        var changes = Array.from(this.$changes.changes);
+        var fieldsByIndex = this._fieldsByIndex;
+        for (var index in changes) {
+            var field = fieldsByIndex[index];
+            var type = schema[field];
+            var value = this[field];
+            if (value === undefined) {
+                continue;
+            }
+            if (type._schema) {
+                value.discardAllChanges();
+            }
+            else if (Array.isArray(type)) {
+                for (var i = 0, l = value.length; i < l; i++) {
+                    var index_1 = value[i];
+                    var item = this["_" + field][index_1];
+                    if (typeof (type[0]) !== "string" && item) {
+                        item.discardAllChanges();
+                    }
+                }
+                value.$changes.discard();
+            }
+            else if (type.map) {
+                var keys = value;
+                var mapKeys = Object.keys(this["_" + field]);
+                for (var i = 0; i < keys.length; i++) {
+                    var key = mapKeys[keys[i]] || keys[i];
+                    var item = this["_" + field][key];
+                    if (item instanceof Schema && item) {
+                        item.discardAllChanges();
+                    }
+                }
+                value.$changes.discard();
+            }
+        }
+        this.$changes.discard();
+    };
+    Schema.prototype._encodeEndOfStructure = function (instance, root, bytes) {
+        if (instance !== root) {
+            bytes.push(spec_1.END_OF_STRUCTURE);
+        }
+    };
+    Schema.prototype.tryEncodeTypeId = function (bytes, type, targetType) {
+        if (type._typeid !== targetType._typeid) {
+            encode.uint8(bytes, spec_1.TYPE_ID);
+            encode.uint8(bytes, targetType._typeid);
+        }
+    };
+    Schema.prototype.createTypeInstance = function (bytes, it, type) {
+        if (bytes[it.offset] === spec_1.TYPE_ID) {
+            it.offset++;
+            var anotherType = this.constructor._context.get(decode.uint8(bytes, it));
+            return new anotherType();
+        }
+        else {
+            return new type();
+        }
+    };
+    Schema.prototype._triggerChanges = function (changes) {
+        if (changes.length > 0) {
+            for (var i = 0; i < changes.length; i++) {
+                var change = changes[i];
+                var listener = this.$listeners[change.field];
+                if (listener) {
+                    try {
+                        listener.invoke(change.value, change.previousValue);
+                    }
+                    catch (e) {
+                        Schema.onError(e);
+                    }
+                }
+            }
+            if (this.onChange) {
+                try {
+                    this.onChange(changes);
+                }
+                catch (e) {
+                    Schema.onError(e);
+                }
+            }
+        }
+    };
+    return Schema;
+}());
+exports.Schema = Schema;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseGame = exports.GameScene = void 0;
+let GameScene = class GameScene {
+};
+GameScene = __decorate([
+    Component("game_scene")
+], GameScene);
+exports.GameScene = GameScene;
+class BaseGame {
+    constructor() {
+        this.entity = {};
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null
+        };
+        const entities = engine.getEntitiesWithComponent("game_scene");
+        console.log("entities when constructor", entities, entities.length);
+        Object.keys(entities).forEach((key) => {
+            engine.removeEntity(entities[key]);
+        });
+    }
+    init() {
+    }
+    destroy() {
+    }
+    block() {
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onShareState() {
+    }
+    shareState(sharedState) {
+    }
+    update(dt) {
+    }
+}
+exports.BaseGame = BaseGame;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MoveTransformComponent = void 0;
+const transfromSystem_1 = __webpack_require__(7);
+const interpolation_1 = __webpack_require__(12);
+let MoveTransformComponent = class MoveTransformComponent {
+    constructor(start, end, duration, onFinishCallback, interpolationType = interpolation_1.InterpolationType.LINEAR) {
+        this.start = start;
+        this.end = end;
+        this.normalizedTime = 0;
+        this.lerpTime = 0;
+        this.onFinishCallback = onFinishCallback;
+        this.interpolationType = interpolationType;
+        if (duration != 0) {
+            this.speed = 1 / duration;
+        }
+        else {
+            this.speed = 0;
+            this.normalizedTime = 1;
+            this.lerpTime = 1;
+        }
+        transfromSystem_1.TransformSystem.createAndAddToEngine();
+    }
+    update(dt) {
+        this.normalizedTime = Scalar.Clamp(this.normalizedTime + dt * this.speed, 0, 1);
+        this.lerpTime = interpolation_1.Interpolate(this.interpolationType, this.normalizedTime);
+    }
+    hasFinished() {
+        return this.normalizedTime >= 1;
+    }
+    assignValueToTransform(transform) {
+        transform.position = Vector3.Lerp(this.start, this.end, this.lerpTime);
+    }
+};
+MoveTransformComponent = __decorate([
+    Component('moveTransformComponent')
+], MoveTransformComponent);
+exports.MoveTransformComponent = MoveTransformComponent;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TimerSystem = void 0;
+const interval_1 = __webpack_require__(28);
+const delay_1 = __webpack_require__(27);
+const expire_1 = __webpack_require__(29);
+class TimerSystem {
+    constructor() {
+        this._components = [];
+        TimerSystem._instance = this;
+        this._components.push(interval_1.Interval);
+        this._components.push(delay_1.Delay);
+        this._components.push(expire_1.ExpireIn);
+    }
+    static createAndAddToEngine() {
+        if (this._instance == null) {
+            this._instance = new TimerSystem();
+            engine.addSystem(this._instance);
+        }
+        return this._instance;
+    }
+    static registerCustomComponent(component) {
+        this.createAndAddToEngine()._components.push(component);
+    }
+    update(dt) {
+        this._components.forEach(component => {
+            this.updateComponent(dt, component);
+        });
+    }
+    updateComponent(dt, component) {
+        let record = engine.getEntitiesWithComponent(component);
+        for (const key in record) {
+            if (record.hasOwnProperty(key)) {
+                let entity = record[key];
+                let timerComponent = entity.getComponent(component);
+                timerComponent.elapsedTime += dt;
+                if (timerComponent.elapsedTime >= timerComponent.targetTime) {
+                    timerComponent.onTargetTimeReached(entity);
+                }
+            }
+        }
+    }
+}
+exports.TimerSystem = TimerSystem;
+TimerSystem._instance = null;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeVideoPanel = exports.reproduceVideo = void 0;
+const spriteTransform = new Transform({ position: new Vector3(0, 1.975, -0.001), scale: new Vector3(-5.95, 3.95, 1) });
+const spritePanel = new Entity();
+spritePanel.addComponent(spriteTransform);
+exports.reproduceVideo = (root, id) => {
+    const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
+    const myVideoClip = new VideoClip(`${resourceBaseUrl}video/${id}.mp4`);
+    const myVideoTexture = new VideoTexture(myVideoClip);
+    const myMaterial = new Material();
+    myMaterial.transparencyMode = 1;
+    myMaterial.specularIntensity = 1;
+    myMaterial.roughness = 1;
+    myMaterial.albedoTexture = myVideoTexture;
+    const shape = new PlaneShape();
+    shape.withCollisions = shape.isPointerBlocker = false;
+    spritePanel.addComponentOrReplace(shape);
+    spritePanel.addComponentOrReplace(myMaterial);
+    spritePanel.setParent(root);
+    myVideoTexture.playing = true;
+    myVideoTexture.loop = true;
+};
+exports.removeVideoPanel = () => {
+    spritePanel.setParent(null);
+    engine.removeEntity(spritePanel);
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateTrack = void 0;
+const CostumeGame_1 = __webpack_require__(19);
+const GameRepo_1 = __importDefault(__webpack_require__(21));
+const MathGame_1 = __webpack_require__(32);
+const ObstacleGame_1 = __webpack_require__(31);
+const RotationGame_1 = __webpack_require__(22);
+const DifferentGame_1 = __webpack_require__(33);
+const seed_1 = __webpack_require__(3);
+const FroggerGame_1 = __webpack_require__(34);
+const AttackGame_1 = __webpack_require__(30);
+function generateTrack(seed, minGames) {
+    const randomizer = seed_1.seedGen.create(seed.toString());
+    const NUM_GAMES = minGames;
+    const repoGames = Object.values(GameRepo_1.default);
+    let choosenGames = [];
+    while (choosenGames.length < NUM_GAMES) {
+        const choosenIndex = getRandomIntExcept(0, repoGames.length - 1, choosenGames.map(c => repoGames.indexOf(c)));
+        choosenGames.push(repoGames[choosenIndex]);
+        choosenGames = Array.from(new Set(choosenGames));
+    }
+    console.log("choosenGames", choosenGames.map(c => c.id));
+    return choosenGames.map((choosen, index) => ({ Game: choosen }));
+    return [
+        { Game: CostumeGame_1.CostumeGame },
+        { Game: RotationGame_1.RotationGame },
+        { Game: MathGame_1.MathGame },
+        { Game: AttackGame_1.AttackGame },
+        { Game: DifferentGame_1.DifferentGame },
+        { Game: ObstacleGame_1.ObstacleGame },
+        { Game: FroggerGame_1.FroggerGame },
+        { Game: AttackGame_1.AttackGame }
+    ];
+    function getRandomIntExcept(min, max, except) {
+        let ran = Math.floor(randomizer.random() * (max + 1 - min));
+        if (!except) {
+            return ran;
+        }
+        while (~except.indexOf(ran)) {
+            ran = min + Math.floor(randomizer.random() * (max + 1 - min));
+        }
+        return ran;
+    }
+}
+exports.generateTrack = generateTrack;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CostumeGame = void 0;
+const seed_1 = __webpack_require__(3);
+const BaseGame_1 = __webpack_require__(14);
+const Model_1 = __webpack_require__(49);
+const collectionCreator_1 = __webpack_require__(54);
+const collectionControl_1 = __webpack_require__(55);
+const utils_1 = __webpack_require__(9);
+const SpritePanel_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(2);
+const gameUtils_1 = __webpack_require__(4);
+const SpriteAnimation_1 = __webpack_require__(0);
+const ROUNDS = 3;
+class CostumeGame {
+    constructor(root, { seed, currentPlayer, level, gameIndex }) {
+        this.state = {
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            round: 0,
+            score1: 0,
+            score2: 0,
+            started: false,
+            finished: false,
+            blocked: false,
+            idle: true
+        };
+        this.entity = {};
+        this.completion = { hair: false, glasses: false, shirt: false, pants: false };
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null,
+            onFinishRound: null
+        };
+        this.root = root;
+        this.gameSetup = { currentPlayer, seed, level, gameIndex };
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        this.scene = new Entity();
+        this.scene.addComponent(new BaseGame_1.GameScene());
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.002)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        const modelDefinition = this.modelDefinition = {
+            hair: this.getRandomInt(1, 10),
+            shirt: this.getRandomInt(1, 5),
+            pants: this.getRandomInt(1, 5),
+            glasses: this.getRandomInt(1, 5)
+        };
+        const X_OFFSET = -0.05;
+        this.entity.model = Model_1.createModel(this.scene, {
+            modelDefinition: modelDefinition,
+            position: new Vector3(0 + X_OFFSET, 2, 0),
+            scale: new Vector3(1.5, 1.5, 1),
+            showLabel: "model"
+        });
+        this.dollModel1 = Model_1.createModel(this.scene, {
+            modelDefinition: {
+                hair: 0,
+                shirt: 0,
+                pants: 0,
+                glasses: 0
+            },
+            position: new Vector3(-1.5 + X_OFFSET, 2, 0),
+            scale: new Vector3(1.5, 1.5, 1)
+        });
+        this.dollModel2 = Model_1.createModel(this.scene, {
+            modelDefinition: {
+                hair: 0,
+                shirt: 0,
+                pants: 0,
+                glasses: 0
+            },
+            position: new Vector3(1.5 + X_OFFSET, 2, 0),
+            scale: new Vector3(1.5, 1.5, 1),
+        });
+        this.collection = collectionCreator_1.createCollection(this.getRandomInt.bind(this), modelDefinition);
+        console.log("model", modelDefinition);
+        console.log("this.collection", this.collection);
+        this.collection.forEach((i) => {
+            if (!i) {
+                debugger;
+            }
+        });
+        try {
+            console.log(Array.from(new Set(this.collection.map((i) => `${i && i.type}${i && i.index}`))));
+            if (currentPlayer) {
+                this.collectionControl = collectionControl_1.createCollectionControl(this.scene, {
+                    collection: this.collection,
+                    side: currentPlayer
+                });
+            }
+        }
+        catch (err) {
+            debugger;
+        }
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.primaryButtonCallback = this.primaryButtonCallback.bind(this);
+        this.secondaryButtonCallback = this.secondaryButtonCallback.bind(this);
+        this.clickCallback = this.clickCallback.bind(this);
+        engine.addSystem(this);
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    init() {
+        Sound_1.playLoop("money", { volume: 0.5 });
+        SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(5, 0, 192, 128) });
+        SpritePanel_1.showSpritePanel();
+        this.state.initialized = true;
+    }
+    start() {
+        this.scene.setParent(this.root);
+        this.state.started = true;
+        if (this.gameSetup.currentPlayer) {
+            Input.instance.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, this.primaryButtonCallback);
+            Input.instance.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, this.secondaryButtonCallback);
+            Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, this.clickCallback);
+        }
+    }
+    startRound() {
+        this.state.round++;
+        console.log("startRound");
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.ui.hideTime();
+        this.state.blocked = false;
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        this.state.waitingRound = false;
+        const modelDefinition = this.modelDefinition = {
+            hair: this.getRandomInt(1, 10),
+            shirt: this.getRandomInt(1, 5),
+            pants: this.getRandomInt(1, 5),
+            glasses: this.getRandomInt(1, 5)
+        };
+        Object.keys(modelDefinition).forEach((type) => {
+            this.entity.model.update({ type, index: modelDefinition[type] });
+            this.dollModel1.update({ type, index: 0 });
+            this.dollModel2.update({ type, index: 0 });
+            this.completion[type] = false;
+        });
+        this.collection = collectionCreator_1.createCollection(this.getRandomInt.bind(this), modelDefinition);
+        if (this.gameSetup.currentPlayer) {
+            this.collectionControl = collectionControl_1.createCollectionControl(this.scene, {
+                collection: this.collection,
+                side: this.gameSetup.currentPlayer
+            });
+        }
+    }
+    block() {
+        this.state.blocked = true;
+    }
+    finish({ winner }) {
+        console.log("finish", winner);
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    finishRound({ winner }) {
+        console.log("finishRound", winner);
+        this.state.blocked = true;
+        this.state[`score${winner}`] += 1;
+        this.ui.updateScore({ player: winner, score: this.state[`score${winner}`] });
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this.state.waitingRound = true;
+        this.collectionControl && this.collectionControl.dispose();
+        Object.keys(this.modelDefinition).forEach((type) => {
+            this.entity.model.update({ type, index: 0 });
+        });
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+        return () => this.callbacks.onFinishRound = null;
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+    setRoundStartTime(roundStartTime) {
+        this.state.roundStartTime = roundStartTime;
+    }
+    shareState({ player, completion, timeSinceStart }) {
+        Object.keys(completion).forEach((type) => {
+            if (completion[type]) {
+                this[`dollModel${player}`].update({
+                    type,
+                    index: this.modelDefinition[type]
+                });
+            }
+        });
+        if (timeSinceStart) {
+            this.ui.updateTime({ player, time: timeSinceStart });
+        }
+    }
+    clickCallback() {
+        if (this.state.blocked)
+            return;
+        console.log("collectionControl.getCurrent()", this.collectionControl.getCurrent());
+        const currentPartDefinition = this.collectionControl.getCurrent();
+        if (!currentPartDefinition) {
+            debugger;
+        }
+        if (this.modelDefinition[currentPartDefinition.type] === currentPartDefinition.index) {
+            console.log("YES", currentPartDefinition);
+            Sound_1.playOnce("ok");
+            this[`dollModel${this.gameSetup.currentPlayer}`].update(currentPartDefinition);
+            this.completion[currentPartDefinition.type] = true;
+            if (Object.values(this.completion).every(i => i)) {
+                console.log("COMPLETE", this.completion);
+                const timeSinceStart = utils_1.getTimeSinceStart((this.state.round === 0) ? this.state.startTime : this.state.lastRoundStartTime);
+                this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceStart });
+                this.callbacks.onShareState({ player: this.gameSetup.currentPlayer, completion: this.completion, timeSinceStart });
+                if (this.state.round < ROUNDS - 1) {
+                    this.callbacks.onFinishRound({ time: timeSinceStart, player: this.gameSetup.currentPlayer,
+                        gameIndex: this.gameSetup.gameIndex, roundIndex: this.state.round });
+                }
+                else {
+                    this.callbacks.onFinish({ time: timeSinceStart, isWinner: this.gameSetup.currentPlayer,
+                        gameIndex: this.gameSetup.gameIndex, roundIndex: this.state.round });
+                }
+            }
+            else {
+                this.callbacks.onShareState({ player: this.gameSetup.currentPlayer, completion: this.completion });
+            }
+        }
+        else {
+            console.log("NO");
+            Sound_1.playOnce("fail");
+            this.state.blocked = true;
+            this.collectionControl.showError();
+            setTimeout(() => {
+                this.collectionControl.hideError();
+                this.state.blocked = false;
+            }, 500);
+        }
+    }
+    primaryButtonCallback() {
+        if (this.state.blocked)
+            return;
+        this.collectionControl.previous();
+    }
+    secondaryButtonCallback() {
+        if (this.state.blocked)
+            return;
+        this.collectionControl.next();
+    }
+    destroy() {
+        Sound_1.stopSound("money");
+        SpritePanel_1.hideSpritePanel();
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        engine.removeSystem(this);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.primaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.secondaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.clickCallback);
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        if (!this.state.waitingRound && !this.state.started && Date.now() >= this.state.startTime) {
+            this.start();
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            this.startRound();
+        }
+    }
+    getRandomInt(min, max, except) {
+        const result = min + Math.floor(this.randomizer.random() * (max - min + 1));
+        return (result === except) ? this.getRandomInt(min, max, except) : result;
+    }
+}
+exports.CostumeGame = CostumeGame;
+CostumeGame.id = 'Costume';
+CostumeGame.instructions = `You have to complete the costume
+    before your opponent
+    E,F to roll parts
+    CLICK to select`;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createCross = void 0;
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createCross = (root, { position, scale }) => {
+    const cross = new Entity();
+    const crossShape = new PlaneShape();
+    crossShape.withCollisions = false;
+    cross.addComponent(SpriteMaterial_1.spriteMaterial);
+    crossShape.uvs = SpriteAnimation_1.getSpriteUv(32 * 32 - 31, 0, 32);
+    cross.addComponent(crossShape);
+    const crossTransform = new Transform({ position, scale });
+    cross.addComponent(crossTransform);
+    cross.setParent(root);
+    return {
+        dispose: () => {
+            cross.setParent(null);
+            engine.removeEntity(cross);
+            cross.removeComponent(SpriteMaterial_1.spriteMaterial);
+            cross.removeComponent(crossTransform);
+            cross.removeComponent(crossShape);
+        },
+        hide: () => {
+            crossShape.visible = false;
+        },
+        show: () => {
+            crossShape.visible = true;
+        },
+        setPosition: ({ x, y, z }) => {
+            crossTransform.position.set(x, y, z);
+        }
+    };
+};
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const RotationGame_1 = __webpack_require__(22);
+const AttackGame_1 = __webpack_require__(30);
+const CostumeGame_1 = __webpack_require__(19);
+const ObstacleGame_1 = __webpack_require__(31);
+const MathGame_1 = __webpack_require__(32);
+const SammichGame_1 = __webpack_require__(61);
+const DifferentGame_1 = __webpack_require__(33);
+const FroggerGame_1 = __webpack_require__(34);
+exports.default = {
+    DifferentGame: DifferentGame_1.DifferentGame,
+    AttackGame: AttackGame_1.AttackGame,
+    RotationGame: RotationGame_1.RotationGame,
+    CostumeGame: CostumeGame_1.CostumeGame,
+    ObstacleGame: ObstacleGame_1.ObstacleGame,
+    MathGame: MathGame_1.MathGame,
+    SammichGame: SammichGame_1.SammichGame,
+    FroggerGame: FroggerGame_1.FroggerGame
+};
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RotationGame = void 0;
+const index_1 = __importDefault(__webpack_require__(56));
+const seed_1 = __webpack_require__(3);
+const BaseGame_1 = __webpack_require__(14);
+const utils_1 = __webpack_require__(9);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpritePanel_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(2);
+const SpriteAnimation_1 = __webpack_require__(0);
+const gameUtils_1 = __webpack_require__(4);
+const ROUNDS = 5;
+class RotationGame {
+    constructor(root, { currentPlayer, seed, level = 1, gameIndex }) {
+        this.state = {
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            started: false,
+            roundStarted: false,
+            round: 0,
+            finished: false,
+            score1: 0,
+            score2: 0,
+            idle: true,
+            currentRotation: 0,
+            answered: false
+        };
+        this.entity = {};
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null,
+            onFinishRound: null
+        };
+        this.root = root;
+        this.gameSetup = { currentPlayer, seed, level, gameIndex };
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.002)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.scene.addComponent(new BaseGame_1.GameScene());
+        this.player1 = gameUtils_1.createPlayerAnswer(this.scene, { player: 1 });
+        this.player2 = gameUtils_1.createPlayerAnswer(this.scene, { player: 2 });
+        this.player1.hide();
+        this.player2.hide();
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        const image = this.entity.image = new Entity();
+        const box = this.entity.box = new Entity();
+        buildBox(box, SpriteMaterial_1.spriteMaterial, SpriteAnimation_1.getSpriteUv(10, (576 / 64) * (1024 / 64), 64, 64));
+        buildBox(image, SpriteMaterial_1.spriteMaterial, SpriteAnimation_1.getSpriteUv(9, (576 / 64) * (1024 / 64), 64, 64));
+        this.state.rotationSerie = this.getRotationSerie(this.gameSetup.level);
+        this.state.solution = this.state.rotationSerie.reduce((acc, current) => acc + current, 0);
+        const correctSolution = this.state.correctSolution = this.getRandomInt(1, 3);
+        this.state.solutions = [1, 2, 3].map((current) => {
+            return current === correctSolution ? this.state.solution : (this.getRandomInt(1, 4, this.state.solution / 90)) * 90;
+        });
+        this.entity.solutions = this.state.solutions.map((solution, index) => {
+            const solEntity = new Entity();
+            this.buildSolution(solEntity, index, solution);
+            solEntity.setParent(this.scene);
+            return solEntity;
+        });
+        engine.addSystem(this);
+        this.onClickAnswer = this.onClickAnswer.bind(this);
+        this.buildSolution = this.buildSolution.bind(this);
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    setRoundStartTime(roundStartTime) {
+        this.state.roundStartTime = roundStartTime;
+    }
+    reset() {
+    }
+    getRotationSerie(level) {
+        let numMov = 3;
+        if (level >= 3 && level < 5) {
+            numMov = 4;
+        }
+        else if (level >= 5) {
+            numMov = 5;
+        }
+        let i = numMov;
+        const movs = [];
+        while (i--) {
+            const ran = this.randomizer.random();
+            movs.push(Math.floor(ran * 2) ? 90 : -90);
+        }
+        return movs;
+    }
+    finish({ winner }) {
+        this.state.blocked = true;
+        const nonWinner = winner === 1 ? 2 : 1;
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    finishRound({ winner }) {
+        this.state.blocked = true;
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.state[`score${winner}`] += 1;
+        this.ui.updateScore({ player: winner, score: this.state[`score${winner}`] });
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this.entity.box.getComponent(Transform).rotation.setEuler(0, 0, 0);
+        this.entity.box.getComponent(PlaneShape).visible = false;
+        this.entity.image.getComponent(PlaneShape).visible = true;
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this.state.waitingRound = true;
+    }
+    shareState(sharedState) {
+        this.state.shared = sharedState;
+        const { round } = sharedState;
+        if (round !== this.state.round)
+            return;
+        if (sharedState.type === "election" && sharedState.player !== this.gameSetup.currentPlayer) {
+            const { x, y, z } = this.entity.solutions[sharedState.election - 1].getComponent(Transform).position;
+            const isWinner = this.getIsWinner(this.state, sharedState.election);
+            this[`player${sharedState.player}`].wrapperEntity.getComponent(Transform).position.set(x + (sharedState.player === 1 ? -0.3 : 0.3), y, z);
+            this[`player${sharedState.player}`].show();
+            this[`player${sharedState.player}`].setSprite(isWinner);
+            this.ui.updateTime({ player: sharedState.player, time: sharedState.timeSinceAnswers });
+        }
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+    init() {
+        Sound_1.playLoop("money", { volume: 0.5 });
+        SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(2, 0, 192, 128) });
+        SpritePanel_1.showSpritePanel();
+        this.entity.image.setParent(this.scene);
+        this.entity.box.setParent(this.scene);
+        this.entity.box.getComponent(PlaneShape).visible = false;
+        this.state.initialized = true;
+        this.scene.setParent(this.root);
+    }
+    destroy() {
+        Sound_1.stopSound("money");
+        SpritePanel_1.hideSpritePanel();
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        engine.removeSystem(this);
+        this.callbacks.onFinish = null;
+        this.callbacks.onShareState = null;
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        const ROTATION_TIME = this.state.round < 2
+            ? 0.4
+            : this.state.round < 3 ? 0.3 : 0.2;
+        const DELAY_TIME = 0.2;
+        if (!this.state.started && Date.now() >= (this.state.startTime)) {
+            this.start(dt);
+        }
+        else if (this.state.started && !this.state.waitingRound && !this.state.roundStarted) {
+            this.state.nextTime += dt;
+            if (this.state.nextTime >= (ROTATION_TIME + DELAY_TIME)) {
+                this.state.nextTime = 0;
+                if (this.state.currentRotation < this.state.rotationSerie.length) {
+                    const startQ = Quaternion.Euler(0, 0, 0);
+                    const endQ = Quaternion.Euler(0, 0, this.state.rotationSerie[this.state.currentRotation]);
+                    Sound_1.playOnce("swing");
+                    this.entity.box.addComponentOrReplace(new index_1.default.RotateTransformComponent(startQ, endQ, ROTATION_TIME));
+                    this.state.nextTime = 0;
+                    this.state.currentRotation++;
+                    this.entity.solutions.forEach(solution => solution.getComponent(PlaneShape).visible = false);
+                    this.state.answersShown = false;
+                }
+                else {
+                    if (!this.state.waitingRound && !this.state.answersShown) {
+                        this.state.answersShown = true;
+                        this.state.shownAnswersTime = Date.now();
+                        this.entity.solutions.forEach(solution => solution.getComponent(PlaneShape).visible = true);
+                    }
+                }
+            }
+        }
+        else if (this.state.started && !this.state.waitingRound && this.state.roundStarted) {
+            this.state.nextTime += dt;
+            if (this.state.nextTime >= (ROTATION_TIME + DELAY_TIME)) {
+                this.state.nextTime = 0;
+                if (this.state.currentRotation < this.state.rotationSerie.length) {
+                    const startQ = Quaternion.Euler(0, 0, 0);
+                    const endQ = Quaternion.Euler(0, 0, this.state.rotationSerie[this.state.currentRotation]);
+                    Sound_1.playOnce("swing");
+                    this.entity.box.addComponentOrReplace(new index_1.default.RotateTransformComponent(startQ, endQ, ROTATION_TIME));
+                    this.state.nextTime = 0;
+                    this.state.currentRotation++;
+                    this.entity.solutions.forEach(solution => solution.getComponent(PlaneShape).visible = false);
+                    this.state.answersShown = false;
+                }
+                else {
+                    if (!this.state.waitingRound && !this.state.answersShown) {
+                        this.state.blocked = false;
+                        this.state.answersShown = true;
+                        this.state.shownAnswersTime = Date.now();
+                        this.entity.solutions.forEach(solution => solution.getComponent(PlaneShape).visible = true);
+                    }
+                }
+            }
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            this.startRound();
+        }
+    }
+    block() {
+        this.state.blocked = true;
+    }
+    start(dt) {
+        setTimeout(() => {
+            this.state.idle = false;
+            this.state.started = true;
+            this.state.finished = false;
+            this.state.nextTime = 0;
+            this.entity.box.getComponent(PlaneShape).visible = true;
+            this.entity.image.getComponent(PlaneShape).visible = false;
+        }, 1000);
+    }
+    startRound() {
+        this.state.round++;
+        this.ui.hideTime();
+        this.entity.solutions.forEach((solEntity) => {
+            solEntity.getComponent(PlaneShape).visible = false;
+        });
+        this.player1.hide();
+        this.player2.hide();
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        setTimeout(() => {
+            this.state.blocked = false;
+            this.state.waitingRound = false;
+            this.state.answered = false;
+            this.state.roundStarted = true;
+            this.state.nextTime = 0;
+            this.entity.box.getComponent(PlaneShape).visible = true;
+            this.entity.image.getComponent(PlaneShape).visible = false;
+            this.state.rotationSerie = this.getRotationSerie(this.state.round + 1);
+            this.state.solution = this.state.rotationSerie.reduce((acc, current) => acc + current, 0);
+            const correctSolution = this.state.correctSolution = this.getRandomInt(1, 3);
+            this.state.solutions = [1, 2, 3].map((current) => {
+                return current === correctSolution ? this.state.solution : (this.getRandomInt(1, 4, this.state.solution / 90)) * 90;
+            });
+            this.state.currentRotation = 0;
+            this.entity.solutions.forEach((solution, index) => {
+                solution.getComponent(Transform).rotation.setEuler(0, 0, 0);
+                solution.getComponent(Transform).rotate(new Vector3(0, 0, 1), this.state.solutions[index]);
+            });
+        }, (1000 / (this.state.round * 500)) * 1000);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+        return () => this.callbacks.onFinishRound = null;
+    }
+    getIsWinner(state, election) {
+        const electedEntity = this.entity.solutions[election - 1];
+        const solutionEntity = this.entity.solutions[state.correctSolution - 1];
+        if (getNormalizedRotation(solutionEntity) === getNormalizedRotation(electedEntity)) {
+            return true;
+        }
+        else {
+            console.log(`
+                NOT WINNER
+                --------------
+                election: ${election}
+                state.correctSolution: ${state.correctSolution}
+                election rotation z: ${this.entity.solutions[election - 1].getComponent(Transform).rotation.eulerAngles.z}
+                soltion rotation z: ${this.entity.solutions[state.correctSolution - 1].getComponent(Transform).rotation.eulerAngles.z}
+            `);
+            return false;
+        }
+        function getNormalizedRotation(entity) {
+            const degrees = Math.round(entity.getComponent(Transform).rotation.eulerAngles.z) % 360;
+            return degrees < 0 ? 360 - degrees : degrees;
+        }
+    }
+    buildSolution(entity, num, rotation) {
+        const plane = new PlaneShape();
+        plane.visible = false;
+        plane.withCollisions = false;
+        const entityPos = { x: -1.1 + num * 1.1, y: 1.15, z: 0 };
+        const transform = new Transform({
+            position: new Vector3(entityPos.x, entityPos.y, entityPos.z),
+            scale: new Vector3(1, 1, 0.0000001)
+        });
+        transform.rotate(new Vector3(0, 0, 1), rotation);
+        entity.addComponent(SpriteMaterial_1.spriteMaterial);
+        plane.withCollisions = false;
+        plane.uvs = SpriteAnimation_1.getSpriteUv(12, (480 / 32) * (1024 / 32), 32, 32);
+        entity.addComponent(plane);
+        entity.addComponent(transform);
+        this.gameSetup.currentPlayer
+            && entity.addComponent(new OnClick(() => this.onClickAnswer(entity, entityPos, num)));
+    }
+    onClickAnswer(entity, entityPos, num) {
+        if (this.state.answered)
+            return;
+        if (this.state.blocked)
+            return;
+        if (!this.state.initialized)
+            return;
+        if (this.state.finished)
+            return;
+        Sound_1.playOnce("swing");
+        this[`player${this.gameSetup.currentPlayer}`].wrapperEntity.getComponent(Transform)
+            .position.set(entityPos.x + (this.gameSetup.currentPlayer === 1 ? -0.2 : 0.2), entityPos.y, entityPos.z);
+        this[`player${this.gameSetup.currentPlayer}`].show();
+        this.state.blocked = true;
+        this.state.answered = true;
+        const isWinner = this.getIsWinner(this.state, num + 1);
+        this[`player${this.gameSetup.currentPlayer}`].setSprite(isWinner);
+        const timeSinceStart = utils_1.getTimeSinceStart((this.state.round === 0) ? this.state.startTime : this.state.lastRoundStartTime);
+        const time = isWinner
+            ? timeSinceStart
+            : 999999999 - timeSinceStart;
+        const timeSinceAnswers = Date.now() - this.state.shownAnswersTime;
+        this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceAnswers });
+        this.callbacks.onShareState({ type: 'election', player: this.gameSetup.currentPlayer, election: num + 1, time: timeSinceStart, timeSinceAnswers, round: this.state.round });
+        if (this.state.round < ROUNDS - 1) {
+            this.callbacks.onFinishRound({
+                time, player: this.gameSetup.currentPlayer,
+                gameIndex: this.gameSetup.gameIndex, roundIndex: this.state.round
+            });
+        }
+        else {
+            this.callbacks.onFinish({ time, isWinner, round: this.state.round,
+                gameIndex: this.gameSetup.gameIndex, roundIndex: this.state.round });
+        }
+    }
+    getRandomInt(min, max, except) {
+        const result = Math.floor(this.randomizer.random() * (max - min + 1)) + min;
+        return (result === except) ? this.getRandomInt(min, max, except) : result;
+    }
+}
+exports.RotationGame = RotationGame;
+RotationGame.id = 'Rotation';
+RotationGame.timeToWaitForOtherAnswer = 2;
+RotationGame.instructions = `Image is hidden and start rotating
+    Click the correct solution`;
+function buildBox(entity, material, uvs) {
+    const plane = new PlaneShape();
+    plane.withCollisions = false;
+    plane.uvs = uvs;
+    const transform = new Transform({
+        scale: new Vector3(2, 2, 0.000001),
+        position: new Vector3(0, 2.7, 0),
+    });
+    entity.addComponent(plane);
+    entity.addComponent(material);
+    entity.addComponent(transform);
+}
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RotateTransformComponent = void 0;
+const transfromSystem_1 = __webpack_require__(7);
+const interpolation_1 = __webpack_require__(12);
+let RotateTransformComponent = class RotateTransformComponent {
+    constructor(start, end, duration, onFinishCallback, interpolationType = interpolation_1.InterpolationType.LINEAR) {
+        this.start = start;
+        this.end = end;
+        this.normalizedTime = 0;
+        this.lerpTime = 0;
+        this.onFinishCallback = onFinishCallback;
+        this.interpolationType = interpolationType;
+        if (duration != 0) {
+            this.speed = 1 / duration;
+        }
+        else {
+            this.speed = 0;
+            this.normalizedTime = 1;
+            this.lerpTime = 1;
+        }
+        transfromSystem_1.TransformSystem.createAndAddToEngine();
+    }
+    update(dt) {
+        this.normalizedTime = Scalar.Clamp(this.normalizedTime + dt * this.speed, 0, 1);
+        this.lerpTime = interpolation_1.Interpolate(this.interpolationType, this.normalizedTime);
+    }
+    hasFinished() {
+        return this.normalizedTime >= 1;
+    }
+    assignValueToTransform(transform) {
+        transform.rotation = Quaternion.Slerp(this.start, this.end, this.lerpTime);
+    }
+};
+RotateTransformComponent = __decorate([
+    Component('rotateTransformComponent')
+], RotateTransformComponent);
+exports.RotateTransformComponent = RotateTransformComponent;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ScaleTransformComponent = void 0;
+const transfromSystem_1 = __webpack_require__(7);
+const interpolation_1 = __webpack_require__(12);
+let ScaleTransformComponent = class ScaleTransformComponent {
+    constructor(start, end, duration, onFinishCallback, interpolationType = interpolation_1.InterpolationType.LINEAR) {
+        this.start = start;
+        this.end = end;
+        this.normalizedTime = 0;
+        this.lerpTime = 0;
+        this.onFinishCallback = onFinishCallback;
+        this.interpolationType = interpolationType;
+        if (duration != 0) {
+            this.speed = 1 / duration;
+        }
+        else {
+            this.speed = 0;
+            this.normalizedTime = 1;
+            this.lerpTime = 1;
+        }
+        transfromSystem_1.TransformSystem.createAndAddToEngine();
+    }
+    update(dt) {
+        this.normalizedTime = Scalar.Clamp(this.normalizedTime + dt * this.speed, 0, 1);
+        this.lerpTime = interpolation_1.Interpolate(this.interpolationType, this.normalizedTime);
+    }
+    hasFinished() {
+        return this.normalizedTime >= 1;
+    }
+    assignValueToTransform(transform) {
+        transform.scale = Vector3.Lerp(this.start, this.end, this.lerpTime);
+    }
+};
+ScaleTransformComponent = __decorate([
+    Component('scaleTransformComponent')
+], ScaleTransformComponent);
+exports.ScaleTransformComponent = ScaleTransformComponent;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FollowPathComponent = void 0;
+const transfromSystem_1 = __webpack_require__(7);
+let FollowPathComponent = class FollowPathComponent {
+    constructor(points, duration, onFinishCallback, onPointReachedCallback) {
+        this.speed = [];
+        this.normalizedTime = 0;
+        this.currentIndex = 0;
+        this.points = points;
+        this.onFinishCallback = onFinishCallback;
+        this.onPointReachedCallback = onPointReachedCallback;
+        if (points.length < 2) {
+            throw new Error('At least 2 points are needed for FollowPathComponent.');
+        }
+        if (duration > 0) {
+            let sqTotalDist = 0;
+            let sqPointsDist = [];
+            for (let i = 0; i < points.length - 1; i++) {
+                let sqDist = Vector3.DistanceSquared(points[i], points[i + 1]);
+                sqTotalDist += sqDist;
+                sqPointsDist.push(sqDist);
+            }
+            for (let i = 0; i < sqPointsDist.length; i++) {
+                this.speed.push(1 / ((sqPointsDist[i] / sqTotalDist) * duration));
+            }
+        }
+        else {
+            this.normalizedTime = 1;
+            this.currentIndex = points.length - 2;
+        }
+        transfromSystem_1.TransformSystem.createAndAddToEngine();
+    }
+    update(dt) {
+        this.normalizedTime = Scalar.Clamp(this.normalizedTime + dt * this.speed[this.currentIndex], 0, 1);
+        if (this.normalizedTime >= 1 &&
+            this.currentIndex < this.points.length - 2) {
+            this.currentIndex++;
+            this.normalizedTime = 0;
+            if (this.onPointReachedCallback &&
+                this.currentIndex < this.points.length - 1)
+                this.onPointReachedCallback(this.points[this.currentIndex], this.points[this.currentIndex + 1]);
+        }
+    }
+    hasFinished() {
+        return (this.currentIndex >= this.points.length - 2 && this.normalizedTime >= 1);
+    }
+    assignValueToTransform(transform) {
+        transform.position = Vector3.Lerp(this.points[this.currentIndex], this.points[this.currentIndex + 1], this.normalizedTime);
+    }
+};
+FollowPathComponent = __decorate([
+    Component('followPathComponent')
+], FollowPathComponent);
+exports.FollowPathComponent = FollowPathComponent;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.KeepRotatingComponent = void 0;
+const transfromSystem_1 = __webpack_require__(7);
+let KeepRotatingComponent = class KeepRotatingComponent {
+    constructor(rotationVelocity, onFinishCallback) {
+        this.rotationVelocity = rotationVelocity;
+        this.onFinishCallback = onFinishCallback;
+        this.rotation = Quaternion.Identity;
+        this.finished = false;
+        transfromSystem_1.TransformSystem.createAndAddToEngine();
+    }
+    update(dt) {
+        this.rotation = Quaternion.Slerp(Quaternion.Identity, this.rotationVelocity, dt);
+    }
+    hasFinished() {
+        return this.finished;
+    }
+    assignValueToTransform(transform) {
+        transform.rotation = transform.rotation.multiply(this.rotation);
+    }
+    stop() {
+        this.finished = true;
+    }
+};
+KeepRotatingComponent = __decorate([
+    Component('keepRotatingComponent')
+], KeepRotatingComponent);
+exports.KeepRotatingComponent = KeepRotatingComponent;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Delay = void 0;
+const timerSystem_1 = __webpack_require__(16);
+let Delay = class Delay {
+    constructor(millisecs, onTimeReachedCallback) {
+        timerSystem_1.TimerSystem.createAndAddToEngine();
+        this.elapsedTime = 0;
+        this.targetTime = millisecs / 1000;
+        this.onTimeReachedCallback = onTimeReachedCallback;
+        this.onTargetTimeReached = entity => {
+            if (this.onTimeReachedCallback)
+                this.onTimeReachedCallback();
+            entity.removeComponent(this);
+        };
+    }
+    setCallback(onTimeReachedCallback) {
+        this.onTimeReachedCallback = onTimeReachedCallback;
+    }
+};
+Delay = __decorate([
+    Component('timerDelay')
+], Delay);
+exports.Delay = Delay;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Interval = void 0;
+const timerSystem_1 = __webpack_require__(16);
+let Interval = class Interval {
+    constructor(millisecs, onTimeReachedCallback) {
+        timerSystem_1.TimerSystem.createAndAddToEngine();
+        this.elapsedTime = 0;
+        this.targetTime = millisecs / 1000;
+        this.onTimeReachedCallback = onTimeReachedCallback;
+        this.onTargetTimeReached = () => {
+            this.elapsedTime = 0;
+            if (this.onTimeReachedCallback)
+                this.onTimeReachedCallback();
+        };
+    }
+    setCallback(onTimeReachedCallback) {
+        this.onTimeReachedCallback = onTimeReachedCallback;
+    }
+};
+Interval = __decorate([
+    Component('timerInterval')
+], Interval);
+exports.Interval = Interval;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExpireIn = void 0;
+const timerSystem_1 = __webpack_require__(16);
+let ExpireIn = class ExpireIn {
+    constructor(millisecs, onTimeReachedCallback) {
+        timerSystem_1.TimerSystem.createAndAddToEngine();
+        this.elapsedTime = 0;
+        this.targetTime = millisecs / 1000;
+        this.onTimeReachedCallback = onTimeReachedCallback;
+        this.onTargetTimeReached = entity => {
+            if (this.onTimeReachedCallback)
+                this.onTimeReachedCallback();
+            entity.removeComponent(this);
+            engine.removeEntity(entity);
+        };
+    }
+    setCallback(onTimeReachedCallback) {
+        this.onTimeReachedCallback = onTimeReachedCallback;
+    }
+};
+ExpireIn = __decorate([
+    Component('timerExpireIn')
+], ExpireIn);
+exports.ExpireIn = ExpireIn;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AttackGame = void 0;
+const BaseGame_1 = __webpack_require__(14);
+const seed_1 = __webpack_require__(3);
+const utils_1 = __webpack_require__(9);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpritePanel_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(2);
+const SpriteAnimation_1 = __webpack_require__(0);
+const gameUtils_1 = __webpack_require__(4);
+const MOVE = {
+    DEFEND: 0,
+    ATTACK: 1
+};
+const SPRITE_OFFSET = (640 / 71) * (1024 / 64);
+const ROUNDS = 11;
+let count = 0;
+const KEYS = {
+    E: 1,
+    F: 2,
+    CLICK: 3
+};
+class AttackGame {
+    constructor(root, { currentPlayer, seed, level, gameIndex }) {
+        this.state = {
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            initialized: false,
+            round: 0,
+            idle: true,
+            started: false,
+            blocked: false,
+            finished: false,
+            player1Key: -1,
+            player2Key: -2,
+        };
+        this.callbacks = {
+            onFinish: null,
+            onFinishRound: null,
+            onShareState: null
+        };
+        this.score1 = 0;
+        this.score2 = 0;
+        console.log("currentPlayer", currentPlayer);
+        count++;
+        this.id = count;
+        const entities = engine.getEntitiesWithComponent("game_scene");
+        console.log("entities when constructor", entities, entities.length);
+        Object.keys(entities).forEach((key) => {
+            engine.removeEntity(entities[key]);
+        });
+        this.root = root;
+        this.gameSetup = { currentPlayer, seed, level, gameIndex };
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        this.scene = new Entity();
+        this.scene.addComponent(new BaseGame_1.GameScene());
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.002)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.label1 = SpriteAnimation_1.createSpriteEntity(this.scene, {
+            position: new Vector3(-1.5, 3.5, -0.001),
+            uvs: SpriteAnimation_1.getSpriteUv(4, (384 / 32) * (1024 / 32), 32, 32),
+            scale: new Vector3(1, 1, 1)
+        });
+        this.label2 = SpriteAnimation_1.createSpriteEntity(this.scene, {
+            position: new Vector3(1.5, 3.5, -0.001),
+            uvs: SpriteAnimation_1.getSpriteUv(4, (384 / 32) * (1024 / 32), 32, 32),
+            scale: new Vector3(1, 1, 1)
+        });
+        this.label1.hide();
+        this.label2.hide();
+        this.char1 = new Entity();
+        this.char2 = new Entity();
+        this.char1.addComponent(SpriteMaterial_1.spriteMaterial);
+        this.char2.addComponent(SpriteMaterial_1.spriteMaterial);
+        this.char1.addComponent(new Transform({ position: new Vector3(-1, 2, 0), scale: new Vector3(2, 2, 1) }));
+        this.char2.addComponent(new Transform({ position: new Vector3(1, 2, 0), scale: new Vector3(-2, 2, 1) }));
+        this.char1.setParent(this.scene);
+        this.char2.setParent(this.scene);
+        this.char1Shape = new PlaneShape();
+        this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(1, SPRITE_OFFSET, 64, 71);
+        this.char2Shape = new PlaneShape();
+        this.char2Shape.uvs = SpriteAnimation_1.getSpriteUv(1, SPRITE_OFFSET, 64, 71);
+        this.char1.addComponent(this.char1Shape);
+        this.char2.addComponent(this.char2Shape);
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.state = Object.assign(Object.assign({}, this.state), { player1Key: 1 + Math.floor(this.randomizer.random() * 3), player2Key: 1 + Math.floor(this.randomizer.random() * 3), started: false });
+        engine.addSystem(this);
+    }
+    setStartTime(startTime) {
+        console.log("SET_START_TIME", startTime);
+        this.state.startTime = startTime;
+    }
+    reset() {
+    }
+    setRoundStartTime(roundStartTime) {
+        console.log("setRoundStartTime", roundStartTime);
+        this.state.roundStartTime = roundStartTime;
+    }
+    finishRound({ winner }) {
+        this.label1.hide();
+        this.label2.hide();
+        Sound_1.stopSound("swing");
+        Sound_1.playOnce("hit");
+        this[`score${winner}`] += 1;
+        this.ui.updateScore({ player: winner, score: this[`score${winner}`] });
+        if (winner !== this.gameSetup.currentPlayer) {
+            setTimeout(() => {
+                Sound_1.playOnce("fail");
+            }, 500);
+        }
+        else {
+            setTimeout(() => {
+                Sound_1.playOnce("ok");
+            }, 500);
+        }
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.primaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.secondaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.clickButtonCallback);
+        console.log("finish round", winner);
+        const endUVParams = [3, (640 / 71) * (1024 / 128), 128, 71];
+        if (winner === 1) {
+            this.char2Shape.visible = false;
+            const t = this.char1.getComponent(Transform);
+            t.scale.set(4, 2, 1);
+            t.position.set(0, 2, 0);
+            this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(...endUVParams);
+        }
+        else {
+            this.char2Shape.visible = false;
+            const t = this.char1.getComponent(Transform);
+            t.scale.set(-4, 2, 1);
+            t.position.set(0, 2, 0);
+            this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(...endUVParams);
+        }
+        const nonWinner = winner === 1 ? 2 : 1;
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this.state.waitingRound = true;
+    }
+    handleAction(isWinner) {
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.primaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.secondaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.clickButtonCallback);
+        this[`char${this.gameSetup.currentPlayer}Shape`].uvs = SpriteAnimation_1.getSpriteUv(3, SPRITE_OFFSET, 64, 71);
+        const timeSinceStart = utils_1.getTimeSinceStart((this.state.round === 0) ? this.state.startTime : this.state.lastRoundStartTime);
+        ;
+        console.log("timeSinceStart", this.state.startTime, this.state.roundStartTime, timeSinceStart);
+        const time = isWinner
+            ? timeSinceStart
+            : 999999999 - timeSinceStart;
+        this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceStart });
+        this.callbacks.onShareState({ player: this.gameSetup.currentPlayer, time, timeSinceStart, round: this.state.round });
+        if (this.state.round < ROUNDS - 1) {
+            this.callbacks.onFinishRound({
+                player: this.gameSetup.currentPlayer,
+                time,
+                isWinner,
+                gameIndex: this.gameSetup.gameIndex,
+                roundIndex: this.state.round
+            });
+            this.state.waitingRound = true;
+        }
+        else {
+            this.callbacks.onFinish({
+                player: this.gameSetup.currentPlayer,
+                time,
+                isWinner,
+                gameIndex: this.gameSetup.gameIndex
+            });
+        }
+    }
+    clickButtonCallback(e) {
+        Sound_1.playOnce('swing');
+        const isWinner = this.state[`player${this.gameSetup.currentPlayer}Key`] === KEYS.CLICK;
+        this.handleAction(isWinner);
+    }
+    primaryButtonCallback(e) {
+        Sound_1.playOnce('swing');
+        const isWinner = this.state[`player${this.gameSetup.currentPlayer}Key`] === KEYS.E;
+        this.handleAction(isWinner);
+    }
+    secondaryButtonCallback(e) {
+        Sound_1.playOnce('swing');
+        const isWinner = this.state[`player${this.gameSetup.currentPlayer}Key`] === KEYS.F;
+        this.handleAction(isWinner);
+    }
+    init() {
+        SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(4, 0, 192, 128) });
+        SpritePanel_1.showSpritePanel();
+        Sound_1.playLoop("battle", { volume: 0.5 });
+        console.log(" -- init -- ");
+        this.scene.setParent(this.root);
+        this.state.initialized = true;
+    }
+    start() {
+        console.log(" -- start -- ");
+        this.state.round = 0;
+        this.state.idle = false;
+        this.state.finished = false;
+        this.state.started = true;
+        this.primaryButtonCallback = this.primaryButtonCallback.bind(this);
+        this.secondaryButtonCallback = this.secondaryButtonCallback.bind(this);
+        this.clickButtonCallback = this.clickButtonCallback.bind(this);
+        this.gameSetup.currentPlayer && Input.instance.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, this.primaryButtonCallback);
+        this.gameSetup.currentPlayer && Input.instance.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, this.secondaryButtonCallback);
+        this.gameSetup.currentPlayer && Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, this.clickButtonCallback);
+        this.label1.show();
+        this.label2.show();
+        this.label1.updateUvs(SpriteAnimation_1.getSpriteUv(this.state.player1Key, (384 / 32) * (1024 / 32) + 3, 32, 32));
+        this.label2.updateUvs(SpriteAnimation_1.getSpriteUv(this.state.player2Key, (384 / 32) * (1024 / 32) + 3, 32, 32));
+    }
+    startRound() {
+        this.state.round++;
+        this.ui.hideTime();
+        this.char2Shape.visible = true;
+        const t = this.char1.getComponent(Transform);
+        t.scale.set(2, 2, 1);
+        t.position.set(-1, 2, 0);
+        this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(1, SPRITE_OFFSET, 64, 71);
+        this.char2Shape.uvs = SpriteAnimation_1.getSpriteUv(1, SPRITE_OFFSET, 64, 71);
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        console.log("start round");
+        this.state.idle = false;
+        this.state.started = true;
+        this.state.waitingRound = false;
+        Input.instance.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, this.primaryButtonCallback);
+        Input.instance.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, this.secondaryButtonCallback);
+        Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, this.clickButtonCallback);
+        this.state = Object.assign(Object.assign({}, this.state), { player1Key: 1 + Math.floor(this.randomizer.random() * 3), player2Key: 1 + Math.floor(this.randomizer.random() * 3) });
+        this.label1.show();
+        this.label2.show();
+        this.label1.updateUvs(SpriteAnimation_1.getSpriteUv(this.state.player1Key, (384 / 32) * (1024 / 32) + 3, 32, 32));
+        this.label2.updateUvs(SpriteAnimation_1.getSpriteUv(this.state.player2Key, (384 / 32) * (1024 / 32) + 3, 32, 32));
+    }
+    destroy() {
+        Sound_1.stopAllSounds();
+        SpritePanel_1.hideSpritePanel();
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.primaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.secondaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.clickButtonCallback);
+        console.log("changing scene parent to null");
+        const entities = engine.getEntitiesWithComponent("game_scene");
+        console.log(entities, entities.length);
+        Object.keys(entities).forEach((key) => {
+        });
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        console.log("remove scene");
+        engine.removeSystem(this);
+    }
+    finish(result) {
+        this.label1.hide();
+        this.label2.hide();
+        const { winner } = result;
+        console.log("RESULT", winner);
+        const nonWinner = winner === 1 ? 2 : 1;
+        Sound_1.stopSound("swing");
+        Sound_1.playOnce("hit");
+        if (winner !== this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("fail");
+        }
+        else {
+            Sound_1.playOnce("ok");
+        }
+        const endUVParams = [3, (640 / 71) * (1024 / 128), 128, 71];
+        if (winner === 1) {
+            this.char2Shape.visible = false;
+            const t = this.char1.getComponent(Transform);
+            t.scale.set(4, 2, 1);
+            t.position.set(0, 2, 0);
+            this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(...endUVParams);
+        }
+        else {
+            this.char2Shape.visible = false;
+            const t = this.char1.getComponent(Transform);
+            t.scale.set(-4, 2, 1);
+            t.position.set(0, 2, 0);
+            this.char1Shape.uvs = SpriteAnimation_1.getSpriteUv(...endUVParams);
+        }
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    block() {
+        this.state.blocked = true;
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.primaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.secondaryButtonCallback);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.clickButtonCallback);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => {
+            this.callbacks.onFinish = null;
+        };
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+        return () => this.callbacks.onFinishRound = null;
+    }
+    shareState(sharedState) {
+        console.log("shareState", sharedState, this.gameSetup.currentPlayer);
+        const { player, timeSinceStart, time, round } = sharedState;
+        if (round !== this.state.round)
+            return;
+        this[`char${player}Shape`].uvs = SpriteAnimation_1.getSpriteUv(3, SPRITE_OFFSET, 64, 71);
+        this.ui.updateTime({ player, time: timeSinceStart });
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+    update(dt) {
+        if (!this.state.initialized) {
+            return;
+        }
+        if (!this.state.waitingRound && !this.state.started && Date.now() >= this.state.startTime) {
+            console.log("start");
+            this.start();
+            return;
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            console.log("startRound");
+            this.startRound();
+        }
+        else if (Date.now() >= this.state.roundStartTime) {
+        }
+    }
+}
+exports.AttackGame = AttackGame;
+AttackGame.id = 'Attack';
+AttackGame.timeToWaitForOtherAnswer = 1;
+AttackGame.instructions = `2 old warriors on each player side, 
+    faster than your opponent,
+    press the appropriate key: E, F or CLICK`;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ObstacleGame = void 0;
+const seed_1 = __webpack_require__(3);
+const Screen_1 = __webpack_require__(60);
+const Sound_1 = __webpack_require__(2);
+const TextPanel_1 = __webpack_require__(6);
+const gameUtils_1 = __webpack_require__(4);
+const generateTrack = ({ getRandomInt, level }) => {
+    const length = Math.log(level + 1) * 80;
+    let i = length;
+    let track = [];
+    const minLength = 2;
+    const maxLength = 8;
+    let firstTime = true;
+    while (track.length < length) {
+        track.push(...[...(new Array(getRandomInt(minLength, maxLength) + (firstTime ? 4 : 0)).fill(0)), 1]);
+        firstTime = false;
+    }
+    track.push(...(new Array(3).fill(0)));
+    return track;
+};
+class ObstacleGame {
+    constructor(root, { seed, currentPlayer, level = 1, gameIndex }) {
+        this.state = {
+            initialized: false,
+            started: false,
+            currentLeg: 1,
+            blocked: true,
+            startTime: Number.MAX_VALUE
+        };
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null
+        };
+        this.root = root;
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.001)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.gameSetup = { seed: seed.toString(), currentPlayer, level, gameIndex };
+        ;
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        const otherPlayer = currentPlayer === 1 ? 2 : 1;
+        const track = generateTrack({ getRandomInt: this.getRandomInt.bind(this), level });
+        console.log("TRACK !!", track);
+        this.screen1 = Screen_1.createScreen(this.scene, { player: 1, track });
+        this.screen2 = Screen_1.createScreen(this.scene, { player: 2, track });
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.moveLeg1 = this.moveLeg1.bind(this);
+        this.moveLeg2 = this.moveLeg2.bind(this);
+        this.jump = this.jump.bind(this);
+        engine.addSystem(this);
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    getPlayerScreen(player) {
+        return this[`screen${player}`];
+    }
+    init() {
+        this.state.initialized = true;
+        this.scene.setParent(this.root);
+    }
+    tempBlock() {
+        this.state.blocked = true;
+        this[`screen${this.gameSetup.currentPlayer}`].showCross();
+        Sound_1.playOnce("fail");
+        setTimeout(() => {
+            this.state.blocked = false;
+            this[`screen${this.gameSetup.currentPlayer}`].hideCross();
+        }, 1000);
+    }
+    moveLeg1() {
+        if (this.state.blocked || !this.state.started)
+            return;
+        const currentPlayerScreen = this.getPlayerScreen(this.gameSetup.currentPlayer);
+        if (this.state.blocked || this.state.currentLeg !== 1 || currentPlayerScreen.getScreenState().moving)
+            return;
+        currentPlayerScreen.moveScreen();
+        this.state.currentLeg = 2;
+        if (currentPlayerScreen.getNextStepValue()) {
+            this.tempBlock();
+        }
+        else {
+            Sound_1.playOnce("ok");
+        }
+        const percentage = this.getPercentage(this.gameSetup.currentPlayer);
+        console.log("percentage", percentage);
+        this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: percentage });
+        this.callbacks.onShareState({ movement: '1', player: this.gameSetup.currentPlayer, percentage });
+    }
+    moveLeg2() {
+        if (this.state.blocked || !this.state.started)
+            return;
+        const currentPlayerScreen = this.getPlayerScreen(this.gameSetup.currentPlayer);
+        if (this.state.blocked || this.state.currentLeg !== 2 || currentPlayerScreen.getScreenState().moving)
+            return;
+        currentPlayerScreen.moveScreen();
+        this.state.currentLeg = 1;
+        if (currentPlayerScreen.getNextStepValue()) {
+            this.tempBlock();
+        }
+        else {
+            Sound_1.playOnce("ok");
+        }
+        const percentage = this.getPercentage(this.gameSetup.currentPlayer);
+        this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: percentage });
+        this.callbacks.onShareState({ movement: '2', player: this.gameSetup.currentPlayer, percentage });
+    }
+    jump() {
+        if (this.state.blocked || !this.state.started)
+            return;
+        const currentPlayerScreen = this.getPlayerScreen(this.gameSetup.currentPlayer);
+        if (currentPlayerScreen.getNextStepValue() !== 1)
+            return;
+        if (currentPlayerScreen.getScreenState().moving)
+            return;
+        currentPlayerScreen.moveScreen(true);
+        const percentage = this.getPercentage(this.gameSetup.currentPlayer, true);
+        this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: percentage });
+        this.callbacks.onShareState({ movement: 'jump', player: this.gameSetup.currentPlayer, percentage });
+        Sound_1.playOnce("jump");
+    }
+    getPercentage(player, isJump) {
+        const currentStep = this[`screen${player}`].getScreenState().currentStep + (isJump ? 2 : 1);
+        const totalSteps = this[`screen${player}`].getTotalSteps() - 4;
+        return Math.floor(currentStep * 100 / totalSteps);
+    }
+    start() {
+        this.state.started = true;
+        (() => __awaiter(this, void 0, void 0, function* () {
+            Sound_1.playLoop("race", { volume: 0.5 });
+            yield sleep(3000);
+            Sound_1.playOnce("readygo");
+            TextPanel_1.updateTextPanel({ value: "READY!" });
+            yield sleep(700);
+            TextPanel_1.updateTextPanel({ value: "STEADY!" });
+            yield sleep(800);
+            TextPanel_1.updateTextPanel({ value: "GO!" });
+            console.log("START");
+            const currentPlayerScreen = this.getPlayerScreen(this.gameSetup.currentPlayer);
+            this.state.blocked = false;
+            if (this.gameSetup.currentPlayer) {
+                this.state.blocked = false;
+                Input.instance.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, this.moveLeg1);
+                Input.instance.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, this.moveLeg2);
+                Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, this.jump);
+            }
+            currentPlayerScreen.onMove((currentStep) => {
+                if (currentStep % 2 === 0) {
+                }
+            });
+            currentPlayerScreen.onFinishScreen(() => {
+                this.block();
+                Sound_1.stopSound("race");
+                const timeSinceStart = Date.now() - this.state.startTime;
+                this.callbacks.onFinish({ time: timeSinceStart, isWinner: true, gameIndex: this.gameSetup.gameIndex, roundIndex: 0 });
+                this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceStart });
+                this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: 100 });
+                this.callbacks.onShareState({ player: this.gameSetup.currentPlayer, timeSinceStart, percentage: 100 });
+            });
+            this.screen1.handleVisibility();
+            this.screen2.handleVisibility();
+            yield sleep(1000);
+            TextPanel_1.updateTextPanel({ value: "" });
+        }))();
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        if (!this.state.started && ((Date.now() - 4000) >= this.state.startTime)) {
+            this.start();
+            return;
+        }
+        if (this.state.started && this.getPlayerScreen(1).getScreenState().moving) {
+            this.getPlayerScreen(1).updateScreen(dt);
+        }
+        if (this.state.started && this.getPlayerScreen(2).getScreenState().moving) {
+            this.getPlayerScreen(2).updateScreen(dt);
+        }
+    }
+    destroy() {
+        Sound_1.stopSound("race");
+        TextPanel_1.updateTextPanel({ value: "" });
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.moveLeg1);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.moveLeg2);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.jump);
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        engine.removeSystem(this);
+    }
+    block() {
+        this.state.blocked = true;
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, this.moveLeg1);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, this.moveLeg2);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, this.jump);
+    }
+    finish({ winner }) {
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+    shareState(sharedState) {
+        console.log("shareState", sharedState);
+        const { movement, player, timeSinceStart, percentage } = sharedState;
+        if (timeSinceStart) {
+            this.ui.updateTime({ player, time: timeSinceStart });
+        }
+        else {
+            const playerScreen = this.getPlayerScreen(player);
+            if (movement === '1' || movement === '2') {
+                playerScreen.moveScreen();
+            }
+            else {
+                playerScreen.moveScreen(true);
+            }
+        }
+        this.ui.updateScore({ player, score: percentage });
+    }
+    getRandomInt(min, max, except) {
+        const result = Math.floor(this.randomizer.random() * (max - min + 1)) + min;
+        return (result === except) ? this.getRandomInt(min, max, except) : result;
+    }
+}
+exports.ObstacleGame = ObstacleGame;
+ObstacleGame.id = "Obstacle";
+ObstacleGame.instructions = `Alternate E and F  with rythm to run,
+    when red obstacle right in front,
+    Press click to jump!
+    `;
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MathGame = void 0;
+const Sound_1 = __webpack_require__(2);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpritePanel_1 = __webpack_require__(5);
+const seed_1 = __webpack_require__(3);
+const utils_1 = __webpack_require__(9);
+const SpriteAnimation_1 = __webpack_require__(0);
+const gameUtils_1 = __webpack_require__(4);
+const ROUNDS = 5;
+const PIXEL = 4 / 128;
+const TEACHER_OFFSET = (576 / 64) * (1024 / 64);
+const createTeacher = (root, { player }) => {
+    const entity = new Entity();
+    const shape = new PlaneShape();
+    shape.withCollisions = false;
+    shape.uvs = SpriteAnimation_1.getSpriteUv(1, TEACHER_OFFSET, 64, 64);
+    entity.addComponent(SpriteMaterial_1.spriteMaterial);
+    entity.addComponent(shape);
+    entity.addComponent(new Transform({
+        position: new Vector3(player === 1 ? -(2.2 + PIXEL * 2) : 2.2 - PIXEL * 3, 1.5 - PIXEL * 2, -0.002),
+        scale: new Vector3(player === 1 ? 2 : -2, 2, 1)
+    }));
+    entity.setParent(root);
+    return shape;
+};
+class MathGame {
+    constructor(root, { seed, level, currentPlayer, gameIndex }) {
+        this.state = {
+            blocked: false,
+            started: false,
+            initialized: false,
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            round: 0,
+            finished: false,
+            score1: 0,
+            score2: 0
+        };
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null,
+            onFinishRound: null
+        };
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.002)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.teacher1 = createTeacher(this.scene, { player: 1 });
+        this.teacher2 = createTeacher(this.scene, { player: 2 });
+        this.player1 = gameUtils_1.createPlayerAnswer(this.scene, { player: 1 });
+        this.player2 = gameUtils_1.createPlayerAnswer(this.scene, { player: 2 });
+        this.player1.hide();
+        this.player2.hide();
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.gameSetup = { seed, currentPlayer, level, gameIndex };
+        this.root = root;
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        const question = new Entity();
+        this.question = new TextShape("");
+        this.question.withCollisions = false;
+        this.question.vTextAlign = "top";
+        this.question.fontSize = 5;
+        question.addComponent(this.question);
+        question.addComponent(new Transform({ position: new Vector3(0, 3.5, -0.001) }));
+        question.setParent(this.scene);
+        engine.addSystem(this);
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    setRoundStartTime(roundStartTime) {
+        console.log("setRoundStartTime", roundStartTime);
+        this.state.roundStartTime = roundStartTime;
+    }
+    onClickAnswer(index) {
+        if (this.state.blocked || !this.state.started)
+            return;
+        this.state.blocked = true;
+        Sound_1.playOnce('swing');
+        const currentPlayerAnswer = this[`player${this.gameSetup.currentPlayer}`];
+        currentPlayerAnswer.show();
+        currentPlayerAnswer.wrapperEntity.getComponent(Transform)
+            .position.set(this.answersT[index].position.x + (this.gameSetup.currentPlayer === 1 ? -0.2 : 0.2), this.answersT[index].position.y, this.answersT[index].position.z);
+        const isWinner = this.answers[index].value === this.answers[this.solutionIndex].value;
+        currentPlayerAnswer.setSprite(isWinner);
+        const timeSinceStart = utils_1.getTimeSinceStart((this.state.round === 0) ? this.state.startTime : this.state.lastRoundStartTime);
+        const time = isWinner
+            ? timeSinceStart
+            : 999999999 - timeSinceStart;
+        this.callbacks.onShareState({ type: 'election', player: this.gameSetup.currentPlayer, index, time, timeSinceStart, round: this.state.round });
+        this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceStart });
+        if (this.state.round < ROUNDS - 1) {
+            this.callbacks.onFinishRound({
+                player: this.gameSetup.currentPlayer,
+                time,
+                round: this.state.round,
+                isWinner,
+                gameIndex: this.gameSetup.gameIndex,
+                roundIndex: this.state.round
+            });
+            this.state.waitingRound = true;
+        }
+        else {
+            this.callbacks.onFinish({
+                player: this.gameSetup.currentPlayer,
+                time,
+                round: this.state.round,
+                isWinner,
+                gameIndex: this.gameSetup.gameIndex,
+                roundIndex: this.state.round
+            });
+        }
+    }
+    init() {
+        Sound_1.playLoop("money", { volume: 0.5 });
+        this.state.initialized = true;
+        SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(3, 0, 192, 128) });
+        SpritePanel_1.showSpritePanel();
+        this.scene.setParent(this.root);
+    }
+    block() {
+        this.state.blocked = true;
+    }
+    destroy() {
+        Sound_1.stopSound("money");
+        SpritePanel_1.hideSpritePanel();
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+    }
+    start() {
+        this.ui.hideTime();
+        const num1 = Math.floor(this.randomizer.random() * 50);
+        const num2 = Math.floor(this.randomizer.random() * 50);
+        this.question.value = `${num1} + ${num2}`;
+        this.state.started = true;
+        const solution = num1 + num2;
+        const solutionIndex = this.solutionIndex = Math.floor(this.randomizer.random() * 6);
+        const solutionMinus = solution - 1;
+        const solutionMinusIndex = this.getRandomIntExcept(0, 5, [solutionIndex]);
+        const solutionMinus10 = solution - 10;
+        const solutionMinus10Index = this.getRandomIntExcept(0, 5, [solutionIndex, solutionMinusIndex]);
+        this.answers = Array(6).fill(null);
+        this.answersT = Array(6).fill(null);
+        const answerValues = [];
+        const answerShape = new PlaneShape();
+        const answerMaterial = new Material();
+        answerMaterial.albedoColor = new Color4(1, 1, 1, 0.05);
+        this.answers.forEach((answerT, index) => {
+            const answerE = new Entity();
+            const answerWrapper = new Entity();
+            answerShape.withCollisions = false;
+            answerWrapper.addComponent(answerShape);
+            answerWrapper.addComponent(answerMaterial);
+            this.answers[index] = new TextShape();
+            this.answers[index].withCollisions = false;
+            this.answers[index].fontSize = 3;
+            answerE.addComponent(this.answers[index]);
+            if (index === solutionIndex) {
+                this.answers[index].value = answerValues[index] = solution;
+            }
+            else if (index === solutionMinusIndex) {
+                this.answers[index].value = answerValues[index] = solutionMinus;
+            }
+            else if (index === solutionMinus10Index) {
+                this.answers[index].value = answerValues[index] = solutionMinus10;
+            }
+            else {
+                this.answers[index].value = answerValues[index] = this.getRandomIntExcept(0, 100, answerValues);
+            }
+            this.answers[index].visible = false;
+            answerE.addComponent(new Transform({ position: new Vector3(0, 0, -0.01) }));
+            this.answersT[index] = new Transform({ position: new Vector3(index === 0 || index === 3 ? -1
+                    : index === 1 || index === 4 ? 0
+                        : 1, index < 3 ? 2.5 : 1.5, 0), scale: new Vector3(0.9, 0.9, 0.9) });
+            answerWrapper.addComponent(this.answersT[index]);
+            answerWrapper.addComponent(new OnClick(() => {
+                this.onClickAnswer(index);
+            }));
+            answerWrapper.setParent(this.scene);
+            answerE.setParent(answerWrapper);
+        });
+    }
+    startRound() {
+        this.state.round++;
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        this.ui.hideTime();
+        this.player1.hide();
+        this.player2.hide();
+        this.question.value = "";
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        this.state.waitingRound = false;
+        this.answers.forEach((answerT, index) => {
+            this.answers[index].value = "";
+        });
+        this.question.value = "";
+        this.teacher1.uvs = SpriteAnimation_1.getSpriteUv(1, TEACHER_OFFSET, 64, 64);
+        this.teacher2.uvs = SpriteAnimation_1.getSpriteUv(1, TEACHER_OFFSET, 64, 64);
+        setTimeout(() => {
+            if (this.gameSetup.currentPlayer)
+                this.state.blocked = false;
+            const num1 = Math.floor(this.randomizer.random() * 50);
+            const num2 = Math.floor(this.randomizer.random() * 50);
+            this.question.value = `${num1} + ${num2}`;
+            const solution = num1 + num2;
+            const solutionIndex = this.solutionIndex = Math.floor(this.randomizer.random() * 6);
+            const solutionMinus = solution - 1;
+            const solutionMinusIndex = this.getRandomIntExcept(0, 5, [solutionIndex]);
+            const solutionMinus10 = solution - 10;
+            const solutionMinus10Index = this.getRandomIntExcept(0, 5, [solutionIndex, solutionMinusIndex]);
+            const answerValues = [];
+            this.answers.forEach((answerT, index) => {
+                if (index === solutionIndex) {
+                    this.answers[index].value = answerValues[index] = solution;
+                }
+                else if (index === solutionMinusIndex) {
+                    this.answers[index].value = answerValues[index] = solutionMinus;
+                }
+                else if (index === solutionMinus10Index) {
+                    this.answers[index].value = answerValues[index] = solutionMinus10;
+                }
+                else {
+                    this.answers[index].value = answerValues[index] = this.getRandomIntExcept(0, 100, answerValues);
+                }
+            });
+        }, 500);
+    }
+    update(dt) {
+        if (!this.state.initialized) {
+            return;
+        }
+        ;
+        if (!this.state.waitingRound && !this.state.started && Date.now() >= this.state.startTime) {
+            console.log("start");
+            this.start();
+            return;
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            this.startRound();
+        }
+        else if (Date.now() >= this.state.roundStartTime) {
+        }
+    }
+    finish(result) {
+        const { winner } = result;
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.state.blocked = true;
+        this[`teacher${winner}`].uvs = SpriteAnimation_1.getSpriteUv(3, TEACHER_OFFSET, 64, 64);
+        this[`teacher${nonWinner}`].uvs = SpriteAnimation_1.getSpriteUv(2, TEACHER_OFFSET, 64, 64);
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    finishRound({ winner }) {
+        console.log("finishRound winner", winner);
+        this.state.blocked = true;
+        this.state[`score${winner}`] += 1;
+        this.ui.updateScore({ player: winner, score: this.state[`score${winner}`] });
+        const nonWinner = winner === 1 ? 2 : 1;
+        console.log("winner", winner);
+        this[`teacher${winner}`].uvs = SpriteAnimation_1.getSpriteUv(3, TEACHER_OFFSET, 64, 64);
+        this[`teacher${nonWinner}`].uvs = SpriteAnimation_1.getSpriteUv(2, TEACHER_OFFSET, 64, 64);
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this.state.waitingRound = true;
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+        return () => this.callbacks.onFinishRound = null;
+    }
+    shareState(sharedState) {
+        const { player, index, timeSinceStart, time, round } = sharedState;
+        if (round !== this.state.round)
+            return;
+        const isWinner = index === this.solutionIndex;
+        const playerAnswer = this[`player${player}`];
+        playerAnswer.show();
+        playerAnswer.wrapperEntity.getComponent(Transform)
+            .position.set(this.answersT[index].position.x + (player === 1 ? -0.2 : 0.2), this.answersT[index].position.y, this.answersT[index].position.z);
+        playerAnswer.setSprite(isWinner);
+        this.ui.updateTime({ player, time: timeSinceStart });
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+    }
+    getRandomIntExcept(min, max, except) {
+        let ran = min + Math.floor(this.randomizer.random() * (max + 1 - min));
+        if (!except) {
+            return ran;
+        }
+        while (~except.indexOf(ran)) {
+            ran = min + Math.floor(this.randomizer.random() * (max + 1 - min));
+        }
+        return ran;
+    }
+}
+exports.MathGame = MathGame;
+MathGame.id = 'Math';
+MathGame.instructions = `Math\nClick the correct answer`;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DifferentGame = void 0;
+const gameUtils_1 = __webpack_require__(4);
+const seed_1 = __webpack_require__(3);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+const Sound_1 = __webpack_require__(2);
+const SpritePanel_1 = __webpack_require__(5);
+const TextPanel_1 = __webpack_require__(6);
+const utils_1 = __webpack_require__(9);
+const SPRITE_OFFSET = 768 / 64 * 1024 / 64;
+const createAnswer = (root, index, clickCallback) => {
+    const entity = new Entity();
+    const shape = new PlaneShape();
+    let spriteIndex = 0;
+    entity.addComponent(shape);
+    entity.addComponent(SpriteMaterial_1.spriteMaterial);
+    entity.addComponent(new Transform({
+        scale: new Vector3(1.9, 1.9, 1.9),
+        position: new Vector3(index === 0 ? -2 : index === 1 ? 0 : 2, 2, -0.001)
+    }));
+    shape.uvs = SpriteAnimation_1.getSpriteUv(1, SPRITE_OFFSET, 64, 64);
+    shape.uvs = SpriteAnimation_1.getSpriteUv(0, 0, 0, 0);
+    entity.setParent(root);
+    entity.addComponent(new OnClick(() => {
+        clickCallback(index);
+    }));
+    return {
+        setIndex: (_spriteIndex) => {
+            spriteIndex = _spriteIndex;
+            shape.uvs = SpriteAnimation_1.getSpriteUv(spriteIndex, SPRITE_OFFSET, 64, 64);
+        },
+        getSpriteIndex: () => spriteIndex,
+        hide: () => {
+            shape.uvs = SpriteAnimation_1.getSpriteUv(0, 0, 0, 0);
+        }
+    };
+};
+const ROUNDS = 5;
+class DifferentGame {
+    constructor(root, { seed, level, currentPlayer, gameIndex }) {
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null,
+            onFinishRound: null
+        };
+        this.state = {
+            blocked: false,
+            started: false,
+            initialized: false,
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            round: 0,
+            finished: false,
+            score1: 0,
+            score2: 0,
+            equalSpriteIndex: 0,
+            differentSpriteIndex: 0,
+            answerPositions: [1, 0, 0]
+        };
+        this.gameSetup = { seed, currentPlayer, level, gameIndex };
+        this.root = root;
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.002)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.player1 = gameUtils_1.createPlayerAnswer(this.scene, { player: 1 });
+        this.player2 = gameUtils_1.createPlayerAnswer(this.scene, { player: 2 });
+        this.player1.hide();
+        this.player2.hide();
+        console.log("diff seed", seed);
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        this.onClickAnswer = this.onClickAnswer.bind(this);
+        this.answers = [0, 1, 2].map((index) => createAnswer(this.scene, index, this.onClickAnswer));
+        engine.addSystem(this);
+        if (!currentPlayer)
+            this.state.blocked = true;
+    }
+    onClickAnswer(index) {
+        if (this.state.blocked || !this.state.started)
+            return;
+        this.state.blocked = true;
+        Sound_1.playOnce('swing');
+        const isWinner = !!this.state.answerPositions[index];
+        console.log("isWinner", isWinner);
+        const currentPlayerAnswer = this[`player${this.gameSetup.currentPlayer}`];
+        currentPlayerAnswer.show();
+        currentPlayerAnswer.wrapperEntity.getComponent(Transform)
+            .position.set((index === 0 ? -2 : index === 1 ? 0 : 2) + (this.gameSetup.currentPlayer === 1 ? -0.5 : 0.5), 2, -0.002);
+        currentPlayerAnswer.setSprite(isWinner);
+        const timeSinceStart = utils_1.getTimeSinceStart((this.state.round === 0) ? this.state.startTime : this.state.lastRoundStartTime);
+        const time = isWinner
+            ? timeSinceStart
+            : 999999999 - timeSinceStart;
+        this.callbacks.onShareState({ player: this.gameSetup.currentPlayer, isWinner, answerIndex: index, time, timeSinceStart, round: this.state.round });
+        this.ui.updateTime({ player: this.gameSetup.currentPlayer, time: timeSinceStart });
+        if (this.state.round < ROUNDS - 1) {
+            this.callbacks.onFinishRound({
+                player: this.gameSetup.currentPlayer,
+                time,
+                roundIndex: this.state.round,
+                gameIndex: this.gameSetup.gameIndex
+            });
+            this.state.waitingRound = true;
+        }
+        else {
+            this.callbacks.onFinish({
+                player: this.gameSetup.currentPlayer,
+                time,
+                roundIndex: this.state.round,
+                gameIndex: this.gameSetup.gameIndex
+            });
+        }
+    }
+    init() {
+        TextPanel_1.updateTextPanel({ value: "Which is different?", color: Color3.Black() });
+        Sound_1.playLoop("money", { volume: 0.5 });
+        this.state.initialized = true;
+        SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(9, 0, 192, 128) });
+        SpritePanel_1.showSpritePanel();
+        this.scene.setParent(this.root);
+    }
+    setStartTime(startTime) {
+        console.log("setStartTime", startTime);
+        this.state.startTime = startTime;
+    }
+    setRoundStartTime(startTime) {
+        this.state.roundStartTime = startTime;
+    }
+    finish(result) {
+        const { winner } = result;
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.state.blocked = true;
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+    }
+    finishRound({ winner }) {
+        this.state.blocked = true;
+        this.state[`score${winner}`] += 1;
+        this.ui.updateScore({ player: winner, score: this.state[`score${winner}`] });
+        const nonWinner = winner === 1 ? 2 : 1;
+        if (winner === this.gameSetup.currentPlayer) {
+            Sound_1.playOnce("wow");
+        }
+        else {
+            Sound_1.playOnce("fail");
+        }
+        this.state.waitingRound = true;
+    }
+    reproduceRound() {
+        if (this.gameSetup.currentPlayer)
+            this.state.blocked = false;
+        this.ui.hideTime();
+        TextPanel_1.updateTextPanel({ value: "Which is different?", color: Color3.Black() });
+        this.state.equalSpriteIndex = this.getRandomIntExcept(1, 9);
+        this.state.differentSpriteIndex = this.getRandomIntExcept(1, 9, [this.state.equalSpriteIndex]);
+        console.log("REPRODUCE, STATE", this.state.equalSpriteIndex, this.state.differentSpriteIndex);
+        this.state.answerPositions = shuffle([1, 0, 0], this.randomizer.random);
+        this.state.answerPositions.forEach((answerPos, index) => {
+            if (answerPos) {
+                this.answers[index].setIndex(this.state.differentSpriteIndex);
+            }
+            else {
+                this.answers[index].setIndex(this.state.equalSpriteIndex);
+            }
+        });
+    }
+    start() {
+        console.log("_START_");
+        this.state.started = true;
+        this.reproduceRound();
+    }
+    startRound() {
+        this.state.round++;
+        this.player1.hide();
+        this.player2.hide();
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        this.state.waitingRound = false;
+        this.answers.forEach(answer => answer.hide());
+        setTimeout(() => {
+            this.reproduceRound();
+        }, 500);
+    }
+    block() {
+        this.state.blocked = true;
+    }
+    update(dt) {
+        if (!this.state.initialized) {
+            return;
+        }
+        ;
+        if (!this.state.waitingRound && !this.state.started && Date.now() >= this.state.startTime) {
+            this.start();
+            return;
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            this.startRound();
+        }
+    }
+    shareState({ player, answerIndex, isWinner, timeSinceStart, round }) {
+        this.ui.updateTime({ player, time: timeSinceStart });
+        const currentPlayerAnswer = this[`player${player}`];
+        const index = answerIndex;
+        currentPlayerAnswer.setSprite(isWinner);
+        currentPlayerAnswer.show();
+        currentPlayerAnswer.wrapperEntity.getComponent(Transform)
+            .position.set((index === 0 ? -2 : index === 1 ? 0 : 2) + (player === 1 ? -0.5 : 0.5), 2, -0.002);
+    }
+    destroy() {
+        Sound_1.stopSound("money");
+        SpritePanel_1.hideSpritePanel();
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+    }
+    getRandomIntExcept(min, max, except) {
+        let ran = min + Math.floor(this.randomizer.random() * (max + 1 - min));
+        if (!except) {
+            return ran;
+        }
+        while (~except.indexOf(ran)) {
+            ran = min + Math.floor(this.randomizer.random() * (max + 1 - min));
+        }
+        return ran;
+    }
+}
+exports.DifferentGame = DifferentGame;
+DifferentGame.id = 'Different';
+DifferentGame.instructions = 'Different\nClick the image that is different';
+function shuffle(array, randomFn) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(randomFn() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
+}
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FroggerGame = void 0;
+const FroggerScreen_1 = __webpack_require__(63);
+const seed_1 = __webpack_require__(3);
+const gameUtils_1 = __webpack_require__(4);
+const Sound_1 = __webpack_require__(2);
+const TextPanel_1 = __webpack_require__(6);
+const KEY = {
+    UP: ActionButton.POINTER,
+    LEFT: ActionButton.PRIMARY,
+    RIGHT: ActionButton.SECONDARY
+};
+class FroggerGame {
+    constructor(root, { seed, currentPlayer, level = 1, gameIndex }) {
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null
+        };
+        this.state = {
+            blocked: false,
+            started: false,
+            initialized: false,
+            startTime: Number.MAX_VALUE,
+            finished: false,
+        };
+        this.root = root;
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 0, -0.001)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene);
+        this.gameSetup = { seed: seed, currentPlayer, level, gameIndex };
+        ;
+        this.randomizer = seed_1.seedGen.create(seed.toString());
+        this.screen1 = FroggerScreen_1.createScreen(this.scene, { player: 1, seed });
+        this.screen2 = FroggerScreen_1.createScreen(this.scene, { player: 2, seed });
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+        if (currentPlayer) {
+            this[`screen${currentPlayer}`].onStateChange((screenState) => {
+                this.ui.updateScore({ score: screenState.score, player: currentPlayer });
+                const { x, y, z } = screenState.frogPosition;
+                this.callbacks.onShareState(Object.assign(Object.assign({}, screenState), { player: currentPlayer, frogPosition: { x, y, z }, takenSammiches: screenState.takenSammiches }));
+                console.log("screenState", screenState);
+                if (screenState.score === 5 && !this.state.finished) {
+                    const timeSinceStart = Date.now() - this.state.startTime;
+                    this.block();
+                    if (currentPlayer)
+                        this[`screen${currentPlayer}`].block();
+                    this.state.finished = true;
+                    this.callbacks.onFinish({
+                        isWinner: true,
+                        time: timeSinceStart,
+                        player: currentPlayer,
+                        gameIndex: this.gameSetup.gameIndex,
+                        roundIndex: 0
+                    });
+                }
+            });
+        }
+        engine.addSystem(this);
+        this.up = this.up.bind(this);
+        this.left = this.left.bind(this);
+        this.right = this.right.bind(this);
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    getPlayerScreen(player) {
+        return this[`screen${player}`];
+    }
+    init() {
+        this.state.initialized = true;
+        this.scene.setParent(this.root);
+        Sound_1.playLoop("race", { volume: 0.5 });
+    }
+    start() {
+        console.log("START_");
+        this.state.started = true;
+        if (this.gameSetup.currentPlayer) {
+            Input.instance.subscribe("BUTTON_DOWN", KEY.UP, false, this.up);
+            Input.instance.subscribe("BUTTON_DOWN", KEY.LEFT, false, this.left);
+            Input.instance.subscribe("BUTTON_DOWN", KEY.RIGHT, false, this.right);
+        }
+    }
+    up() {
+        var _a;
+        if (!this.state.started || this.state.blocked)
+            return;
+        (_a = this.getPlayerScreen(this.gameSetup.currentPlayer)) === null || _a === void 0 ? void 0 : _a.up();
+    }
+    left() {
+        var _a;
+        if (!this.state.started || this.state.blocked)
+            return;
+        (_a = this.getPlayerScreen(this.gameSetup.currentPlayer)) === null || _a === void 0 ? void 0 : _a.left();
+    }
+    right() {
+        var _a;
+        if (!this.state.started || this.state.blocked)
+            return;
+        (_a = this.getPlayerScreen(this.gameSetup.currentPlayer)) === null || _a === void 0 ? void 0 : _a.right();
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        if (!this.state.started && ((Date.now() - 4000) >= this.state.startTime)) {
+            this.start();
+            return;
+        }
+        if (this.state.started) {
+            this.getPlayerScreen(1).updateScreen(dt, this.gameSetup.currentPlayer === 1);
+        }
+        if (this.state.started) {
+            this.getPlayerScreen(2).updateScreen(dt, this.gameSetup.currentPlayer === 2);
+        }
+    }
+    block() {
+        this.state.blocked = true;
+        if (this.gameSetup.currentPlayer)
+            this[`screen${this.gameSetup.currentPlayer}`].block();
+    }
+    destroy() {
+        console.log("destroy");
+        Sound_1.stopSound("race");
+        TextPanel_1.updateTextPanel({ value: "" });
+        Input.instance.unsubscribe("BUTTON_DOWN", KEY.UP, this.up);
+        Input.instance.unsubscribe("BUTTON_DOWN", KEY.LEFT, this.left);
+        Input.instance.unsubscribe("BUTTON_DOWN", KEY.RIGHT, this.right);
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        engine.removeSystem(this);
+    }
+    shareState({ score, player, frogPosition, takenSammiches }) {
+        console.log("shareState", { score, player, frogPosition, takenSammiches });
+        const { x, y, z } = frogPosition || {};
+        this.ui.updateScore({ score, player });
+        this[`screen${player}`].setFrogPosition(x, y, z);
+        this[`screen${player}`].setTakenSammiches(takenSammiches);
+    }
+    finish({ winner }) {
+        console.log("FINISH", winner);
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+}
+exports.FroggerGame = FroggerGame;
+FroggerGame.id = "Frogger";
+FroggerGame.instructions = `cross the roads and\ntake all sammiches\npressing E F and CLICK`;
+
+
+/***/ }),
+/* 35 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "send", function() { return send; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get", function() { return get; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "post", function() { return post; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "patch", function() { return patch; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "del", function() { return del; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "put", function() { return put; });
+function apply(src, tar) {
+	tar.headers = src.headers || {};
+	tar.statusMessage = src.statusText;
+	tar.statusCode = src.status;
+	tar.data = src.response;
+}
+
+function send(method, uri, opts) {
+	return new Promise(function (res, rej) {
+		opts = opts || {};
+		var k, str, tmp, arr;
+		var req = new XMLHttpRequest;
+		var headers = opts.headers || {};
+
+		// IE compatible
+		if (opts.timeout) req.timeout = opts.timeout;
+		req.ontimeout = req.onerror = function (err) {
+			err.timeout = err.type == 'timeout';
+			rej(err);
+		}
+
+		req.open(method, uri.href || uri);
+
+		req.onload = function () {
+			arr = req.getAllResponseHeaders().trim().split(/[\r\n]+/);
+			apply(req, req); //=> req.headers
+
+			while (tmp = arr.shift()) {
+				tmp = tmp.split(': ');
+				req.headers[tmp.shift().toLowerCase()] = tmp.join(': ');
+			}
+
+			tmp = req.headers['content-type'];
+			if (tmp && !!~tmp.indexOf('application/json')) {
+				try {
+					req.data = JSON.parse(req.data, opts.reviver);
+				} catch (err) {
+					apply(req, err);
+					return rej(err);
+				}
+			}
+
+			(req.status >= 400 ? rej : res)(req);
+		};
+
+		if ((str = opts.body) && typeof str == 'object') {
+			headers['content-type'] = 'application/json';
+			str = JSON.stringify(str);
+		}
+
+		req.withCredentials = !!opts.withCredentials;
+
+		for (k in headers) {
+			req.setRequestHeader(k, headers[k]);
+		}
+
+		req.send(str);
+	});
+}
+
+var get = send.bind(send, 'GET');
+var post = send.bind(send, 'POST');
+var patch = send.bind(send, 'PATCH');
+var del = send.bind(send, 'DELETE');
+var put = send.bind(send, 'PUT');
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule)
+        return mod;
+    var result = {};
+    if (mod != null)
+        for (var k in mod)
+            if (Object.hasOwnProperty.call(mod, k))
+                result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var msgpack = __importStar(__webpack_require__(37));
+var strong_events_1 = __webpack_require__(72);
+var nanoevents_1 = __webpack_require__(73);
+var Connection_1 = __webpack_require__(74);
+var Serializer_1 = __webpack_require__(38);
+var Protocol_1 = __webpack_require__(39);
+var encode = __importStar(__webpack_require__(40));
+var decode = __importStar(__webpack_require__(41));
+var Room = (function () {
+    function Room(name, rootSchema) {
+        var _this = this;
+        this.onJoin = strong_events_1.createSignal();
+        this.onStateChange = strong_events_1.createSignal();
+        this.onError = strong_events_1.createSignal();
+        this.onLeave = strong_events_1.createSignal();
+        this.hasJoined = false;
+        this.onMessageHandlers = nanoevents_1.createNanoEvents();
+        this.id = null;
+        this.name = name;
+        if (rootSchema) {
+            this.serializer = new (Serializer_1.getSerializer("schema"));
+            this.rootSchema = rootSchema;
+            this.serializer.state = new rootSchema();
+        }
+        else {
+            this.serializer = new (Serializer_1.getSerializer("fossil-delta"));
+        }
+        this.onError(function (code, message) { return console.error("colyseus.js - onError => (" + code + ") " + message); });
+        this.onLeave(function () { return _this.removeAllListeners(); });
+    }
+    Room.prototype.connect = function (endpoint) {
+        var _this = this;
+        this.connection = new Connection_1.Connection(endpoint, false);
+        this.connection.reconnectEnabled = false;
+        this.connection.onmessage = this.onMessageCallback.bind(this);
+        this.connection.onclose = function (e) {
+            if (!_this.hasJoined) {
+                console.error("Room connection was closed unexpectedly (" + e.code + "): " + e.reason);
+                _this.onError.invoke(e.code, e.reason);
+                return;
+            }
+            _this.onLeave.invoke(e.code);
+        };
+        this.connection.onerror = function (e) {
+            console.warn("Room, onError (" + e.code + "): " + e.reason);
+            _this.onError.invoke(e.code, e.reason);
+        };
+        this.connection.open();
+    };
+    Room.prototype.leave = function (consented) {
+        if (consented === void 0) {
+            consented = true;
+        }
+        if (this.connection) {
+            if (consented) {
+                this.connection.send([Protocol_1.Protocol.LEAVE_ROOM]);
+            }
+            else {
+                this.connection.close();
+            }
+        }
+        else {
+            this.onLeave.invoke(4000);
+        }
+    };
+    Room.prototype.onMessage = function (type, callback) {
+        return this.onMessageHandlers.on(this.getMessageHandlerKey(type), callback);
+    };
+    Room.prototype.send = function (type, message) {
+        var initialBytes = [Protocol_1.Protocol.ROOM_DATA];
+        if (typeof (type) === "string") {
+            encode.string(initialBytes, type);
+        }
+        else {
+            encode.number(initialBytes, type);
+        }
+        var arr;
+        if (message !== undefined) {
+            var encoded = msgpack.encode(message);
+            arr = new Uint8Array(initialBytes.length + encoded.byteLength);
+            arr.set(new Uint8Array(initialBytes), 0);
+            arr.set(new Uint8Array(encoded), initialBytes.length);
+        }
+        else {
+            arr = new Uint8Array(initialBytes);
+        }
+        this.connection.send(arr.buffer);
+    };
+    Object.defineProperty(Room.prototype, "state", {
+        get: function () {
+            return this.serializer.getState();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Room.prototype.listen = function (segments, callback, immediate) {
+        if (this.serializerId === "schema") {
+            console.error("'" + this.serializerId + "' serializer doesn't support .listen() method here.");
+            return;
+        }
+        else if (!this.serializerId) {
+            console.warn("room.Listen() should be called after room.onJoin has been called (DEPRECATION WARNING)");
+        }
+        return this.serializer.api.listen(segments, callback, immediate);
+    };
+    Room.prototype.removeListener = function (listener) {
+        return this.serializer.api.removeListener(listener);
+    };
+    Room.prototype.removeAllListeners = function () {
+        if (this.serializer) {
+            this.serializer.teardown();
+        }
+        this.onJoin.clear();
+        this.onStateChange.clear();
+        this.onError.clear();
+        this.onLeave.clear();
+    };
+    Room.prototype.onMessageCallback = function (event) {
+        var bytes = Array.from(new Uint8Array(event.data));
+        var code = bytes[0];
+        if (code === Protocol_1.Protocol.JOIN_ROOM) {
+            var offset = 1;
+            this.serializerId = Protocol_1.utf8Read(bytes, offset);
+            offset += Protocol_1.utf8Length(this.serializerId);
+            var serializer = Serializer_1.getSerializer(this.serializerId);
+            if (!serializer) {
+                throw new Error("missing serializer: " + this.serializerId);
+            }
+            if (this.serializerId !== "fossil-delta" && !this.rootSchema) {
+                this.serializer = new serializer();
+            }
+            if (bytes.length > offset && this.serializer.handshake) {
+                this.serializer.handshake(bytes, { offset: 1 });
+            }
+            this.hasJoined = true;
+            this.onJoin.invoke();
+            this.connection.send([Protocol_1.Protocol.JOIN_ROOM]);
+        }
+        else if (code === Protocol_1.Protocol.ERROR) {
+            var it_1 = { offset: 1 };
+            var code_1 = decode.number(bytes, it_1);
+            var message = decode.string(bytes, it_1);
+            this.onError.invoke(code_1, message);
+        }
+        else if (code === Protocol_1.Protocol.LEAVE_ROOM) {
+            this.leave();
+        }
+        else if (code === Protocol_1.Protocol.ROOM_DATA_SCHEMA) {
+            var context_1 = this.serializer.getState().constructor._context;
+            var type = context_1.get(bytes[1]);
+            var message = new type();
+            message.decode(bytes, { offset: 2 });
+            this.dispatchMessage(type, message);
+        }
+        else if (code === Protocol_1.Protocol.ROOM_STATE) {
+            bytes.shift();
+            this.setState(bytes);
+        }
+        else if (code === Protocol_1.Protocol.ROOM_STATE_PATCH) {
+            bytes.shift();
+            this.patch(bytes);
+        }
+        else if (code === Protocol_1.Protocol.ROOM_DATA) {
+            var it_2 = { offset: 1 };
+            var type = (decode.stringCheck(bytes, it_2))
+                ? decode.string(bytes, it_2)
+                : decode.number(bytes, it_2);
+            var message = (bytes.length > it_2.offset)
+                ? msgpack.decode(event.data, it_2.offset)
+                : undefined;
+            this.dispatchMessage(type, message);
+        }
+    };
+    Room.prototype.setState = function (encodedState) {
+        this.serializer.setState(encodedState);
+        this.onStateChange.invoke(this.serializer.getState());
+    };
+    Room.prototype.patch = function (binaryPatch) {
+        this.serializer.patch(binaryPatch);
+        this.onStateChange.invoke(this.serializer.getState());
+    };
+    Room.prototype.dispatchMessage = function (type, message) {
+        var messageType = this.getMessageHandlerKey(type);
+        if (this.onMessageHandlers.events[messageType]) {
+            this.onMessageHandlers.emit(messageType, message);
+        }
+        else if (this.onMessageHandlers.events['*']) {
+            this.onMessageHandlers.emit('*', type, message);
+        }
+        else {
+            console.warn("onMessage not registered for type '" + type + "'.");
+        }
+    };
+    Room.prototype.getMessageHandlerKey = function (type) {
+        switch (typeof (type)) {
+            case "function": return "$" + type._typeid;
+            case "string": return type;
+            case "number": return "i" + type;
+            default: throw new Error("invalid message type.");
+        }
+    };
+    return Room;
+}());
+exports.Room = Room;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var decode_1 = __importDefault(__webpack_require__(70));
+var encode_1 = __importDefault(__webpack_require__(71));
+exports.decode = decode_1.default;
+exports.encode = encode_1.default;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var serializers = {};
+function registerSerializer(id, serializer) {
+    serializers[id] = serializer;
+}
+exports.registerSerializer = registerSerializer;
+function getSerializer(id) {
+    return serializers[id];
+}
+exports.getSerializer = getSerializer;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Protocol;
+(function (Protocol) {
+    Protocol[Protocol["HANDSHAKE"] = 9] = "HANDSHAKE";
+    Protocol[Protocol["JOIN_ROOM"] = 10] = "JOIN_ROOM";
+    Protocol[Protocol["ERROR"] = 11] = "ERROR";
+    Protocol[Protocol["LEAVE_ROOM"] = 12] = "LEAVE_ROOM";
+    Protocol[Protocol["ROOM_DATA"] = 13] = "ROOM_DATA";
+    Protocol[Protocol["ROOM_STATE"] = 14] = "ROOM_STATE";
+    Protocol[Protocol["ROOM_STATE_PATCH"] = 15] = "ROOM_STATE_PATCH";
+    Protocol[Protocol["ROOM_DATA_SCHEMA"] = 16] = "ROOM_DATA_SCHEMA";
+})(Protocol = exports.Protocol || (exports.Protocol = {}));
+var ErrorCode;
+(function (ErrorCode) {
+    ErrorCode[ErrorCode["MATCHMAKE_NO_HANDLER"] = 4210] = "MATCHMAKE_NO_HANDLER";
+    ErrorCode[ErrorCode["MATCHMAKE_INVALID_CRITERIA"] = 4211] = "MATCHMAKE_INVALID_CRITERIA";
+    ErrorCode[ErrorCode["MATCHMAKE_INVALID_ROOM_ID"] = 4212] = "MATCHMAKE_INVALID_ROOM_ID";
+    ErrorCode[ErrorCode["MATCHMAKE_UNHANDLED"] = 4213] = "MATCHMAKE_UNHANDLED";
+    ErrorCode[ErrorCode["MATCHMAKE_EXPIRED"] = 4214] = "MATCHMAKE_EXPIRED";
+    ErrorCode[ErrorCode["AUTH_FAILED"] = 4215] = "AUTH_FAILED";
+    ErrorCode[ErrorCode["APPLICATION_ERROR"] = 4216] = "APPLICATION_ERROR";
+})(ErrorCode = exports.ErrorCode || (exports.ErrorCode = {}));
+function utf8Read(view, offset) {
+    var length = view[offset++];
+    var string = '', chr = 0;
+    for (var i = offset, end = offset + length; i < end; i++) {
+        var byte = view[i];
+        if ((byte & 0x80) === 0x00) {
+            string += String.fromCharCode(byte);
+            continue;
+        }
+        if ((byte & 0xe0) === 0xc0) {
+            string += String.fromCharCode(((byte & 0x1f) << 6) |
+                (view[++i] & 0x3f));
+            continue;
+        }
+        if ((byte & 0xf0) === 0xe0) {
+            string += String.fromCharCode(((byte & 0x0f) << 12) |
+                ((view[++i] & 0x3f) << 6) |
+                ((view[++i] & 0x3f) << 0));
+            continue;
+        }
+        if ((byte & 0xf8) === 0xf0) {
+            chr = ((byte & 0x07) << 18) |
+                ((view[++i] & 0x3f) << 12) |
+                ((view[++i] & 0x3f) << 6) |
+                ((view[++i] & 0x3f) << 0);
+            if (chr >= 0x010000) {
+                chr -= 0x010000;
+                string += String.fromCharCode((chr >>> 10) + 0xD800, (chr & 0x3FF) + 0xDC00);
+            }
+            else {
+                string += String.fromCharCode(chr);
+            }
+            continue;
+        }
+        throw new Error('Invalid byte ' + byte.toString(16));
+    }
+    return string;
+}
+exports.utf8Read = utf8Read;
+function utf8Length(str) {
+    if (str === void 0) {
+        str = '';
+    }
+    var c = 0;
+    var length = 0;
+    for (var i = 0, l = str.length; i < l; i++) {
+        c = str.charCodeAt(i);
+        if (c < 0x80) {
+            length += 1;
+        }
+        else if (c < 0x800) {
+            length += 2;
+        }
+        else if (c < 0xd800 || c >= 0xe000) {
+            length += 3;
+        }
+        else {
+            i++;
+            length += 4;
+        }
+    }
+    return length + 1;
+}
+exports.utf8Length = utf8Length;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.number = exports.string = exports.boolean = exports.writeFloat64 = exports.writeFloat32 = exports.float64 = exports.float32 = exports.uint64 = exports.int64 = exports.uint32 = exports.int32 = exports.uint16 = exports.int16 = exports.uint8 = exports.int8 = exports.utf8Write = void 0;
+function utf8Length(str) {
+    var c = 0, length = 0;
+    for (var i = 0, l = str.length; i < l; i++) {
+        c = str.charCodeAt(i);
+        if (c < 0x80) {
+            length += 1;
+        }
+        else if (c < 0x800) {
+            length += 2;
+        }
+        else if (c < 0xd800 || c >= 0xe000) {
+            length += 3;
+        }
+        else {
+            i++;
+            length += 4;
+        }
+    }
+    return length;
+}
+function utf8Write(view, offset, str) {
+    var c = 0;
+    for (var i = 0, l = str.length; i < l; i++) {
+        c = str.charCodeAt(i);
+        if (c < 0x80) {
+            view[offset++] = c;
+        }
+        else if (c < 0x800) {
+            view[offset++] = 0xc0 | (c >> 6);
+            view[offset++] = 0x80 | (c & 0x3f);
+        }
+        else if (c < 0xd800 || c >= 0xe000) {
+            view[offset++] = 0xe0 | (c >> 12);
+            view[offset++] = 0x80 | (c >> 6 & 0x3f);
+            view[offset++] = 0x80 | (c & 0x3f);
+        }
+        else {
+            i++;
+            c = 0x10000 + (((c & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+            view[offset++] = 0xf0 | (c >> 18);
+            view[offset++] = 0x80 | (c >> 12 & 0x3f);
+            view[offset++] = 0x80 | (c >> 6 & 0x3f);
+            view[offset++] = 0x80 | (c & 0x3f);
+        }
+    }
+}
+exports.utf8Write = utf8Write;
+function int8(bytes, value) {
+    bytes.push(value & 255);
+}
+exports.int8 = int8;
+;
+function uint8(bytes, value) {
+    bytes.push(value & 255);
+}
+exports.uint8 = uint8;
+;
+function int16(bytes, value) {
+    bytes.push(value & 255);
+    bytes.push((value >> 8) & 255);
+}
+exports.int16 = int16;
+;
+function uint16(bytes, value) {
+    bytes.push(value & 255);
+    bytes.push((value >> 8) & 255);
+}
+exports.uint16 = uint16;
+;
+function int32(bytes, value) {
+    bytes.push(value & 255);
+    bytes.push((value >> 8) & 255);
+    bytes.push((value >> 16) & 255);
+    bytes.push((value >> 24) & 255);
+}
+exports.int32 = int32;
+;
+function uint32(bytes, value) {
+    var b4 = value >> 24;
+    var b3 = value >> 16;
+    var b2 = value >> 8;
+    var b1 = value;
+    bytes.push(b1 & 255);
+    bytes.push(b2 & 255);
+    bytes.push(b3 & 255);
+    bytes.push(b4 & 255);
+}
+exports.uint32 = uint32;
+;
+function int64(bytes, value) {
+    var high = Math.floor(value / Math.pow(2, 32));
+    var low = value >>> 0;
+    uint32(bytes, low);
+    uint32(bytes, high);
+}
+exports.int64 = int64;
+;
+function uint64(bytes, value) {
+    var high = (value / Math.pow(2, 32)) >> 0;
+    var low = value >>> 0;
+    uint32(bytes, low);
+    uint32(bytes, high);
+}
+exports.uint64 = uint64;
+;
+function float32(bytes, value) {
+    writeFloat32(bytes, value);
+}
+exports.float32 = float32;
+function float64(bytes, value) {
+    writeFloat64(bytes, value);
+}
+exports.float64 = float64;
+var _isLittleEndian = true;
+var _int32 = new Int32Array(2);
+var _float32 = new Float32Array(_int32.buffer);
+var _float64 = new Float64Array(_int32.buffer);
+function writeFloat32(bytes, value) {
+    _float32[0] = value;
+    int32(bytes, _int32[0]);
+}
+exports.writeFloat32 = writeFloat32;
+;
+function writeFloat64(bytes, value) {
+    _float64[0] = value;
+    int32(bytes, _int32[_isLittleEndian ? 0 : 1]);
+    int32(bytes, _int32[_isLittleEndian ? 1 : 0]);
+}
+exports.writeFloat64 = writeFloat64;
+;
+function boolean(bytes, value) {
+    return uint8(bytes, value ? 1 : 0);
+}
+exports.boolean = boolean;
+;
+function string(bytes, value) {
+    if (!value) {
+        value = "";
+    }
+    var length = utf8Length(value);
+    var size = 0;
+    if (length < 0x20) {
+        bytes.push(length | 0xa0);
+        size = 1;
+    }
+    else if (length < 0x100) {
+        bytes.push(0xd9);
+        uint8(bytes, length);
+        size = 2;
+    }
+    else if (length < 0x10000) {
+        bytes.push(0xda);
+        uint16(bytes, length);
+        size = 3;
+    }
+    else if (length < 0x100000000) {
+        bytes.push(0xdb);
+        uint32(bytes, length);
+        size = 5;
+    }
+    else {
+        throw new Error('String too long');
+    }
+    utf8Write(bytes, bytes.length, value);
+    return size + length;
+}
+exports.string = string;
+function number(bytes, value) {
+    if (isNaN(value)) {
+        return number(bytes, 0);
+    }
+    else if (!isFinite(value)) {
+        return number(bytes, (value > 0) ? Number.MAX_SAFE_INTEGER : -Number.MAX_SAFE_INTEGER);
+    }
+    else if (value !== (value | 0)) {
+        bytes.push(0xcb);
+        writeFloat64(bytes, value);
+        return 9;
+    }
+    if (value >= 0) {
+        if (value < 0x80) {
+            uint8(bytes, value);
+            return 1;
+        }
+        if (value < 0x100) {
+            bytes.push(0xcc);
+            uint8(bytes, value);
+            return 2;
+        }
+        if (value < 0x10000) {
+            bytes.push(0xcd);
+            uint16(bytes, value);
+            return 3;
+        }
+        if (value < 0x100000000) {
+            bytes.push(0xce);
+            uint32(bytes, value);
+            return 5;
+        }
+        bytes.push(0xcf);
+        uint64(bytes, value);
+        return 9;
+    }
+    else {
+        if (value >= -0x20) {
+            bytes.push(value);
+            return 1;
+        }
+        if (value >= -0x80) {
+            bytes.push(0xd0);
+            int8(bytes, value);
+            return 2;
+        }
+        if (value >= -0x8000) {
+            bytes.push(0xd1);
+            int16(bytes, value);
+            return 3;
+        }
+        if (value >= -0x80000000) {
+            bytes.push(0xd2);
+            int32(bytes, value);
+            return 5;
+        }
+        bytes.push(0xd3);
+        int64(bytes, value);
+        return 9;
+    }
+}
+exports.number = number;
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.indexChangeCheck = exports.nilCheck = exports.arrayCheck = exports.numberCheck = exports.number = exports.stringCheck = exports.string = exports.boolean = exports.readFloat64 = exports.readFloat32 = exports.uint64 = exports.int64 = exports.float64 = exports.float32 = exports.uint32 = exports.int32 = exports.uint16 = exports.int16 = exports.uint8 = exports.int8 = void 0;
+var spec_1 = __webpack_require__(42);
+function utf8Read(bytes, offset, length) {
+    var string = '', chr = 0;
+    for (var i = offset, end = offset + length; i < end; i++) {
+        var byte = bytes[i];
+        if ((byte & 0x80) === 0x00) {
+            string += String.fromCharCode(byte);
+            continue;
+        }
+        if ((byte & 0xe0) === 0xc0) {
+            string += String.fromCharCode(((byte & 0x1f) << 6) |
+                (bytes[++i] & 0x3f));
+            continue;
+        }
+        if ((byte & 0xf0) === 0xe0) {
+            string += String.fromCharCode(((byte & 0x0f) << 12) |
+                ((bytes[++i] & 0x3f) << 6) |
+                ((bytes[++i] & 0x3f) << 0));
+            continue;
+        }
+        if ((byte & 0xf8) === 0xf0) {
+            chr = ((byte & 0x07) << 18) |
+                ((bytes[++i] & 0x3f) << 12) |
+                ((bytes[++i] & 0x3f) << 6) |
+                ((bytes[++i] & 0x3f) << 0);
+            if (chr >= 0x010000) {
+                chr -= 0x010000;
+                string += String.fromCharCode((chr >>> 10) + 0xD800, (chr & 0x3FF) + 0xDC00);
+            }
+            else {
+                string += String.fromCharCode(chr);
+            }
+            continue;
+        }
+        throw new Error('Invalid byte ' + byte.toString(16));
+    }
+    return string;
+}
+function int8(bytes, it) {
+    return uint8(bytes, it) << 24 >> 24;
+}
+exports.int8 = int8;
+;
+function uint8(bytes, it) {
+    return bytes[it.offset++];
+}
+exports.uint8 = uint8;
+;
+function int16(bytes, it) {
+    return uint16(bytes, it) << 16 >> 16;
+}
+exports.int16 = int16;
+;
+function uint16(bytes, it) {
+    return bytes[it.offset++] | bytes[it.offset++] << 8;
+}
+exports.uint16 = uint16;
+;
+function int32(bytes, it) {
+    return bytes[it.offset++] | bytes[it.offset++] << 8 | bytes[it.offset++] << 16 | bytes[it.offset++] << 24;
+}
+exports.int32 = int32;
+;
+function uint32(bytes, it) {
+    return int32(bytes, it) >>> 0;
+}
+exports.uint32 = uint32;
+;
+function float32(bytes, it) {
+    return readFloat32(bytes, it);
+}
+exports.float32 = float32;
+function float64(bytes, it) {
+    return readFloat64(bytes, it);
+}
+exports.float64 = float64;
+function int64(bytes, it) {
+    var low = uint32(bytes, it);
+    var high = int32(bytes, it) * Math.pow(2, 32);
+    return high + low;
+}
+exports.int64 = int64;
+;
+function uint64(bytes, it) {
+    var low = uint32(bytes, it);
+    var high = uint32(bytes, it) * Math.pow(2, 32);
+    return high + low;
+}
+exports.uint64 = uint64;
+;
+var _isLittleEndian = true;
+var _int32 = new Int32Array(2);
+var _float32 = new Float32Array(_int32.buffer);
+var _float64 = new Float64Array(_int32.buffer);
+function readFloat32(bytes, it) {
+    _int32[0] = int32(bytes, it);
+    return _float32[0];
+}
+exports.readFloat32 = readFloat32;
+;
+function readFloat64(bytes, it) {
+    _int32[_isLittleEndian ? 0 : 1] = int32(bytes, it);
+    _int32[_isLittleEndian ? 1 : 0] = int32(bytes, it);
+    return _float64[0];
+}
+exports.readFloat64 = readFloat64;
+;
+function boolean(bytes, it) {
+    return uint8(bytes, it) > 0;
+}
+exports.boolean = boolean;
+;
+function string(bytes, it) {
+    var prefix = bytes[it.offset++];
+    var length;
+    if (prefix < 0xc0) {
+        length = prefix & 0x1f;
+    }
+    else if (prefix === 0xd9) {
+        length = uint8(bytes, it);
+    }
+    else if (prefix === 0xda) {
+        length = uint16(bytes, it);
+    }
+    else if (prefix === 0xdb) {
+        length = uint32(bytes, it);
+    }
+    var value = utf8Read(bytes, it.offset, length);
+    it.offset += length;
+    return value;
+}
+exports.string = string;
+function stringCheck(bytes, it) {
+    var prefix = bytes[it.offset];
+    return ((prefix < 0xc0 && prefix > 0xa0) ||
+        prefix === 0xd9 ||
+        prefix === 0xda ||
+        prefix === 0xdb);
+}
+exports.stringCheck = stringCheck;
+function number(bytes, it) {
+    var prefix = bytes[it.offset++];
+    if (prefix < 0x80) {
+        return prefix;
+    }
+    else if (prefix === 0xca) {
+        return readFloat32(bytes, it);
+    }
+    else if (prefix === 0xcb) {
+        return readFloat64(bytes, it);
+    }
+    else if (prefix === 0xcc) {
+        return uint8(bytes, it);
+    }
+    else if (prefix === 0xcd) {
+        return uint16(bytes, it);
+    }
+    else if (prefix === 0xce) {
+        return uint32(bytes, it);
+    }
+    else if (prefix === 0xcf) {
+        return uint64(bytes, it);
+    }
+    else if (prefix === 0xd0) {
+        return int8(bytes, it);
+    }
+    else if (prefix === 0xd1) {
+        return int16(bytes, it);
+    }
+    else if (prefix === 0xd2) {
+        return int32(bytes, it);
+    }
+    else if (prefix === 0xd3) {
+        return int64(bytes, it);
+    }
+    else if (prefix > 0xdf) {
+        return (0xff - prefix + 1) * -1;
+    }
+}
+exports.number = number;
+;
+function numberCheck(bytes, it) {
+    var prefix = bytes[it.offset];
+    return (prefix < 0x80 ||
+        (prefix >= 0xca && prefix <= 0xd3));
+}
+exports.numberCheck = numberCheck;
+function arrayCheck(bytes, it) {
+    return bytes[it.offset] < 0xa0;
+}
+exports.arrayCheck = arrayCheck;
+function nilCheck(bytes, it) {
+    return bytes[it.offset] === spec_1.NIL;
+}
+exports.nilCheck = nilCheck;
+function indexChangeCheck(bytes, it) {
+    return bytes[it.offset] === spec_1.INDEX_CHANGE;
+}
+exports.indexChangeCheck = indexChangeCheck;
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TYPE_ID = exports.INDEX_CHANGE = exports.NIL = exports.END_OF_STRUCTURE = void 0;
+exports.END_OF_STRUCTURE = 0xc1;
+exports.NIL = 0xc0;
+exports.INDEX_CHANGE = 0xd4;
+exports.TYPE_ID = 0xd5;
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try {
+            step(generator.next(value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function rejected(value) { try {
+            step(generator["throw"](value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function () { if (t[0] & 1)
+            throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f)
+            throw new TypeError("Generator is already executing.");
+        while (_)
+            try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+                    return t;
+                if (y = 0, t)
+                    op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0:
+                    case 1:
+                        t = op;
+                        break;
+                    case 4:
+                        _.label++;
+                        return { value: op[1], done: false };
+                    case 5:
+                        _.label++;
+                        y = op[1];
+                        op = [0];
+                        continue;
+                    case 7:
+                        op = _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                            _ = 0;
+                            continue;
+                        }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                            _.label = op[1];
+                            break;
+                        }
+                        if (op[0] === 6 && _.label < t[1]) {
+                            _.label = t[1];
+                            t = op;
+                            break;
+                        }
+                        if (t && _.label < t[2]) {
+                            _.label = t[2];
+                            _.ops.push(op);
+                            break;
+                        }
+                        if (t[2])
+                            _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                }
+                op = body.call(thisArg, _);
+            }
+            catch (e) {
+                op = [6, e];
+                y = 0;
+            }
+            finally {
+                f = t = 0;
+            }
+        if (op[0] & 5)
+            throw op[1];
+        return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule)
+        return mod;
+    var result = {};
+    if (mod != null)
+        for (var k in mod)
+            if (Object.hasOwnProperty.call(mod, k))
+                result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var http = __importStar(__webpack_require__(35));
+var Storage_1 = __webpack_require__(78);
+var TOKEN_STORAGE = "colyseus-auth-token";
+var Platform;
+(function (Platform) {
+    Platform["ios"] = "ios";
+    Platform["android"] = "android";
+})(Platform = exports.Platform || (exports.Platform = {}));
+var Auth = (function () {
+    function Auth(endpoint) {
+        var _this = this;
+        this._id = undefined;
+        this.username = undefined;
+        this.displayName = undefined;
+        this.avatarUrl = undefined;
+        this.isAnonymous = undefined;
+        this.email = undefined;
+        this.lang = undefined;
+        this.location = undefined;
+        this.timezone = undefined;
+        this.metadata = undefined;
+        this.devices = undefined;
+        this.facebookId = undefined;
+        this.twitterId = undefined;
+        this.googleId = undefined;
+        this.gameCenterId = undefined;
+        this.steamId = undefined;
+        this.friendIds = undefined;
+        this.blockedUserIds = undefined;
+        this.createdAt = undefined;
+        this.updatedAt = undefined;
+        this.token = undefined;
+        this.endpoint = endpoint.replace("ws", "http");
+        Storage_1.getItem(TOKEN_STORAGE, function (token) { return _this.token = token; });
+    }
+    Object.defineProperty(Auth.prototype, "hasToken", {
+        get: function () {
+            return !!this.token;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Auth.prototype.login = function (options) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            var queryParams, data, attr;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        queryParams = Object.assign({}, options);
+                        if (this.hasToken) {
+                            queryParams.token = this.token;
+                        }
+                        return [4, this.request('post', '/auth', queryParams)];
+                    case 1:
+                        data = _a.sent();
+                        this.token = data.token;
+                        Storage_1.setItem(TOKEN_STORAGE, this.token);
+                        for (attr in data) {
+                            if (this.hasOwnProperty(attr)) {
+                                this[attr] = data[attr];
+                            }
+                        }
+                        this.registerPingService();
+                        return [2, this];
+                }
+            });
+        });
+    };
+    Auth.prototype.save = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('put', '/auth', {}, {
+                            username: this.username,
+                            displayName: this.displayName,
+                            avatarUrl: this.avatarUrl,
+                            lang: this.lang,
+                            location: this.location,
+                            timezone: this.timezone,
+                        })];
+                    case 1:
+                        _a.sent();
+                        return [2, this];
+                }
+            });
+        });
+    };
+    Auth.prototype.getFriends = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('get', '/friends/all')];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.getOnlineFriends = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('get', '/friends/online')];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.getFriendRequests = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('get', '/friends/requests')];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.sendFriendRequest = function (friendId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('post', '/friends/requests', { userId: friendId })];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.acceptFriendRequest = function (friendId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('put', '/friends/requests', { userId: friendId })];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.declineFriendRequest = function (friendId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('del', '/friends/requests', { userId: friendId })];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.blockUser = function (friendId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('post', '/friends/block', { userId: friendId })];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.unblockUser = function (friendId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.request('put', '/friends/block', { userId: friendId })];
+                    case 1: return [2, (_a.sent())];
+                }
+            });
+        });
+    };
+    Auth.prototype.request = function (method, segments, query, body, headers) {
+        if (query === void 0) {
+            query = {};
+        }
+        if (headers === void 0) {
+            headers = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            var queryParams, name_1, queryString, opts;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        headers['Accept'] = 'application/json';
+                        if (this.hasToken) {
+                            headers['Authorization'] = 'Bearer ' + this.token;
+                        }
+                        queryParams = [];
+                        for (name_1 in query) {
+                            queryParams.push(name_1 + "=" + query[name_1]);
+                        }
+                        queryString = (queryParams.length > 0)
+                            ? "?" + queryParams.join("&")
+                            : '';
+                        opts = { headers: headers };
+                        if (body) {
+                            opts.body = body;
+                        }
+                        return [4, http[method]("" + this.endpoint + segments + queryString, opts)];
+                    case 1: return [2, (_a.sent()).data];
+                }
+            });
+        });
+    };
+    Auth.prototype.logout = function () {
+        this.token = undefined;
+        Storage_1.removeItem(TOKEN_STORAGE);
+        this.unregisterPingService();
+    };
+    Auth.prototype.registerPingService = function (timeout) {
+        var _this = this;
+        if (timeout === void 0) {
+            timeout = 15000;
+        }
+        this.unregisterPingService();
+        this.keepOnlineInterval = setInterval(function () { return _this.request('get', '/auth'); }, timeout);
+    };
+    Auth.prototype.unregisterPingService = function () {
+        clearInterval(this.keepOnlineInterval);
+    };
+    return Auth;
+}());
+exports.Auth = Auth;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Schema_1 = __webpack_require__(13);
+Object.defineProperty(exports, "Schema", { enumerable: true, get: function () { return Schema_1.Schema; } });
+var MapSchema_1 = __webpack_require__(11);
+Object.defineProperty(exports, "MapSchema", { enumerable: true, get: function () { return MapSchema_1.MapSchema; } });
+var ArraySchema_1 = __webpack_require__(10);
+Object.defineProperty(exports, "ArraySchema", { enumerable: true, get: function () { return ArraySchema_1.ArraySchema; } });
+var utils_1 = __webpack_require__(87);
+Object.defineProperty(exports, "dumpChanges", { enumerable: true, get: function () { return utils_1.dumpChanges; } });
+var Reflection_1 = __webpack_require__(88);
+Object.defineProperty(exports, "Reflection", { enumerable: true, get: function () { return Reflection_1.Reflection; } });
+Object.defineProperty(exports, "ReflectionType", { enumerable: true, get: function () { return Reflection_1.ReflectionType; } });
+Object.defineProperty(exports, "ReflectionField", { enumerable: true, get: function () { return Reflection_1.ReflectionField; } });
+var annotations_1 = __webpack_require__(46);
+Object.defineProperty(exports, "type", { enumerable: true, get: function () { return annotations_1.type; } });
+Object.defineProperty(exports, "deprecated", { enumerable: true, get: function () { return annotations_1.deprecated; } });
+Object.defineProperty(exports, "filter", { enumerable: true, get: function () { return annotations_1.filter; } });
+Object.defineProperty(exports, "defineTypes", { enumerable: true, get: function () { return annotations_1.defineTypes; } });
+Object.defineProperty(exports, "Context", { enumerable: true, get: function () { return annotations_1.Context; } });
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChangeTree = void 0;
+var Schema_1 = __webpack_require__(13);
+var ArraySchema_1 = __webpack_require__(10);
+var MapSchema_1 = __webpack_require__(11);
+var ChangeTree = (function () {
+    function ChangeTree(indexes, parentField, parent) {
+        if (indexes === void 0) {
+            indexes = {};
+        }
+        if (parentField === void 0) {
+            parentField = null;
+        }
+        this.changed = false;
+        this.changes = new Set();
+        this.allChanges = new Set();
+        this.deletedKeys = {};
+        this.fieldIndexes = indexes;
+        this.parent = parent;
+        this.parentField = parentField;
+    }
+    ChangeTree.prototype.change = function (fieldName, isDelete) {
+        if (isDelete === void 0) {
+            isDelete = false;
+        }
+        var fieldIndex = this.fieldIndexes[fieldName];
+        var field = (typeof (fieldIndex) === "number") ? fieldIndex : fieldName;
+        if (!isDelete) {
+            this.changed = true;
+            this.changes.add(field);
+            this.allChanges.add(field);
+        }
+        else if (isDelete) {
+            this.changed = true;
+            this.changes.add(field);
+            this.allChanges.delete(field);
+        }
+        if (this.parent) {
+            this.parent.change(this.parentField);
+        }
+    };
+    ChangeTree.prototype.mapIndex = function (instance, key) {
+        if (typeof instance === "object") {
+            if (!this.indexMap) {
+                this.indexMap = new Map();
+                this.indexChange = new Map();
+            }
+            this.indexMap.set(instance, key);
+        }
+    };
+    ChangeTree.prototype.getIndex = function (instance) {
+        return this.indexMap && this.indexMap.get(instance);
+    };
+    ChangeTree.prototype.deleteIndex = function (instance) {
+        if (typeof instance === "object") {
+            this.deletedKeys[this.indexMap.get(instance)] = true;
+            this.indexMap.delete(instance);
+        }
+    };
+    ChangeTree.prototype.isDeleted = function (key) {
+        return this.deletedKeys[key] !== undefined;
+    };
+    ChangeTree.prototype.mapIndexChange = function (instance, previousKey) {
+        if (typeof instance === "object" && !this.indexChange.has(instance)) {
+            this.indexChange.set(instance, previousKey);
+        }
+    };
+    ChangeTree.prototype.getIndexChange = function (instance) {
+        return this.indexChange && this.indexChange.get(instance);
+    };
+    ChangeTree.prototype.deleteIndexChange = function (instance) {
+        if (typeof instance === "object") {
+            this.indexChange.delete(instance);
+        }
+    };
+    ChangeTree.prototype.changeAll = function (obj) {
+        if (obj instanceof Schema_1.Schema) {
+            var schema = obj['_schema'];
+            for (var field in schema) {
+                if ((obj[field] instanceof Schema_1.Schema ||
+                    obj[field] instanceof ArraySchema_1.ArraySchema ||
+                    obj[field] instanceof MapSchema_1.MapSchema) &&
+                    !obj[field].$changes.parent.parent) {
+                    obj[field].$changes.parent = this;
+                }
+                if (obj[field] !== undefined) {
+                    this.change(field);
+                }
+            }
+        }
+        else {
+            var keys = Object.keys(obj);
+            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+                var key = keys_1[_i];
+                if (obj[key] !== undefined) {
+                    this.change(key);
+                }
+            }
+        }
+    };
+    ChangeTree.prototype.discard = function () {
+        this.changed = false;
+        this.changes.clear();
+        this.deletedKeys = {};
+        if (this.indexChange) {
+            this.indexChange.clear();
+        }
+    };
+    ChangeTree.prototype.clone = function () {
+        return new ChangeTree(this.fieldIndexes, this.parentField, undefined);
+    };
+    return ChangeTree;
+}());
+exports.ChangeTree = ChangeTree;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.defineTypes = exports.deprecated = exports.filter = exports.type = exports.globalContext = exports.Context = void 0;
+var ChangeTree_1 = __webpack_require__(45);
+var Schema_1 = __webpack_require__(13);
+var Context = (function () {
+    function Context() {
+        this.types = {};
+        this.schemas = new Map();
+    }
+    Context.prototype.has = function (schema) {
+        return this.schemas.has(schema);
+    };
+    Context.prototype.get = function (typeid) {
+        return this.types[typeid];
+    };
+    Context.prototype.add = function (schema) {
+        schema._typeid = this.schemas.size;
+        this.types[schema._typeid] = schema;
+        this.schemas.set(schema, schema._typeid);
+    };
+    return Context;
+}());
+exports.Context = Context;
+exports.globalContext = new Context();
+function type(type, context) {
+    if (context === void 0) {
+        context = exports.globalContext;
+    }
+    return function (target, field) {
+        var constructor = target.constructor;
+        constructor._context = context;
+        if (!context.has(constructor)) {
+            context.add(constructor);
+            constructor._schema = Object.assign({}, constructor._schema || {});
+            constructor._indexes = Object.assign({}, constructor._indexes || {});
+            constructor._fieldsByIndex = Object.assign({}, constructor._fieldsByIndex || {});
+            constructor._descriptors = Object.assign({}, constructor._descriptors || {});
+            constructor._deprecated = Object.assign({}, constructor._deprecated || {});
+        }
+        var index = Object.keys(constructor._schema).length;
+        constructor._fieldsByIndex[index] = field;
+        constructor._indexes[field] = index;
+        constructor._schema[field] = type;
+        if (constructor._descriptors[field]) {
+            return;
+        }
+        var isArray = Array.isArray(type);
+        var isMap = !isArray && type.map;
+        var isSchema = (typeof (constructor._schema[field]) === "function");
+        var fieldCached = "_" + field;
+        constructor._descriptors[fieldCached] = {
+            enumerable: false,
+            configurable: false,
+            writable: true,
+        };
+        constructor._descriptors[field] = {
+            get: function () {
+                return this[fieldCached];
+            },
+            set: function (value) {
+                if (isArray || isMap) {
+                    value = new Proxy(value, {
+                        get: function (obj, prop) { return obj[prop]; },
+                        set: function (obj, prop, setValue) {
+                            if (prop !== "length" && prop.indexOf("$") !== 0) {
+                                var key = (isArray) ? Number(prop) : String(prop);
+                                if (!obj.$sorting) {
+                                    var previousIndex = obj.$changes.getIndex(setValue);
+                                    if (previousIndex !== undefined) {
+                                        obj.$changes.mapIndexChange(setValue, previousIndex);
+                                    }
+                                    obj.$changes.mapIndex(setValue, key);
+                                }
+                                if (setValue instanceof Schema_1.Schema) {
+                                    if (!setValue.$changes.parent) {
+                                        setValue.$changes = new ChangeTree_1.ChangeTree(setValue._indexes, key, obj.$changes);
+                                        setValue.$changes.changeAll(setValue);
+                                    }
+                                }
+                                else {
+                                    obj[prop] = setValue;
+                                }
+                                obj.$changes.change(key);
+                            }
+                            else if (setValue !== obj[prop]) {
+                            }
+                            obj[prop] = setValue;
+                            return true;
+                        },
+                        deleteProperty: function (obj, prop) {
+                            var deletedValue = obj[prop];
+                            if (isMap && deletedValue !== undefined) {
+                                obj.$changes.deleteIndex(deletedValue);
+                                obj.$changes.deleteIndexChange(deletedValue);
+                                if (deletedValue.$changes) {
+                                    delete deletedValue.$changes.parent;
+                                }
+                            }
+                            delete obj[prop];
+                            var key = (isArray) ? Number(prop) : String(prop);
+                            obj.$changes.change(key, true);
+                            return true;
+                        },
+                    });
+                }
+                if (value === this[fieldCached]) {
+                    return;
+                }
+                this[fieldCached] = value;
+                if (isArray) {
+                    this.$changes.change(field);
+                    value.$changes = new ChangeTree_1.ChangeTree({}, field, this.$changes);
+                    for (var i = 0; i < value.length; i++) {
+                        if (value[i] instanceof Schema_1.Schema) {
+                            value[i].$changes = new ChangeTree_1.ChangeTree(value[i]._indexes, i, value.$changes);
+                            value[i].$changes.changeAll(value[i]);
+                        }
+                        value.$changes.mapIndex(value[i], i);
+                        value.$changes.change(i);
+                    }
+                }
+                else if (isMap) {
+                    value.$changes = new ChangeTree_1.ChangeTree({}, field, this.$changes);
+                    this.$changes.change(field);
+                    for (var key in value) {
+                        if (value[key] instanceof Schema_1.Schema) {
+                            value[key].$changes = new ChangeTree_1.ChangeTree(value[key]._indexes, key, value.$changes);
+                            value[key].$changes.changeAll(value[key]);
+                        }
+                        value.$changes.mapIndex(value[key], key);
+                        value.$changes.change(key);
+                    }
+                }
+                else if (isSchema) {
+                    this.$changes.change(field);
+                    if (value) {
+                        value.$changes = new ChangeTree_1.ChangeTree(value._indexes, field, this.$changes);
+                        value.$changes.changeAll(value);
+                    }
+                }
+                else {
+                    this.$changes.change(field);
+                }
+            },
+            enumerable: true,
+            configurable: true
+        };
+    };
+}
+exports.type = type;
+function filter(cb) {
+    return function (target, field) {
+        var constructor = target.constructor;
+        if (!constructor._filters) {
+            constructor._filters = {};
+        }
+        constructor._filters[field] = cb;
+    };
+}
+exports.filter = filter;
+function deprecated(throws, context) {
+    if (throws === void 0) {
+        throws = true;
+    }
+    if (context === void 0) {
+        context = exports.globalContext;
+    }
+    return function (target, field) {
+        var constructor = target.constructor;
+        constructor._deprecated[field] = true;
+        if (throws) {
+            constructor._descriptors[field] = {
+                get: function () { throw new Error(field + " is deprecated."); },
+                set: function (value) { },
+                enumerable: false,
+                configurable: true
+            };
+        }
+    };
+}
+exports.deprecated = deprecated;
+function defineTypes(target, fields, context) {
+    if (context === void 0) {
+        context = exports.globalContext;
+    }
+    for (var field in fields) {
+        type(fields[field], context)(target.prototype, field);
+    }
+    return target;
+}
+exports.defineTypes = defineTypes;
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const GameTrackRunner_1 = __webpack_require__(48);
+const SpectatorTrackRunner_1 = __webpack_require__(65);
+const Colyseus = __webpack_require__(66);
+const TextPanel_1 = __webpack_require__(6);
+const SpritePanel_1 = __webpack_require__(5);
+const Sound_1 = __webpack_require__(2);
+const SpriteAnimation_1 = __webpack_require__(0);
+const gameUtils_1 = __webpack_require__(4);
+const GameRepo_1 = __importDefault(__webpack_require__(21));
+const config_1 = __webpack_require__(89);
+const hostData_1 = __webpack_require__(90);
+const land_1 = __webpack_require__(91);
+const SpriteMaterial_1 = __webpack_require__(1);
+engine["PRODI"] = true;
+const DevGame = GameRepo_1.default.CostumeGame;
+const devSeed = 2222222231;
+console.log("META_SAMMICH");
+const createSpectatorTrackHandler = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted = false }) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("createSpectatorTrackHandler", root, lobbyRoom, { trackSeed, minGames });
+    const spectatorTrack = yield SpectatorTrackRunner_1.createSpectatorTrack(root, { lobbyRoom, trackSeed, minGames, alreadyStarted });
+});
+const createGameTrackHandler = (root, { gameRoom, lobbyRoom, user, trackSeed, player, minGames }) => __awaiter(void 0, void 0, void 0, function* () {
+    const gameTrack = yield GameTrackRunner_1.createTrack(root, { gameRoom, lobbyRoom, user, trackSeed, minGames });
+    gameTrack.onScore((...args) => {
+        console.log("onScore", args);
+    });
+    gameTrack.onFinish(() => {
+        console.log("gameTrack.onFinish");
+    });
+    gameRoom.state.onChange = (changes) => {
+        console.log("gameRoom state change", changes, gameRoom.state);
+        if (gameRoom.state.player1 && gameRoom.state.player2
+            && gameRoom.state.minGames <= gameRoom.state.currentGameIndex
+            && gameRoom.state.score.player1 !== gameRoom.state.score.player2) {
+            const winner = (gameRoom.state.score.player1 || 0) > (gameRoom.state.score.player2 || 0) ? 1 : 2;
+            const nonWinner = winner === 1 ? 2 : 1;
+            const res = `${lobbyRoom.state[`player${winner}`].displayName}\npwned\n${lobbyRoom.state[`player${nonWinner}`].displayName}`;
+            if (!gameRoom.state.player1.skipEnd && !gameRoom.state.player2.skipEnd) {
+                TextPanel_1.updateTextPanel({ value: `Players must click to skip end screen\n\n${res}` });
+            }
+            else {
+                TextPanel_1.updateTextPanel({ value: `One player still have to click\nto skip end screen.\n\n${res}` });
+            }
+        }
+        if (![gameRoom.state.player1.readyNext, gameRoom.state.player2.readyNext].every(i => i)
+            && (gameRoom.state.player1.readyNext || gameRoom.state.player2.readyNext)
+            && gameRoom.state[`player${player}`].readyNext) {
+            TextPanel_1.updateTextPanel({ value: "Waiting for other player" });
+        }
+        else if (TextPanel_1.getTextPanelValue() === "Waiting for other player") {
+            TextPanel_1.updateTextPanel({ value: "" });
+        }
+    };
+    gameRoom.onMessage("*", (...args) => {
+        console.log("gameRoom onMessage *", ...args);
+    });
+    const dispose = () => {
+        gameRoom.dispose();
+        gameRoom = null;
+    };
+    return dispose;
+});
+let gameLobby;
+class SammichGame {
+    constructor(api, landData) {
+        this.state = {
+            countToCheckCamera: 0
+        };
+        (() => __awaiter(this, void 0, void 0, function* () {
+            const { position, rotation, scale, hideFrame, hideBoard, hideAd, soundDistance, showJoinVoice, voiceChannel, showScenario, serverWs, serverHttp } = JSON.parse(landData.host_data).sammichgame;
+            const gameID = JSON.parse(landData.host_data).sammichgame.gameID.replace(',', "_");
+            const client = new Colyseus.Client(`${serverWs || config_1.WS_HOST}`);
+            console.log(`ws connecting to ${serverWs || config_1.WS_HOST}`);
+            yield gameUtils_1.sleep(0);
+            SpriteMaterial_1.loadTexture();
+            Sound_1.loadSounds();
+            const user = api.getUserData ? (yield api.getUserData()) : api.user.data;
+            const land = yield land_1.getLand();
+            hostData_1.setHostData({ land, gameID, position, rotation, scale, hideFrame, hideBoard, hideAd, soundDistance, showJoinVoice, voiceChannel, showScenario, serverWs, serverHttp });
+            console.log("META_LAND", land);
+            console.log("uuuser", user);
+            const root = new Entity();
+            TextPanel_1.createTextPanel(root, "");
+            SpritePanel_1.createSpritePanel(root);
+            SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(1, 0, 192, 128) });
+            this.rootTransform = new Transform({
+                position: new Vector3(position.x, position.y, position.z),
+                scale: new Vector3(scale.x, scale.y, scale.z)
+            });
+            this.rootTransform.rotation.setEuler(rotation.x, rotation.y, rotation.z);
+            root.addComponent(this.rootTransform);
+            engine.addEntity(root);
+        }))();
+    }
+    update(dt) {
+    }
+    refreshHost(landData) {
+    }
+}
+exports.default = SammichGame;
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createTrack = void 0;
+const TextPanel_1 = __webpack_require__(6);
+const Sound_1 = __webpack_require__(2);
+const SpritePanel_1 = __webpack_require__(5);
+const VideoPanel_1 = __webpack_require__(17);
+const SpriteAnimation_1 = __webpack_require__(0);
+const TrackUtil_1 = __webpack_require__(18);
+let timeOffset = 0;
+exports.createTrack = (root, { gameRoom, lobbyRoom, user, trackSeed, minGames }) => __awaiter(void 0, void 0, void 0, function* () {
+    const callbacks = {
+        onScore: null,
+        onFinish: null
+    };
+    const gameTrackDefinition = TrackUtil_1.generateTrack(trackSeed, minGames);
+    console.log("gameTrackDefinition", gameTrackDefinition);
+    const state = {
+        currentIndex: 0,
+        currentPlayer: 0,
+        currentRoundIndex: 0,
+        score1: 0,
+        score2: 0
+    };
+    if (lobbyRoom.state.player1.userId === user.userId)
+        state.currentPlayer = 1;
+    if (lobbyRoom.state.player2.userId === user.userId)
+        state.currentPlayer = 2;
+    Sound_1.stopSound("music2");
+    yield sleep(100);
+    Sound_1.playOnce("vs", { volume: 1 });
+    SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(10, 0, 192, 128) });
+    TextPanel_1.updateTextPanel({
+        value: `${lobbyRoom.state.player1.displayName} (left)\nVS\n${lobbyRoom.state.player2.displayName} (right)`, bottom: false, color: Color3.White()
+    });
+    yield sleep(3000);
+    VideoPanel_1.reproduceVideo(root, gameTrackDefinition[0].Game.id);
+    SpritePanel_1.hideSpritePanel();
+    TextPanel_1.updateTextPanel({ value: gameTrackDefinition[0].Game.instructions + `\n\nClick when ready to play\nor waiting 20 seconds` });
+    let game = new gameTrackDefinition[state.currentIndex].Game(root, {
+        seed: trackSeed,
+        currentPlayer: state.currentPlayer,
+        level: 1,
+        gameIndex: 0
+    });
+    setGameCallbacks(game, gameRoom);
+    setGameRoomMessageHandlers(gameRoom);
+    const initGameOnUserAction = () => {
+        gameRoom.send("READY_NEXT", { senderPlayer: state.currentPlayer, games: (gameTrackDefinition || []).map(g => g.Game.id) });
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, initGameOnUserAction);
+        TextPanel_1.updateTextPanel({ value: `waiting for other user` });
+    };
+    Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, initGameOnUserAction);
+    return {
+        onScore,
+        onFinish,
+        dispose: () => {
+            console.log("//TODO dispose");
+        }
+    };
+    function onScore(fn) {
+        callbacks.onScore = fn;
+        return () => callbacks.onScore = null;
+    }
+    ;
+    function onFinish(fn) {
+        callbacks.onFinish = fn;
+        return () => callbacks.onFinish = null;
+    }
+    ;
+    function dispose() {
+        callbacks.onFinish = callbacks.onScore = null;
+    }
+    ;
+    function setGameRoomMessageHandlers(gameRoom) {
+        gameRoom.onMessage("SHARE_STATE", (sharedState) => {
+            game && game.shareState(sharedState || {});
+        });
+        gameRoom.onLeave((code) => {
+            console.log("leave", code);
+            game && game.destroy();
+            game = null;
+            VideoPanel_1.removeVideoPanel();
+            SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(1, 0, 192, 128) });
+            SpritePanel_1.showSpritePanel();
+        });
+        gameRoom.onMessage("FINSIH_AGREE", ({ winner, nextSeed, nextIndex }) => __awaiter(this, void 0, void 0, function* () {
+            console.log("received FINSIH_AGREE", { winner, nextSeed, nextIndex });
+            game.finish && game.finish({ winner });
+            callbacks.onScore({ score1: state.score1, score2: state.score2 });
+            const winnerDisplayName = lobbyRoom.state[`player${winner}`].displayName;
+            TextPanel_1.updateTextPanel({ value: `(${winner}) ${winnerDisplayName} wins` });
+            yield sleep(2000);
+            game.destroy();
+            game = null;
+            if (state.currentIndex + 1 >= gameTrackDefinition.length && state.score1 === state.score2) {
+                gameTrackDefinition.push(TrackUtil_1.generateTrack(nextSeed, 1)[0]);
+                console.log("tie-breaker", gameTrackDefinition);
+            }
+            if (state.currentIndex < gameTrackDefinition.length) {
+                state.currentIndex = nextIndex;
+                createGame({ nextSeed });
+                setGameCallbacks(game, gameRoom);
+                const instructions = gameTrackDefinition[nextIndex].Game.instructions || `ERROR: MISSING_INSTRUCTIONS`;
+                VideoPanel_1.reproduceVideo(root, gameTrackDefinition[nextIndex].Game.id);
+                TextPanel_1.updateTextPanel({ value: `${instructions}\n\nClick when ready to play\n or waiting 20 seconds` });
+                const initGameOnUserAction = () => {
+                    Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, initGameOnUserAction);
+                    TextPanel_1.updateTextPanel({ value: `waiting for other user` });
+                    gameRoom.send("READY_NEXT", { senderPlayer: state.currentPlayer, games: gameTrackDefinition.map(g => g.Game.id) });
+                };
+                Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, initGameOnUserAction);
+            }
+        }));
+        gameRoom.onMessage("NEXT_GAME", ({ serverTime, startTime }) => {
+            state.currentRoundIndex = 0;
+            Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, initGameOnUserAction);
+            console.log("NEXT_GAME", serverTime, startTime);
+            TextPanel_1.updateTextPanel({ value: `` });
+            Sound_1.stopAllSounds();
+            game && game.init();
+            VideoPanel_1.removeVideoPanel();
+            timeOffset = serverTime - Date.now();
+            game.setStartTime(getLocalStartTime(startTime));
+        });
+        gameRoom.onMessage("NEXT_ROUND", ({ winner, serverTime, startTime, roundIndex }) => {
+            state.currentRoundIndex++;
+            console.log("NEXT_ROUND", winner, serverTime, startTime);
+            timeOffset = serverTime - Date.now();
+            game.finishRound && game.finishRound({ winner });
+            const localRoundStartTime = getLocalStartTime(startTime);
+            console.log("localRoundStartTime", localRoundStartTime, new Date(localRoundStartTime).getMinutes(), new Date(localRoundStartTime).getSeconds());
+            console.log("now", Date.now(), new Date().getMinutes(), new Date().getSeconds());
+            game.setRoundStartTime && game.setRoundStartTime(localRoundStartTime);
+        });
+        gameRoom.onMessage("FINISH_TRACK", ({ score }) => __awaiter(this, void 0, void 0, function* () {
+            console.log("receive FINISH_TRACK", score);
+            game.destroy();
+            game = null;
+            Sound_1.playOnce("pwned");
+            const winnerPlayer = (score.player1 || 0) > (score.player2 || 0) ? 1 : 2;
+            SpritePanel_1.updateSpritePanel({
+                uvs: SpriteAnimation_1.getSpriteUv(8, 0, 192, 128),
+                scale: new Vector3(winnerPlayer === 1 ? 6 : -6, 4, 1)
+            });
+            SpritePanel_1.showSpritePanel();
+            callbacks.onFinish({ score });
+            const clickSkip = () => {
+                gameRoom.send("SKIP_END", { senderPlayer: state.currentPlayer });
+            };
+            Input.instance.subscribe("BUTTON_DOWN", ActionButton.POINTER, false, clickSkip);
+            gameRoom.onLeave(() => Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.POINTER, clickSkip));
+        }));
+    }
+    function setGameCallbacks(game, gameRoom) {
+        game.onFinish(({ time, isWinner, score, gameIndex, roundIndex }) => {
+            console.log("onFinish");
+            game.block();
+            const otherPlayer = state.currentPlayer === 1 ? 2 : 1;
+            const winner = (isWinner
+                ? state.currentPlayer : otherPlayer);
+            console.log("sending FINISH_GAME", {
+                winner,
+                time,
+                score,
+                senderPlayer: state.currentPlayer,
+                userId: user.userId
+            });
+            gameRoom.send("FINISH_GAME", {
+                winner,
+                time,
+                score,
+                senderPlayer: state.currentPlayer,
+                userId: user.userId,
+                currentGameIndex: gameIndex,
+                currentRoundIndex: roundIndex,
+                gameName: game.id
+            });
+        });
+        game.onFinishRound && game.onFinishRound(({ player, time, score, isWinner, roundIndex, gameIndex }) => {
+            const otherPlayer = state.currentPlayer === 1 ? 2 : 1;
+            const winner = (isWinner
+                ? state.currentPlayer : otherPlayer);
+            gameRoom.send("READY_ROUND", {
+                player,
+                time,
+                score,
+                winner,
+                currentGameIndex: gameIndex,
+                currentRoundIndex: roundIndex,
+                gameName: game.id
+            });
+        });
+        game.onShareState((sharedState) => {
+            gameRoom.send("SHARE_STATE", {
+                sharedState,
+                userId: user.userId,
+                senderPlayer: state.currentPlayer,
+                currentGameIndex: state.currentIndex,
+                currentRoundIndex: state.currentRoundIndex
+            });
+        });
+    }
+    function createGame({ nextSeed }) {
+        console.log(`
+            createGame
+            state.currentIndex: ${state.currentIndex}
+            gameTrackDefinition[state.currentIndex]: ${gameTrackDefinition[state.currentIndex] && gameTrackDefinition[state.currentIndex].Game.id}
+  
+        `);
+        if (game) {
+            game.destroy();
+            game = null;
+        }
+        const Game = gameTrackDefinition[state.currentIndex].Game;
+        game = new Game(root, { seed: nextSeed, currentPlayer: state.currentPlayer, level: 1, gameIndex: state.currentIndex });
+    }
+    function isCurrentUserPlayer() {
+        var _a;
+        return lobbyRoom.state.player1 && lobbyRoom.state.player2 && (lobbyRoom.state.player1.userId === user.userId || ((_a = lobbyRoom.state.player2) === null || _a === void 0 ? void 0 : _a.userId) === user.userId);
+    }
+});
+function getLocalStartTime(startTime) {
+    return startTime - timeOffset;
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createModel = void 0;
+const Hair_1 = __webpack_require__(50);
+const Glasses_1 = __webpack_require__(51);
+const Shirt_1 = __webpack_require__(52);
+const Pants_1 = __webpack_require__(53);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createModel = (root, { modelDefinition, position, scale, showLabel = "" }) => {
+    const model = new Entity();
+    model.addComponent(new Transform({ position, scale }));
+    const doll = new Entity();
+    const dollShape = new PlaneShape();
+    dollShape.withCollisions = false;
+    dollShape.isPointerBlocker = false;
+    dollShape.uvs = SpriteAnimation_1.getSpriteUv(16, (896 / 128) * (1024 / 64), 64, 128);
+    const dollMat = new Material();
+    dollMat.albedoColor = new Color3(1, 0, 0);
+    const dollTransform = new Transform({ scale: new Vector3(-1, 2, -1), position: new Vector3(0, 0, 0) });
+    dollTransform.rotation.setEuler(0, 180, 0);
+    doll.addComponent(dollTransform);
+    doll.addComponent(SpriteMaterial_1.spriteMaterial);
+    doll.addComponent(dollShape);
+    doll.setParent(model);
+    model.setParent(root);
+    const parts = { glasses: null, hair: null, shirt: null, pants: null };
+    parts.glasses = Glasses_1.createGlasses(model, {
+        partDefinition: { type: "glasses", index: modelDefinition.glasses }
+    });
+    parts.hair = Hair_1.createHair(model, {
+        partDefinition: { type: "hair", index: modelDefinition.hair }
+    });
+    parts.pants = Pants_1.createPants(model, {
+        partDefinition: { type: "pants", index: modelDefinition.pants }
+    });
+    parts.shirt = Shirt_1.createShirt(model, {
+        partDefinition: { type: "shirt", index: modelDefinition.shirt }
+    });
+    if (showLabel) {
+        const l = new Entity();
+        l.setParent(model);
+        const t = new TextShape("model");
+        t.fontSize = 2;
+        t.font = new Font(Fonts.SanFrancisco_Heavy);
+        l.addComponent(t);
+        l.addComponent(new Transform({ position: new Vector3(0, 1.3, 0) }));
+    }
+    const addPart = ({ partDefinition }) => {
+    };
+    return {
+        entity: model,
+        update: (partDefinition) => {
+            if (!partDefinition) {
+                debugger;
+            }
+            parts[partDefinition.type].updateIndex(partDefinition.index);
+        },
+        dispose: () => { }
+    };
+};
+
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createHair = void 0;
+const PartUtils_1 = __webpack_require__(8);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createHair = (parent, { partDefinition }) => {
+    const PIXEL = (4 / 128) / 2;
+    const hair = new Entity();
+    const hairShape = new PlaneShape();
+    hairShape.withCollisions = false;
+    const hairTransform = new Transform({
+        position: new Vector3(0.25 - PIXEL * 15, (0.75 / 2) + PIXEL * 23, -0.0003),
+        scale: new Vector3(1, 1, 1)
+    });
+    hair.addComponent(hairShape);
+    hair.addComponent(hairTransform);
+    hair.addComponent(SpriteMaterial_1.spriteMaterial);
+    hair.setParent(parent);
+    hairShape.uvs = SpriteAnimation_1.getSpriteUv(partDefinition.index, PartUtils_1.PART_OFFSET_INDEX["hair"], PartUtils_1.PART_SIZE_WIDTH["hair"]);
+    return {
+        dispose: () => {
+            parent.setParent(null);
+            engine.removeEntity(hair);
+        },
+        updateIndex: (index) => {
+            hairShape.uvs = SpriteAnimation_1.getSpriteUv(index, PartUtils_1.PART_OFFSET_INDEX["hair"], PartUtils_1.PART_SIZE_WIDTH["hair"]);
+        }
+    };
+};
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createGlasses = void 0;
+const PartUtils_1 = __webpack_require__(8);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createGlasses = (parent, { partDefinition }) => {
+    const PIXEL = (4 / 128) / 2;
+    const glasses = new Entity();
+    const glassesShape = new PlaneShape();
+    glassesShape.withCollisions = false;
+    const hairTransform = new Transform({
+        position: new Vector3(0.25 - PIXEL * 15, (0.75 / 2) + PIXEL * 8, -0.0005),
+        scale: new Vector3(1, 1, 1)
+    });
+    glasses.addComponent(glassesShape);
+    glasses.addComponent(hairTransform);
+    glasses.addComponent(SpriteMaterial_1.spriteMaterial);
+    glasses.setParent(parent);
+    glassesShape.uvs = SpriteAnimation_1.getSpriteUv(partDefinition.index, PartUtils_1.PART_OFFSET_INDEX["glasses"], PartUtils_1.PART_SIZE_WIDTH["glasses"], PartUtils_1.PART_SIZE_HEIGHT["glasses"]);
+    return {
+        dispose: () => {
+            parent.setParent(null);
+            engine.removeEntity(glasses);
+        },
+        updateIndex: (index) => {
+            glassesShape.uvs = SpriteAnimation_1.getSpriteUv(index, PartUtils_1.PART_OFFSET_INDEX["glasses"], PartUtils_1.PART_SIZE_WIDTH["glasses"], PartUtils_1.PART_SIZE_HEIGHT["glasses"]);
+        }
+    };
+};
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createShirt = void 0;
+const PartUtils_1 = __webpack_require__(8);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createShirt = (parent, { partDefinition }) => {
+    const PIXEL = (4 / 128) / 2;
+    const hair = new Entity();
+    const shirtShape = new PlaneShape();
+    shirtShape.withCollisions = false;
+    const hairTransform = new Transform({
+        position: new Vector3(PIXEL * 4, 0.5 - PIXEL * 15, -0.002),
+        scale: new Vector3(1, 1, 1)
+    });
+    hair.addComponent(shirtShape);
+    hair.addComponent(hairTransform);
+    hair.addComponent(SpriteMaterial_1.spriteMaterial);
+    hair.setParent(parent);
+    shirtShape.uvs = SpriteAnimation_1.getSpriteUv(partDefinition.index, PartUtils_1.PART_OFFSET_INDEX["shirt"], PartUtils_1.PART_SIZE_WIDTH["shirt"]);
+    return {
+        dispose: () => {
+            parent.setParent(null);
+            engine.removeEntity(hair);
+        },
+        updateIndex: (index) => {
+            shirtShape.uvs = SpriteAnimation_1.getSpriteUv(index, PartUtils_1.PART_OFFSET_INDEX["shirt"], PartUtils_1.PART_SIZE_WIDTH["shirt"]);
+        }
+    };
+};
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createPants = void 0;
+const PartUtils_1 = __webpack_require__(8);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+exports.createPants = (parent, { partDefinition }) => {
+    const PIXEL = (4 / 128) / 2;
+    const pants = new Entity();
+    const pantsShape = new PlaneShape();
+    pantsShape.withCollisions = false;
+    const hairTransform = new Transform({
+        position: new Vector3(PIXEL * 5, -0.5 + PIXEL * 2, -0.001),
+        scale: new Vector3(1, 1, 1)
+    });
+    pants.addComponent(pantsShape);
+    pants.addComponent(hairTransform);
+    pants.addComponent(SpriteMaterial_1.spriteMaterial);
+    pants.setParent(parent);
+    pantsShape.uvs = SpriteAnimation_1.getSpriteUv(partDefinition.index, PartUtils_1.PART_OFFSET_INDEX["pants"], PartUtils_1.PART_SIZE_WIDTH["pants"]);
+    return {
+        dispose: () => {
+            parent.setParent(null);
+            engine.removeEntity(pants);
+        },
+        updateIndex: (index) => {
+            pantsShape.uvs = SpriteAnimation_1.getSpriteUv(index, PartUtils_1.PART_OFFSET_INDEX["pants"], PartUtils_1.PART_SIZE_WIDTH["pants"]);
+        }
+    };
+};
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createCollection = exports.MAX_INDEX = void 0;
+exports.MAX_INDEX = {
+    hair: 10,
+    glasses: 5,
+    shirt: 5,
+    pants: 5
+};
+const PART_TYPES = ["hair", "glasses", "shirt", "pants"];
+exports.createCollection = (getRandomInt, modelDefinition) => {
+    console.log("createCollection", modelDefinition);
+    const included = Object.keys(modelDefinition).map((type) => {
+        return { type, index: modelDefinition[type] };
+    });
+    const collection = [...included];
+    PART_TYPES.forEach((partType) => {
+        let i = 3;
+        while (i--) {
+            let index = getRandomInt(1, exports.MAX_INDEX[partType]);
+            const includedType = included.find(included => included.type === partType);
+            while (index === includedType.index || collection.find(i => i.type === partType && i.index === index)) {
+                index = getRandomInt(1, exports.MAX_INDEX[partType]);
+            }
+            collection.push({
+                type: partType,
+                index
+            });
+        }
+    });
+    return shuffle(collection);
+    function shuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(getRandomInt(1, 100) / 100 * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
+    }
+};
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createCollectionControl = void 0;
+const PartUtils_1 = __webpack_require__(8);
+const Cross_1 = __webpack_require__(20);
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+const Sound_1 = __webpack_require__(2);
+const PREVIOUS = 0.7;
+const CURRENT = 0;
+const NEXT = -0.7;
+exports.createCollectionControl = (root, { collection, side, avoidAdd = false }) => {
+    const control = new Entity();
+    const previous = new Entity();
+    const next = new Entity();
+    const current = new Entity();
+    const e = new Entity();
+    const eShape = new TextShape("E");
+    eShape.fontSize = 2;
+    e.addComponent(eShape);
+    e.addComponent(new Transform({ position: new Vector3(side === 1 ? -0.3 : 0.3, 0.8, -0.002) }));
+    e.setParent(control);
+    const f = new Entity();
+    const fShape = new TextShape("F");
+    fShape.fontSize = 2;
+    f.addComponent(fShape);
+    f.addComponent(new Transform({ position: new Vector3(side === 1 ? -0.3 : 0.3, -0.75, -0.002) }));
+    f.setParent(control);
+    previous.setParent(control);
+    next.setParent(control);
+    current.setParent(control);
+    const previousDefinition = collection[0];
+    const currentDefinition = collection[1];
+    const nextDefinition = collection[2];
+    let currentIndex = 1;
+    const previousShape = new PlaneShape();
+    const nextShape = new PlaneShape();
+    const currentShape = new PlaneShape();
+    const scale = new Vector3(0.5, 0.5, 0.5);
+    previous.addComponent(new Transform({ position: new Vector3(0, PREVIOUS, 0), scale }));
+    current.addComponent(new Transform({ position: new Vector3(0, CURRENT, 0), scale: new Vector3(1, 1, 1) }));
+    next.addComponent(new Transform({ position: new Vector3(0, NEXT, 0), scale }));
+    previous.addComponent(previousShape);
+    current.addComponent(currentShape);
+    next.addComponent(nextShape);
+    if (!previousDefinition || !currentDefinition || !nextDefinition) {
+        debugger;
+    }
+    previousShape.uvs = SpriteAnimation_1.getSpriteUv(previousDefinition.index, PartUtils_1.PART_OFFSET_INDEX[previousDefinition.type], PartUtils_1.PART_SIZE_WIDTH[previousDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[previousDefinition.type]);
+    currentShape.uvs = SpriteAnimation_1.getSpriteUv(currentDefinition.index, PartUtils_1.PART_OFFSET_INDEX[currentDefinition.type], PartUtils_1.PART_SIZE_WIDTH[currentDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[currentDefinition.type]);
+    nextShape.uvs = SpriteAnimation_1.getSpriteUv(nextDefinition.index, PartUtils_1.PART_OFFSET_INDEX[nextDefinition.type], PartUtils_1.PART_SIZE_WIDTH[nextDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[nextDefinition.type]);
+    previous.addComponent(SpriteMaterial_1.spriteMaterial);
+    current.addComponent(SpriteMaterial_1.spriteMaterial);
+    next.addComponent(SpriteMaterial_1.spriteMaterial);
+    control.addComponent(new Transform({ position: new Vector3(side === 1 ? -2.5 : 2.5, 2, -0.001) }));
+    if (!avoidAdd)
+        control.setParent(root);
+    const crossError = Cross_1.createCross(control, { position: new Vector3(0, 0, -0.003), scale });
+    crossError.hide();
+    setUvsForCurrentIndex(currentIndex);
+    return {
+        entity: control,
+        hide: () => {
+            control.setParent(null);
+            engine.removeEntity(control);
+        },
+        show: () => {
+            control.setParent(root);
+        },
+        dispose: () => {
+            control.setParent(null);
+            engine.removeEntity(control);
+            control.children;
+        },
+        getCurrent: () => {
+            return collection[currentIndex];
+        },
+        next: () => {
+            Sound_1.playOnce("swing");
+            currentIndex = getNextIndex(currentIndex);
+            setUvsForCurrentIndex(currentIndex);
+        },
+        previous: () => {
+            Sound_1.playOnce("swing");
+            currentIndex = getPreviousIndex(currentIndex);
+            setUvsForCurrentIndex(currentIndex);
+        },
+        showError: () => {
+            crossError.show();
+        },
+        hideError: () => {
+            crossError.hide();
+        }
+    };
+    function getPreviousIndex(index) {
+        if (index - 1 < 0)
+            return collection.length - 1;
+        return index - 1;
+    }
+    ;
+    function getNextIndex(index) {
+        if (index + 1 > collection.length - 1)
+            return 0;
+        return index + 1;
+    }
+    function setUvsForCurrentIndex(currentIndex) {
+        const previousIndex = getPreviousIndex(currentIndex);
+        const nextIndex = getNextIndex(currentIndex);
+        const previousDefinition = collection[previousIndex];
+        const currentDefinition = collection[currentIndex];
+        const nextDefinition = collection[nextIndex];
+        const currentTransform = current.getComponent(Transform);
+        const currentPosition = currentTransform.position;
+        if (!previousDefinition || !currentDefinition || !nextDefinition) {
+            debugger;
+        }
+        currentPosition.set(currentPosition.x, CURRENT - (PartUtils_1.PART_TYPE_OFFSET_Y[currentDefinition.type] * currentTransform.scale.y), currentPosition.z);
+        const previousTransform = previous.getComponent(Transform);
+        const previousPosition = previousTransform.position;
+        previousPosition.set(previousPosition.x, PREVIOUS - (PartUtils_1.PART_TYPE_OFFSET_Y[previousDefinition.type] * previousTransform.scale.y), previousPosition.z);
+        const nextTransform = next.getComponent(Transform);
+        const nextPosition = nextTransform.position;
+        nextPosition.set(nextPosition.x, NEXT - (PartUtils_1.PART_TYPE_OFFSET_Y[nextDefinition.type] * nextTransform.scale.y), nextPosition.z);
+        previousShape.uvs = SpriteAnimation_1.getSpriteUv(previousDefinition.index, PartUtils_1.PART_OFFSET_INDEX[previousDefinition.type], PartUtils_1.PART_SIZE_WIDTH[previousDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[previousDefinition.type]);
+        currentShape.uvs = SpriteAnimation_1.getSpriteUv(currentDefinition.index, PartUtils_1.PART_OFFSET_INDEX[currentDefinition.type], PartUtils_1.PART_SIZE_WIDTH[currentDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[currentDefinition.type]);
+        nextShape.uvs = SpriteAnimation_1.getSpriteUv(nextDefinition.index, PartUtils_1.PART_OFFSET_INDEX[nextDefinition.type], PartUtils_1.PART_SIZE_WIDTH[nextDefinition.type], PartUtils_1.PART_SIZE_HEIGHT[nextDefinition.type]);
+    }
+};
+
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const move_1 = __webpack_require__(15);
+const rotate_1 = __webpack_require__(23);
+const scale_1 = __webpack_require__(24);
+const followpath_1 = __webpack_require__(25);
+const keeprotating_1 = __webpack_require__(26);
+const transfromSystem_1 = __webpack_require__(7);
+const interpolation_1 = __webpack_require__(12);
+const toggleComponent_1 = __webpack_require__(57);
+const delay_1 = __webpack_require__(27);
+const expire_1 = __webpack_require__(29);
+const interval_1 = __webpack_require__(28);
+const triggerSystem_1 = __webpack_require__(58);
+const actionsSequenceSystem_1 = __webpack_require__(59);
+exports.default = {
+    TransformSystem: transfromSystem_1.TransformSystem,
+    MoveTransformComponent: move_1.MoveTransformComponent,
+    RotateTransformComponent: rotate_1.RotateTransformComponent,
+    ScaleTransformComponent: scale_1.ScaleTransformComponent,
+    FollowPathComponent: followpath_1.FollowPathComponent,
+    KeepRotatingComponent: keeprotating_1.KeepRotatingComponent,
+    Interpolate: interpolation_1.Interpolate,
+    InterpolationType: interpolation_1.InterpolationType,
+    ToggleComponent: toggleComponent_1.ToggleComponent,
+    ToggleState: toggleComponent_1.ToggleState,
+    Delay: delay_1.Delay,
+    ExpireIn: expire_1.ExpireIn,
+    Interval: interval_1.Interval,
+    TriggerComponent: triggerSystem_1.TriggerComponent,
+    TriggerSystem: triggerSystem_1.TriggerSystem,
+    TriggerSphereShape: triggerSystem_1.TriggerSphereShape,
+    TriggerBoxShape: triggerSystem_1.TriggerBoxShape,
+    ActionsSequenceSystem: actionsSequenceSystem_1.ActionsSequenceSystem
+};
+
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ToggleComponent = exports.ToggleState = void 0;
+var ToggleState;
+(function (ToggleState) {
+    ToggleState[ToggleState["Off"] = 0] = "Off";
+    ToggleState[ToggleState["On"] = 1] = "On";
+})(ToggleState = exports.ToggleState || (exports.ToggleState = {}));
+let ToggleComponent = class ToggleComponent {
+    constructor(startingState = ToggleState.On, onValueChangedCallback) {
+        this.enabled = true;
+        this.state = ToggleState.Off;
+        this.set(startingState);
+        if (onValueChangedCallback)
+            this.setCallback(onValueChangedCallback);
+    }
+    set(state) {
+        this.state = state;
+        if (this.onValueChangedCallback)
+            this.onValueChangedCallback(state);
+    }
+    toggle() {
+        if (this.enabled) {
+            this.set(1 - this.state);
+        }
+    }
+    isOn() {
+        return this.state == ToggleState.On;
+    }
+    setCallback(onValueChangedCallback) {
+        this.onValueChangedCallback = onValueChangedCallback;
+    }
+};
+ToggleComponent = __decorate([
+    Component('toggle')
+], ToggleComponent);
+exports.ToggleComponent = ToggleComponent;
+exports.default = {
+    ToggleComponent,
+    ToggleState
+};
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TriggerSphereShape = exports.TriggerBoxShape = exports.TriggerComponent = exports.TriggerSystem = void 0;
+class TriggerSystem {
+    constructor() {
+        this._triggers = {};
+        TriggerSystem._instance = this;
+        this._cameraTriggerWrapper = new CameraTrigger(new TriggerBoxShape(new Vector3(0.5, 1.8, 0.5), new Vector3(0, 0.91, 0)));
+    }
+    static get instance() {
+        return this.createAndAddToEngine();
+    }
+    static createAndAddToEngine() {
+        if (this._instance == null) {
+            this._instance = new TriggerSystem();
+            engine.addSystem(this._instance);
+        }
+        return this._instance;
+    }
+    setCameraTriggerShape(shape) {
+        this._cameraTriggerWrapper.setShape(shape);
+    }
+    update() {
+        let entitiesWithTriggers = engine.getComponentGroup(TriggerComponent)
+            .entities;
+        entitiesWithTriggers.forEach(entity => {
+            if (this.shouldWrapTriggerEntity(entity)) {
+                this.wrapTriggerEntity(entity);
+            }
+        });
+        for (const key in this._triggers) {
+            if (this._triggers.hasOwnProperty(key)) {
+                let wrapper = this._triggers[key];
+                if (wrapper.isDebugging()) {
+                    wrapper.updateDebugEntity();
+                }
+                if (!wrapper.isInEngine()) {
+                    if (wrapper.isDebugging()) {
+                        wrapper.removeDebugEntity();
+                    }
+                    TriggerSystem.removeTriggerFromSystem(wrapper);
+                    delete this._triggers[key];
+                }
+                else if (wrapper.trigger != null && wrapper.trigger.enabled) {
+                    if (!wrapper.wasEnabled) {
+                        if (wrapper.isDebugging()) {
+                            wrapper.addDebugEntity();
+                        }
+                    }
+                    wrapper.wasEnabled = true;
+                    if (wrapper.trigger.onCameraEnter || wrapper.trigger.onCameraExit) {
+                        this.checkCollisionAgainstCamera(wrapper);
+                    }
+                    if (wrapper.trigger.onTriggerEnter || wrapper.trigger.onTriggerExit) {
+                        this.checkCollisionAgainstOtherTriggers(wrapper);
+                    }
+                }
+                else if (wrapper.wasEnabled) {
+                    wrapper.wasEnabled = false;
+                    if (wrapper.isDebugging()) {
+                        wrapper.removeDebugEntity();
+                    }
+                    TriggerSystem.removeTriggerFromSystem(wrapper);
+                }
+            }
+        }
+    }
+    shouldWrapTriggerEntity(entity) {
+        return (this._triggers[entity.uuid] == undefined ||
+            this._triggers[entity.uuid] == null);
+    }
+    wrapTriggerEntity(entity) {
+        this._triggers[entity.uuid] = new TriggerWrapper(entity);
+    }
+    static removeTriggerFromSystem(wrapper) {
+        let activeCollisions = wrapper.getActiveCollisions();
+        for (let i = 0; i < activeCollisions.length; i++) {
+            if (activeCollisions[i].trigger.onTriggerExit && wrapper.entity)
+                activeCollisions[i].trigger.onTriggerExit(wrapper.entity);
+            activeCollisions[i].disengageActiveCollision(wrapper);
+            wrapper.disengageActiveCollision(activeCollisions[i]);
+        }
+    }
+    static disengageCollision(t1, t2) {
+        t1.disengageActiveCollision(t2);
+        t2.disengageActiveCollision(t1);
+        if (t1.trigger.onTriggerExit && t2.entity)
+            t1.trigger.onTriggerExit(t2.entity);
+        if (t2.trigger.onTriggerExit && t1.entity)
+            t2.trigger.onTriggerExit(t1.entity);
+    }
+    static engageCollision(t1, t2) {
+        t1.engageCollision(t2);
+        t2.engageCollision(t1);
+        if (t1.trigger.onTriggerEnter && t2.entity)
+            t1.trigger.onTriggerEnter(t2.entity);
+        if (t2.trigger.onTriggerEnter && t1.entity)
+            t2.trigger.onTriggerEnter(t1.entity);
+    }
+    checkCollisionAgainstCamera(wrapper) {
+        let wereColliding = wrapper.hasActiveCollision(this._cameraTriggerWrapper);
+        let areColliding = TriggerSystem.areColliding(wrapper, this._cameraTriggerWrapper);
+        if (wereColliding && !areColliding) {
+            wrapper.disengageActiveCollision(this._cameraTriggerWrapper);
+            if (wrapper.trigger.onCameraExit)
+                wrapper.trigger.onCameraExit();
+        }
+        else if (!wereColliding && areColliding) {
+            wrapper.engageCollision(this._cameraTriggerWrapper);
+            if (wrapper.trigger.onCameraEnter)
+                wrapper.trigger.onCameraEnter();
+        }
+    }
+    checkCollisionAgainstOtherTriggers(wrapper) {
+        for (const key in this._triggers) {
+            if (this._triggers.hasOwnProperty(key)) {
+                if (key != wrapper.uuid && this._triggers[key].trigger.enabled) {
+                    if (TriggerSystem.canTriggersCollide(wrapper, this._triggers[key])) {
+                        let wereColliding = wrapper.hasActiveCollision(this._triggers[key]);
+                        let areColliding = TriggerSystem.areColliding(wrapper, this._triggers[key]);
+                        if (wereColliding && !areColliding)
+                            TriggerSystem.disengageCollision(wrapper, this._triggers[key]);
+                        else if (!wereColliding && areColliding)
+                            TriggerSystem.engageCollision(wrapper, this._triggers[key]);
+                    }
+                }
+            }
+        }
+    }
+    static canTriggersCollide(t1, t2) {
+        if (t1.trigger.triggeredByLayer == 0)
+            return true;
+        return (t2.trigger.layer & t1.trigger.triggeredByLayer) != 0;
+    }
+    static areColliding(t1, t2) {
+        if (t1.getShape() instanceof TriggerBoxShape &&
+            t2.getShape() instanceof TriggerBoxShape) {
+            return TriggerSystem.areCollidingAABB(t1.getGlobalPosition(), t1.getShape(), t2.getGlobalPosition(), t2.getShape());
+        }
+        else if (t1.getShape() instanceof TriggerSphereShape &&
+            t2.getShape() instanceof TriggerSphereShape) {
+            return TriggerSystem.areCollidingSphere(t1.getGlobalPosition(), t1.getShape(), t2.getGlobalPosition(), t2.getShape());
+        }
+        else if (t1.getShape() instanceof TriggerBoxShape &&
+            t2.getShape() instanceof TriggerSphereShape) {
+            return TriggerSystem.areCollidingAABBSphere(t1.getGlobalPosition(), t1.getShape(), t2.getGlobalPosition(), t2.getShape());
+        }
+        else if (t1.getShape() instanceof TriggerSphereShape &&
+            t2.getShape() instanceof TriggerBoxShape) {
+            return TriggerSystem.areCollidingAABBSphere(t2.getGlobalPosition(), t2.getShape(), t1.getGlobalPosition(), t1.getShape());
+        }
+        return false;
+    }
+    static areCollidingAABB(t1GlobalPosition, t1Shape, t2GlobalPosition, t2Shape) {
+        let t1 = TriggerSystem.getBoxShapeValues(t1GlobalPosition, t1Shape);
+        let t2 = TriggerSystem.getBoxShapeValues(t2GlobalPosition, t2Shape);
+        return (t1.min.x <= t2.max.x &&
+            t1.max.x >= t2.min.x &&
+            t1.min.y <= t2.max.y && t1.max.y >= t2.min.y &&
+            t1.min.z <= t2.max.z && t1.max.z >= t2.min.z);
+    }
+    static areCollidingSphere(t1GlobalPosition, t1Shape, t2GlobalPosition, t2Shape) {
+        let sqDist = Vector3.DistanceSquared(t1GlobalPosition.add(t1Shape.position), t2GlobalPosition.add(t2Shape.position));
+        return (sqDist < t1Shape.radius * t1Shape.radius + t2Shape.radius * t2Shape.radius);
+    }
+    static areCollidingAABBSphere(t1GlobalPosition, t1Shape, t2GlobalPosition, t2Shape) {
+        let box = TriggerSystem.getBoxShapeValues(t1GlobalPosition, t1Shape);
+        let sphere = {
+            center: t2GlobalPosition.add(t2Shape.position),
+            radius: t2Shape.radius
+        };
+        let dmin = 0;
+        if (sphere.center.x < box.min.x)
+            dmin += (box.min.x - sphere.center.x) * (box.min.x - sphere.center.x);
+        if (sphere.center.x > box.max.x)
+            dmin += (sphere.center.x - box.max.x) * (sphere.center.x - box.max.x);
+        if (sphere.center.y < box.min.y)
+            dmin += (box.min.y - sphere.center.y) * (box.min.y - sphere.center.y);
+        if (sphere.center.y > box.max.y)
+            dmin += (sphere.center.y - box.max.y) * (sphere.center.y - box.max.y);
+        if (sphere.center.z < box.min.z)
+            dmin += (box.min.z - sphere.center.z) * (box.min.z - sphere.center.z);
+        if (sphere.center.z > box.max.z)
+            dmin += (sphere.center.z - box.max.z) * (sphere.center.z - box.max.z);
+        return dmin < sphere.radius * sphere.radius;
+    }
+    static getBoxShapeValues(entityGlobalPosition, shape) {
+        let center = entityGlobalPosition.add(shape.position);
+        return {
+            center: center,
+            min: center.subtract(shape.size.scale(0.5)),
+            max: center.add(shape.size.scale(0.5))
+        };
+    }
+}
+exports.TriggerSystem = TriggerSystem;
+TriggerSystem._instance = null;
+class TriggerWrapper {
+    constructor(entity) {
+        this.wasEnabled = true;
+        this._uuid = '';
+        this._collidingWith = {};
+        this._isDebug = false;
+        this._debugEntity = null;
+        this._entity = entity;
+        if (entity) {
+            this._trigger = entity.getComponent(TriggerComponent);
+            this._uuid = entity.uuid;
+            this._isDebug = this._trigger.debugEnabled;
+            if (this._isDebug) {
+                this.addDebugEntity();
+            }
+        }
+    }
+    get entity() {
+        return this._entity;
+    }
+    get trigger() {
+        return this._trigger;
+    }
+    get uuid() {
+        return this._uuid;
+    }
+    getGlobalPosition() {
+        if (this._entity)
+            return TriggerWrapper.getEntityWorldPosition(this._entity);
+        return Vector3.Zero();
+    }
+    getShape() {
+        return this._trigger.shape;
+    }
+    isInEngine() {
+        return this._entity != null && this._entity.isAddedToEngine();
+    }
+    getActiveCollisions() {
+        let ret = [];
+        for (const key in this._collidingWith) {
+            if (this._collidingWith.hasOwnProperty(key)) {
+                ret.push(this._collidingWith[key]);
+            }
+        }
+        return ret;
+    }
+    hasActiveCollision(other) {
+        return (this._collidingWith[other.uuid] != undefined &&
+            this._collidingWith[other.uuid] != null);
+    }
+    disengageActiveCollision(other) {
+        delete this._collidingWith[other.uuid];
+    }
+    engageCollision(other) {
+        this._collidingWith[other.uuid] = other;
+    }
+    isDebugging() {
+        return this._isDebug;
+    }
+    addDebugEntity() {
+        if (!TriggerWrapper._debugMaterial) {
+            TriggerWrapper._debugMaterial = new Material();
+            TriggerWrapper._debugMaterial.alphaTest = 0.5;
+        }
+        if (this._debugEntity == null) {
+            this._debugEntity = new Entity();
+            const transform = new Transform();
+            this._debugEntity.addComponent(transform);
+            this._debugEntity.addComponent(TriggerWrapper._debugMaterial);
+            if (this.getShape() instanceof TriggerBoxShape) {
+                const shape = new BoxShape();
+                shape.withCollisions = false;
+                this._debugEntity.addComponent(shape);
+                transform.scale = this.getShape().size;
+            }
+            if (this.getShape() instanceof TriggerSphereShape) {
+                const shape = new SphereShape();
+                shape.withCollisions = false;
+                this._debugEntity.addComponent(shape);
+                let rad = this.getShape().radius;
+                transform.scale = new Vector3(rad, rad, rad);
+            }
+        }
+        engine.addEntity(this._debugEntity);
+    }
+    removeDebugEntity() {
+        if (this._debugEntity != null)
+            engine.removeEntity(this._debugEntity);
+    }
+    updateDebugEntity() {
+        if (this._debugEntity) {
+            this._debugEntity.getComponent(Transform).position = this.getGlobalPosition().add(this.getShape().position);
+        }
+    }
+    static getEntityWorldPosition(entity) {
+        let entityPosition = entity.hasComponent(Transform)
+            ? entity.getComponent(Transform).position
+            : Vector3.Zero();
+        let parentEntity = entity.getParent();
+        if (parentEntity != null) {
+            let parentRotation = parentEntity.hasComponent(Transform)
+                ? parentEntity.getComponent(Transform).rotation
+                : Quaternion.Identity;
+            return this.getEntityWorldPosition(parentEntity).add(entityPosition.rotate(parentRotation));
+        }
+        return entityPosition;
+    }
+}
+TriggerWrapper._debugMaterial = null;
+class CameraTrigger extends TriggerWrapper {
+    constructor(shape) {
+        super();
+        this._shape = shape;
+        this._uuid = 'cameraTrigger';
+    }
+    getGlobalPosition() {
+        return Camera.instance.position;
+    }
+    getShape() {
+        return this._shape;
+    }
+    setShape(shape) {
+        this._shape = shape;
+    }
+    isInEngine() {
+        return false;
+    }
+    hasActiveCollision(other) {
+        return false;
+    }
+    disengageActiveCollision(other) { }
+    engageCollision(other) { }
+    isDebugging() {
+        return false;
+    }
+}
+let TriggerComponent = class TriggerComponent {
+    constructor(shape, layer = 0, triggeredByLayer = 0, onTriggerEnter, onTriggerExit, onCameraEnter, onCameraExit, enableDebug = false) {
+        this.enabled = true;
+        this.layer = 0;
+        this.triggeredByLayer = 0;
+        TriggerSystem.createAndAddToEngine();
+        this.shape = shape;
+        this.layer = layer;
+        this.triggeredByLayer = triggeredByLayer;
+        this.onTriggerEnter = onTriggerEnter;
+        this.onTriggerExit = onTriggerExit;
+        this.onCameraEnter = onCameraEnter;
+        this.onCameraExit = onCameraExit;
+        this._debugEnabled = enableDebug;
+    }
+    get debugEnabled() {
+        return this._debugEnabled;
+    }
+};
+TriggerComponent = __decorate([
+    Component('triggerComponent')
+], TriggerComponent);
+exports.TriggerComponent = TriggerComponent;
+class TriggerBoxShape {
+    constructor(size, position) {
+        this.size = size;
+        this.position = position;
+    }
+}
+exports.TriggerBoxShape = TriggerBoxShape;
+class TriggerSphereShape {
+    constructor(radius, position) {
+        this.radius = radius;
+        this.position = position;
+    }
+}
+exports.TriggerSphereShape = TriggerSphereShape;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ActionsSequenceSystem = void 0;
+class ActionsSequenceSystem {
+    constructor(sequenceBuilt) {
+        this.beginSequenceNode = null;
+        this.currentSequenceNode = null;
+        this.running = false;
+        this.started = false;
+        if (sequenceBuilt) {
+            this.startSequence(sequenceBuilt);
+        }
+    }
+    startSequence(sequenceBuilt) {
+        this.beginSequenceNode = sequenceBuilt.beginSequenceNode;
+        this.currentSequenceNode = this.beginSequenceNode;
+        this.running = true;
+        this.started = false;
+    }
+    setOnFinishCallback(onFinishCallback) {
+        this.onFinishCallback = onFinishCallback;
+    }
+    isRunning() {
+        return this.running;
+    }
+    stop() {
+        this.running = false;
+    }
+    resume() {
+        if (this.beginSequenceNode != null) {
+            this.running = true;
+        }
+    }
+    reset() {
+        this.currentSequenceNode = this.beginSequenceNode;
+        this.running = true;
+        this.started = false;
+    }
+    getRunningAction() {
+        let currentNode = this.currentSequenceNode;
+        if (this.currentSequenceNode instanceof SubSequenceNode) {
+            do {
+                currentNode = currentNode.currentInnerSequence;
+            } while (currentNode instanceof SubSequenceNode);
+        }
+        return currentNode.action;
+    }
+    update(dt) {
+        if (this.running) {
+            if (!this.started) {
+                ;
+                this.currentSequenceNode.onStart();
+                this.started = true;
+            }
+            else {
+                if (!this.currentSequenceNode.hasFinish()) {
+                    ;
+                    this.currentSequenceNode.update(dt);
+                }
+                else {
+                    ;
+                    this.currentSequenceNode.onFinish();
+                    this.currentSequenceNode = this
+                        .currentSequenceNode.next;
+                    if (this.currentSequenceNode) {
+                        this.currentSequenceNode.onStart();
+                    }
+                    else {
+                        this.running = false;
+                        if (this.onFinishCallback)
+                            this.onFinishCallback();
+                    }
+                }
+            }
+        }
+    }
+}
+exports.ActionsSequenceSystem = ActionsSequenceSystem;
+(function (ActionsSequenceSystem) {
+    class SequenceBuilder {
+        constructor() {
+            this.currentSequenceNode = null;
+            this.beginSequenceNode = null;
+            this.whileNodeStack = [];
+        }
+        then(action) {
+            if (this.currentSequenceNode == null) {
+                this.currentSequenceNode = new SequenceNode();
+                this.currentSequenceNode.action = action;
+                this.beginSequenceNode = this.currentSequenceNode;
+            }
+            else {
+                let next = new SequenceNode();
+                next.action = action;
+                this.currentSequenceNode = this.currentSequenceNode.then(next);
+            }
+            return this;
+        }
+        if(condition) {
+            let ifSeq = new IfSequenceNode(condition);
+            if (this.currentSequenceNode == null) {
+                this.currentSequenceNode = ifSeq;
+                this.beginSequenceNode = ifSeq;
+            }
+            else {
+                this.currentSequenceNode = this.currentSequenceNode.then(ifSeq);
+            }
+            return this;
+        }
+        else() {
+            let seq = this.currentSequenceNode.getSequence();
+            if (seq instanceof IfSequenceNode) {
+                seq.closed = true;
+                let elseSeq = new ElseSequenceNode(seq);
+                this.currentSequenceNode = this
+                    .currentSequenceNode.then(elseSeq);
+            }
+            else {
+                throw new Error('IF statement is needed to be called before ELSE statement.');
+            }
+            return this;
+        }
+        endIf() {
+            let seq = this.currentSequenceNode.getSequence();
+            if (seq instanceof IfSequenceNode || seq instanceof ElseSequenceNode) {
+                seq.closed = true;
+            }
+            else {
+                throw new Error('IF statement is needed to be called before ENDIF statement.');
+            }
+            return this;
+        }
+        while(condition) {
+            let whileSeq = new WhileSequenceNode(condition);
+            if (this.currentSequenceNode == null) {
+                this.currentSequenceNode = whileSeq;
+                this.beginSequenceNode = whileSeq;
+            }
+            else {
+                this.currentSequenceNode = this.currentSequenceNode.then(whileSeq);
+            }
+            this.whileNodeStack.push(whileSeq);
+            return this;
+        }
+        endWhile() {
+            let seq = this.currentSequenceNode.getSequence();
+            if (seq instanceof WhileSequenceNode) {
+                seq.closed = true;
+                if (this.whileNodeStack.length > 0) {
+                    this.whileNodeStack.splice(this.whileNodeStack.length - 1, 1);
+                }
+            }
+            else {
+                throw new Error('WHILE statement is needed to be called before ENDWHILE statement.');
+            }
+            return this;
+        }
+        breakWhile() {
+            if (this.whileNodeStack.length > 0) {
+                this.currentSequenceNode = this
+                    .currentSequenceNode.then(new BreakWhileSequenceNode(this.whileNodeStack[this.whileNodeStack.length - 1]));
+            }
+            else {
+                throw new Error('WHILE statement is needed to be called before BREAKWHILE statement.');
+            }
+            return this;
+        }
+    }
+    ActionsSequenceSystem.SequenceBuilder = SequenceBuilder;
+})(ActionsSequenceSystem = exports.ActionsSequenceSystem || (exports.ActionsSequenceSystem = {}));
+class SequenceNode {
+    constructor() {
+        this.action = null;
+        this.next = null;
+    }
+    then(next) {
+        this.next = next;
+        return next;
+    }
+    onStart() {
+        if (this.action)
+            this.action.onStart();
+    }
+    update(dt) {
+        if (this.action)
+            this.action.update(dt);
+    }
+    onFinish() {
+        if (this.action)
+            this.action.onFinish();
+    }
+    hasFinish() {
+        if (this.action)
+            return this.action.hasFinished;
+        else
+            return true;
+    }
+    getSequence() {
+        return this;
+    }
+}
+class SubSequenceNode extends SequenceNode {
+    constructor() {
+        super(...arguments);
+        this.currentInnerSequence = null;
+        this.startingInnerSequence = null;
+        this.closed = false;
+    }
+    then(next) {
+        if (this.currentInnerSequence == null) {
+            this.currentInnerSequence = next;
+            this.startingInnerSequence = next;
+        }
+        else {
+            if (this.closed) {
+                this.next = next;
+                return next;
+            }
+            else {
+                this.currentInnerSequence = this.currentInnerSequence.then(next);
+            }
+        }
+        return this;
+    }
+    onStart() {
+        this.currentInnerSequence = this.startingInnerSequence;
+        if (this.currentInnerSequence)
+            this.currentInnerSequence.onStart();
+    }
+    update(dt) {
+        if (this.currentInnerSequence) {
+            if (!this.currentInnerSequence.hasFinish()) {
+                this.currentInnerSequence.update(dt);
+            }
+            else {
+                this.currentInnerSequence.onFinish();
+                this.currentInnerSequence = this.currentInnerSequence.next;
+                if (this.currentInnerSequence)
+                    this.currentInnerSequence.onStart();
+            }
+        }
+    }
+    onFinish() {
+        if (this.currentInnerSequence)
+            this.currentInnerSequence.onFinish();
+    }
+    hasFinish() {
+        return this.currentInnerSequence == null;
+    }
+    getSequence() {
+        if (this.currentInnerSequence) {
+            let innerSeq = this.currentInnerSequence.getSequence();
+            if (innerSeq instanceof SubSequenceNode) {
+                if (!innerSeq.closed) {
+                    return innerSeq;
+                }
+            }
+        }
+        return this;
+    }
+}
+class IfSequenceNode extends SubSequenceNode {
+    constructor(condition) {
+        super();
+        this.result = false;
+        this.condition = condition;
+    }
+    onStart() {
+        this.result = this.condition();
+        if (this.result)
+            super.onStart();
+        else
+            this.currentInnerSequence = null;
+    }
+}
+class ElseSequenceNode extends SubSequenceNode {
+    constructor(ifSequence) {
+        super();
+        this.ifSequence = null;
+        this.ifSequence = ifSequence;
+    }
+    onStart() {
+        if (this.ifSequence && !this.ifSequence.result)
+            super.onStart();
+        else
+            this.currentInnerSequence = null;
+    }
+}
+class WhileSequenceNode extends SubSequenceNode {
+    constructor(condition) {
+        super();
+        this.breakWhile = false;
+        this.condition = condition;
+    }
+    onStart() {
+        this.breakWhile = false;
+        if (this.condition())
+            super.onStart();
+        else
+            this.currentInnerSequence = null;
+    }
+    update(dt) {
+        if (this.currentInnerSequence) {
+            if (!this.currentInnerSequence.hasFinish()) {
+                this.currentInnerSequence.update(dt);
+            }
+            else {
+                this.currentInnerSequence.onFinish();
+                this.currentInnerSequence = this.currentInnerSequence.next;
+                if (this.currentInnerSequence == null)
+                    this.currentInnerSequence = this.startingInnerSequence;
+                if (this.currentInnerSequence)
+                    this.currentInnerSequence.onStart();
+            }
+        }
+    }
+    hasFinish() {
+        return this.breakWhile || !this.condition();
+    }
+}
+class BreakWhileSequenceNode extends SequenceNode {
+    constructor(whileNode) {
+        super();
+        this.whileNode = whileNode;
+    }
+    onStart() {
+        this.whileNode.breakWhile = true;
+    }
+}
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createScreen = void 0;
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+const Cross_1 = __webpack_require__(20);
+const TIME_MOVE = 0.3;
+let Step = class Step {
+    constructor(index, isObstacle) {
+        this.index = index;
+        this.isObstacle = isObstacle;
+    }
+};
+Step = __decorate([
+    Component("ObstacleGame-step")
+], Step);
+let Player = class Player {
+};
+Player = __decorate([
+    Component("ObstacleGame-player")
+], Player);
+exports.createScreen = (root, { player, track }) => {
+    let stepText = new TextShape("E");
+    stepText.withCollisions = false;
+    stepText.fontSize = 4;
+    stepText.font = new Font(Fonts.SanFrancisco_Heavy);
+    stepText.shadowOffsetX = 1;
+    stepText.shadowOffsetY = 1;
+    stepText.shadowColor = Color3.FromHexString("#000000");
+    const callbacks = {
+        onMove: null,
+        onFinish: null
+    };
+    const state = {
+        moving: false,
+        jumping: false,
+        moveCount: 0,
+        currentStep: 0,
+        jumps: 0
+    };
+    let screen;
+    screen = new Entity();
+    screen.setParent(root);
+    const cross = Cross_1.createCross(screen, {
+        position: new Vector3(1.5, 3, -0.001),
+        scale: new Vector3(1, 1, 1)
+    });
+    cross.hide();
+    screen.addComponent(new Transform({ position: new Vector3(player === 2 ? 0 : -3, 0, 0) }));
+    const background = new Entity();
+    const backShape = new PlaneShape();
+    backShape.withCollisions = false;
+    backShape.uvs = SpriteAnimation_1.getSpriteUv(2, 11, 96, 128);
+    background.addComponent(SpriteMaterial_1.spriteMaterial);
+    background.addComponent(backShape);
+    background.addComponent(new Transform({
+        position: new Vector3(1.5, 2, 0),
+        scale: new Vector3(3, 4, 1)
+    }));
+    background.setParent(screen);
+    const spriteOffset = 32 * 64 + 12;
+    const playerS1 = new SpriteAnimation_1.SpriteAnimationSystem(screen, {
+        frames: [
+            { uvs: SpriteAnimation_1.getSpriteUv(8, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(1, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(2, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(3, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(4, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(4, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(5, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(6, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(7, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(8, spriteOffset, 16, 16) },
+            { uvs: SpriteAnimation_1.getSpriteUv(8, spriteOffset + (1024 / 16), 16, 16) }
+        ],
+        scale: new Vector3(0.5, 0.5, 1),
+        position: new Vector3(0.3 * 3 + 0.15, 1.9, -0.002),
+        time: 0.1
+    });
+    playerS1.init();
+    const steps = [];
+    track.forEach((isObstacle, index) => {
+        const step = new Entity();
+        step.addComponent(new Step(index, isObstacle));
+        const stepShape = new PlaneShape();
+        stepShape.withCollisions = false;
+        const stepMaterial = new Material();
+        stepMaterial.transparencyMode = TransparencyMode.ALPHA_BLEND;
+        stepMaterial.albedoColor = isObstacle ? new Color4(1, 0, 0, 0) : (player === 1 ? new Color4(0, 0, 1, 0) : new Color4(1, 1, 0, 0));
+        stepMaterial.emissiveColor = isObstacle ? new Color3(1, 0, 0) : (player === 1 ? Color3.FromHexString('#0000ff') : Color3.FromHexString('#ffff00'));
+        stepMaterial.emissiveIntensity = 3;
+        if (index === track.length - 1) {
+            stepMaterial.albedoColor = new Color4(0, 1, 0, 0);
+            stepMaterial.emissiveColor = new Color3(0, 1, 0);
+        }
+        step.addComponent(stepShape);
+        step.addComponent(stepMaterial);
+        if (isObstacle) {
+            step.addComponent(new Transform({ position: new Vector3(index * 0.3 + 0.15 - 0.1, 1.75, -0.001), scale: new Vector3(0.1, 0.1, 1) }));
+        }
+        else {
+            step.addComponent(new Transform({ position: new Vector3(index * 0.3 + 0.15, 1.95, -0.001), scale: new Vector3(0.02, 0.02, 1) }));
+        }
+        steps.push(step);
+        step.setParent(screen);
+    });
+    const stepLabel = new Entity();
+    stepLabel.addComponent(stepText);
+    stepLabel.addComponent(new Transform({ position: new Vector3(1, 1.3, -0.002) }));
+    stepLabel.setParent(screen);
+    const getJumpHeight = (count) => {
+        if (count > TIME_MOVE) {
+            return Math.max(0, 0.4 - state.moveCount / TIME_MOVE * 0.4 / 2);
+        }
+        else {
+            return Math.min(0.4, state.moveCount / TIME_MOVE * 0.4);
+        }
+    };
+    const hideAll = () => {
+        Object.values(steps).forEach((step, index) => {
+            step.visible = false;
+        });
+    };
+    const getNextStepValue = () => {
+        return track[state.currentStep + 1 + 3];
+    };
+    const moveScreen = (jumping) => {
+        state.moving = true;
+        state.jumping = !!jumping;
+        if (!playerS1.state.playing) {
+            if (jumping) {
+                playerS1.play([9, 0, 1], { loop: false, time: 0.2 });
+            }
+            else {
+                if (state.currentStep % 2 === 0) {
+                    playerS1.play([1, 2, 3], { loop: false, time: 0.1 });
+                }
+                else {
+                    playerS1.play([5, 6, 7], { loop: false, time: 0.1 });
+                }
+            }
+        }
+    };
+    const getScreenState = () => state;
+    const onMove = (fn) => {
+        callbacks.onMove = fn;
+        return () => callbacks.onMove = null;
+    };
+    const onFinishScreen = (fn) => {
+        callbacks.onFinish = fn;
+        return () => callbacks.onFinish = null;
+    };
+    const handleVisibility = () => {
+        steps.forEach((step, index) => {
+            const stepTransform = step.getComponent(Transform);
+            const stepShape = step.getComponent(PlaneShape);
+            const stepMaterial = step.getComponent(Material);
+            const isObstacle = step.getComponent(Step).isObstacle;
+            if (stepTransform.position.x < 0.2 || stepTransform.position.x >= 2.999) {
+                stepMaterial.albedoColor = isObstacle ? new Color4(1, 0, 0, 0) : (player === 1 ? new Color4(0, 0, 1, 0) : new Color4(1, 1, 0, 0));
+            }
+            else {
+                stepMaterial.albedoColor = isObstacle ? new Color4(1, 0, 0, 1) : (player === 1 ? new Color4(0, 0, 1, 1) : new Color4(1, 1, 0, 1));
+                if (index === track.length - 1) {
+                    stepMaterial.albedoColor = new Color4(0, 1, 0, 1);
+                    stepMaterial.emissiveColor = new Color3(0, 1, 0);
+                }
+            }
+        });
+        if (track[state.currentStep + 4]) {
+            stepText.value = "CLICK";
+        }
+        else {
+            if ((state.currentStep) % 2 === 0) {
+                stepText.value = "E";
+            }
+            else {
+                stepText.value = "F";
+            }
+        }
+    };
+    const updateScreen = (dt) => {
+        if (state.moving) {
+            state.moveCount += dt;
+            steps.forEach((step, index) => {
+                const stepTransform = step.getComponent(Transform);
+                const stepPosition = stepTransform.position;
+                const basePos = index * 0.3 + 0.15;
+                const byStepPos = state.currentStep * 0.3;
+                const byDt = state.moveCount / TIME_MOVE * 0.3;
+                stepPosition.set(basePos - byStepPos - byDt, stepPosition.y, stepPosition.z);
+            });
+            if (state.jumping) {
+                const playerPosition = playerS1.globalOptions.position;
+                const jumpY = getJumpHeight(state.moveCount);
+                playerPosition.set(playerPosition.x, jumpY + 1.9, playerPosition.z);
+            }
+        }
+        if (state.moveCount >= (state.jumping ? TIME_MOVE * 2 : TIME_MOVE)) {
+            if (state.jumping)
+                state.jumps++;
+            state.currentStep += (state.jumping ? 2 : 1);
+            state.moving = state.jumping = false;
+            state.moveCount = 0;
+            callbacks.onMove && callbacks.onMove(state.currentStep);
+            if (callbacks.onFinish && state.currentStep + 3 === track.length - 1)
+                callbacks.onFinish();
+            handleVisibility();
+        }
+    };
+    const destroy = () => {
+        screen.setParent(null);
+        engine.removeEntity(screen);
+        callbacks.onFinish = null;
+        callbacks.onMove = null;
+    };
+    return {
+        getNextStepValue,
+        moveScreen,
+        getScreenState,
+        onMove,
+        onFinishScreen,
+        handleVisibility,
+        updateScreen,
+        destroy,
+        getTotalSteps: () => track.length,
+        showCross: () => cross.show(),
+        hideCross: () => cross.hide()
+    };
+};
+
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SammichGame = void 0;
+const Screen_1 = __webpack_require__(62);
+const Sound_1 = __webpack_require__(2);
+const gameUtils_1 = __webpack_require__(4);
+const ROUNDS = 5;
+class SammichGame {
+    constructor(root, { currentPlayer, seed, level, gameIndex }) {
+        this.gameSetup = {
+            level: 1,
+            currentPlayer: 0,
+            seed: null
+        };
+        this.callbacks = {
+            onFinish: null,
+            onShareState: null,
+            onFinishRound: null
+        };
+        this.state = {
+            started: false,
+            initialized: false,
+            blocked: false,
+            startTime: Number.MAX_VALUE,
+            roundStartTime: Number.MAX_VALUE,
+            lastRoundStartTime: Number.MAX_VALUE,
+            waitingRound: false,
+            round: 0,
+            score: 0,
+            score1: 0,
+            score2: 0
+        };
+        this.scene = new Entity();
+        this.scene.addComponent(new Transform({
+            position: new Vector3(0, 2, -0.001)
+        }));
+        this.ui = gameUtils_1.createUI(this.scene, { position: new Vector3(0, -2, 0) });
+        this.root = root;
+        this.gameSetup = { currentPlayer, seed, level, gameIndex };
+        this.screen1 = Screen_1.createScreen(this.scene, { player: 1, seed, owner: currentPlayer === 1 });
+        this.screen2 = Screen_1.createScreen(this.scene, { player: 2, seed, owner: currentPlayer === 2 });
+        if (currentPlayer)
+            this[`screen${currentPlayer}`].onStateChange((roundState) => {
+                console.log('global score', this.state.score);
+                console.log("onStateChange", roundState.score, roundState);
+                this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: (roundState.score + this.state.score) });
+                this.callbacks.onShareState({
+                    player: currentPlayer,
+                    state: roundState,
+                    score: (roundState.score + this.state.score)
+                });
+            });
+        engine.addSystem(this);
+        this.roundResult1 = gameUtils_1.createRoundResult(this.scene, { player: 1 });
+        this.roundResult2 = gameUtils_1.createRoundResult(this.scene, { player: 2 });
+        const position1 = this.roundResult1.getTransform().position;
+        const position2 = this.roundResult2.getTransform().position;
+        position1.set(position1.x, position1.y - 2, position1.z);
+        position2.set(position2.x, position2.y - 2, position2.z);
+        this.roundResult1.hide();
+        this.roundResult2.hide();
+    }
+    startRound() {
+        this.state.round++;
+        this.state.lastRoundStartTime = this.state.roundStartTime;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        this.state.waitingRound = false;
+        if (this.gameSetup.currentPlayer) {
+            this[`screen${this.gameSetup.currentPlayer}`].start({ level: this.state.round });
+        }
+    }
+    setRoundStartTime(roundStartTime) {
+        this.state.roundStartTime = roundStartTime;
+    }
+    setStartTime(startTime) {
+        this.state.startTime = startTime;
+    }
+    block() {
+        this.state.blocked = true;
+    }
+    init() {
+        this.scene.setParent(this.root);
+        this.state.initialized = true;
+        Sound_1.playLoop("music2", { volume: 0.5 });
+    }
+    start() {
+        console.log("sammichGame start");
+        this.state.started = true;
+        this.state.startTime = Number.MAX_VALUE;
+        this.state.roundStartTime = Number.MAX_VALUE;
+        this.screen1.start({ level: this.state.round + 1 });
+        this.screen2.start({ level: this.state.round + 1 });
+        this.gameSetup.currentPlayer && this[`screen${this.gameSetup.currentPlayer}`].onComplete((score) => {
+            if (score >= 6) {
+                Sound_1.playOnce("wow");
+            }
+            else if (score >= 4) {
+            }
+            else {
+            }
+            this.state.score += score;
+            this.state[`score${this.gameSetup.currentPlayer}`] = this.state.score;
+            const globalCurrentPlayerScore = this.state[`score${this.gameSetup.currentPlayer}`];
+            this.ui.updateScore({ player: this.gameSetup.currentPlayer, score: globalCurrentPlayerScore });
+            console.log("Compelted costume", JSON.stringify(this.state, null, '  '));
+            setTimeout(() => {
+                console.log("Compelted costume timeout", JSON.stringify(this.state, null, '  '));
+                if ((this.state.round < ROUNDS - 1) || this.state.score1 === this.state.score2) {
+                    this.callbacks.onFinishRound({
+                        player: this.gameSetup.currentPlayer,
+                        score: globalCurrentPlayerScore,
+                        gameIndex: this.gameSetup.gameIndex,
+                        roundIndex: this.state.round
+                    });
+                }
+                else {
+                    console.log("CALLING onFinish", this.state.round, this.state.score1, this.state.score2, this.state.score1 === this.state.score2);
+                    Sound_1.stopSound("music2");
+                    this.callbacks.onFinish({
+                        isWinner: true,
+                        time: -1 * globalCurrentPlayerScore,
+                        score: globalCurrentPlayerScore,
+                        gameIndex: this.gameSetup.gameIndex,
+                        roundIndex: this.state.round
+                    });
+                }
+            }, 1000);
+        });
+    }
+    finish({ winner }) {
+        const nonWinner = winner === 1 ? 2 : 1;
+        this.roundResult1.show();
+        this.roundResult2.show();
+        this[`roundResult${winner}`].update(true);
+        this[`roundResult${nonWinner}`].update(false);
+    }
+    finishRound({ winner }) {
+        this.state.waitingRound = true;
+        this.screen1.reset();
+        this.screen2.reset();
+    }
+    destroy() {
+        this.screen1.dispose();
+        this.screen2.dispose();
+        this.scene.setParent(null);
+        engine.removeEntity(this.scene);
+        engine.removeSystem(this);
+    }
+    shareState(sharedState) {
+        const screenState = sharedState.state;
+        const player = sharedState.player;
+        console.log("shareState", sharedState.score, sharedState);
+        this.ui.updateScore({ player, score: sharedState.score });
+        this[`screen${player}`].setState(screenState);
+        this.state[`score${player}`] = sharedState.score;
+    }
+    onShareState(fn) {
+        this.callbacks.onShareState = fn;
+        return () => this.callbacks.onShareState = null;
+    }
+    onFinish(fn) {
+        this.callbacks.onFinish = fn;
+        return () => this.callbacks.onFinish = null;
+    }
+    onFinishRound(fn) {
+        this.callbacks.onFinishRound = fn;
+        return () => this.callbacks.onFinishRound = null;
+    }
+    update(dt) {
+        if (!this.state.initialized)
+            return;
+        if (!this.state.waitingRound && !this.state.started && Date.now() >= this.state.startTime) {
+            this.start();
+            return;
+        }
+        if (this.state.started && this.state.waitingRound && Date.now() >= this.state.roundStartTime) {
+            this.startRound();
+        }
+        if (!this.state.waitingRound && this.state.started) {
+            if (!this.getPlayerScreen(1).getScreenState().idle)
+                this.getPlayerScreen(1).updateScreen(dt);
+            if (!this.getPlayerScreen(2).getScreenState().idle)
+                this.getPlayerScreen(2).updateScreen(dt);
+        }
+    }
+    getPlayerScreen(player) {
+        return this[`screen${player}`];
+    }
+}
+exports.SammichGame = SammichGame;
+SammichGame.id = 'Sammich';
+SammichGame.instructions = `Move to sides with E and F\nto build the perfect sammich`;
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createScreen = void 0;
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+const Sound_1 = __webpack_require__(2);
+const seed_1 = __webpack_require__(3);
+const INGREDIENTS = [1, 2, 3, 4, 6, 7, 8];
+const createSprite = (root, { spriteIndex, position }) => {
+    const sprite = new Entity();
+    sprite.setParent(root);
+    const baseShape = new PlaneShape();
+    baseShape.withCollisions = false;
+    sprite.addComponent(SpriteMaterial_1.spriteMaterial);
+    sprite.addComponent(baseShape);
+    const spriteTransform = new Transform({
+        scale: new Vector3(0.5, 0.5, 0.5),
+        position
+    });
+    sprite.addComponent(spriteTransform);
+    baseShape.uvs = SpriteAnimation_1.getSpriteUv(spriteIndex, 32 * (1024 / 16), 16, 16);
+    const state = {
+        onBase: false,
+        baseX: 0,
+        currentRound: 1
+    };
+    return {
+        setX: (x) => {
+            spriteTransform.position.set(x, spriteTransform.position.y, spriteTransform.position.z);
+        },
+        setY: (y) => {
+            spriteTransform.position.set(spriteTransform.position.x, y, spriteTransform.position.z);
+        },
+        getX: () => spriteTransform.position.x,
+        getY: () => spriteTransform.position.y,
+        isOnBase: () => state.onBase,
+        getBaseX: () => state.baseX,
+        setOnBase: (value, x) => {
+            state.onBase = value;
+            state.baseX = x;
+        },
+        dispose: () => {
+            sprite.setParent(null);
+            sprite.removeComponent(Transform);
+            sprite.removeComponent(SpriteMaterial_1.spriteMaterial);
+            sprite.removeComponent(PlaneShape);
+            engine.removeEntity(sprite);
+        }
+    };
+};
+exports.createScreen = (root, { seed, player, owner }) => {
+    const screen = new Entity();
+    const state = {
+        dtCount: 0,
+        idle: true,
+        level: 1,
+        basePosition: 0,
+        layers: [],
+        score: 0
+    };
+    const randomizer = seed_1.seedGen.create(seed.toString());
+    const backShape = new PlaneShape();
+    backShape.withCollisions = false;
+    backShape.uvs = SpriteAnimation_1.getSpriteUv(1, 11, 96, 128);
+    screen.setParent(root);
+    screen.addComponent(new Transform({ position: new Vector3(player === 1 ? -1.5 : 1.5, 0, -0.000),
+    }));
+    const background = new Entity();
+    const backTransform = new Transform({
+        scale: new Vector3(3, 4, 1)
+    });
+    background.addComponent(backShape);
+    background.addComponent(SpriteMaterial_1.spriteMaterial);
+    background.addComponent(backTransform);
+    background.setParent(screen);
+    const base = createSprite(screen, { spriteIndex: 9, position: new Vector3(0, -1.125, -0.002) });
+    const DISPLACEMENT = 0.25;
+    const setState = (obj) => {
+        Object.assign(state, obj);
+        base.setX(state.basePosition);
+        state.layers.forEach((x, index) => {
+            combination[index].setX(base.getX() + x);
+            const spriteMinY = base.getY() + (index * LAYER_HEIGHT) + LAYER_OFFSET;
+            combination[index].setY(spriteMinY);
+        });
+    };
+    const updateState = (obj) => {
+        Object.assign(state, obj);
+        callbacks.onStateChange && callbacks.onStateChange(state);
+    };
+    const onStateChange = (fn) => {
+        callbacks.onStateChange = fn;
+        return () => callbacks.onStateChange = null;
+    };
+    const moveRight = () => {
+        if (state.idle && !owner)
+            return;
+        const newX = base.getX() === +DISPLACEMENT ? +DISPLACEMENT : (base.getX() + DISPLACEMENT);
+        base.setX(newX);
+        combination.forEach(sprite => {
+            if (sprite.isOnBase()) {
+                sprite.setX(base.getX() - sprite.getBaseX());
+            }
+        });
+        updateState({ basePosition: base.getX() });
+    };
+    const moveLeft = () => {
+        if (state.idle && !owner)
+            return;
+        const newX = base.getX() === -DISPLACEMENT ? -DISPLACEMENT : (base.getX() - DISPLACEMENT);
+        base.setX(newX);
+        combination.forEach((sprite, index) => {
+            if (sprite.isOnBase()) {
+                sprite.setX(base.getX() - sprite.getBaseX());
+            }
+        });
+        updateState({ basePosition: base.getX() });
+    };
+    if (owner) {
+        Input.instance.subscribe("BUTTON_DOWN", ActionButton.PRIMARY, false, moveLeft);
+        Input.instance.subscribe("BUTTON_DOWN", ActionButton.SECONDARY, false, moveRight);
+    }
+    const LAYER_HEIGHT = 0.05;
+    const LAYER_OFFSET = 0.1;
+    const MAX_LEVEL_VEL = 7;
+    const updateScreen = (dt) => {
+        if (state.idle)
+            return;
+        const levelVelocityFactor = (Math.min(state.level, MAX_LEVEL_VEL) * 0.7 + 0.2);
+        const initialSpriteY = 1.75;
+        state.dtCount += dt;
+        combination.forEach((sprite, index) => {
+            const spriteInitialTime = index / levelVelocityFactor + 0.03 * index * levelVelocityFactor;
+            if (state.dtCount >= spriteInitialTime) {
+                const spriteMinY = base.getY() + (index * LAYER_HEIGHT) + LAYER_OFFSET;
+                if (sprite.getY() <= spriteMinY) {
+                    if (!owner)
+                        return;
+                    if (!sprite.isOnBase()) {
+                        sprite.setOnBase(true, base.getX() - sprite.getX());
+                        if (sprite.getBaseX() !== 0) {
+                            Sound_1.playOnce("fail");
+                        }
+                        else {
+                            Sound_1.playOnce("ok");
+                            state.score++;
+                        }
+                        updateState({
+                            score: state.score,
+                            layers: [...state.layers, sprite.getX() - base.getX()]
+                        });
+                    }
+                }
+                else {
+                    sprite.setY(Math.max(spriteMinY, initialSpriteY - ((state.dtCount - spriteInitialTime) * levelVelocityFactor)));
+                }
+            }
+        });
+        if (!owner)
+            return;
+        if (combination.every((sprite, index) => sprite.isOnBase())) {
+            state.idle = true;
+            let roundScore = 0;
+            combination.forEach((sprite, index) => {
+                if (sprite.getBaseX() === 0)
+                    roundScore++;
+            });
+            callbacks.onComplete && callbacks.onComplete(roundScore);
+            state.score = 0;
+        }
+    };
+    let combination = [];
+    const setCombination = () => {
+        combination = Array(5).fill(null).map((c, index) => {
+            const ran = randomizer.random();
+            let posX = Math.floor((-1 + ran * 3)) * DISPLACEMENT;
+            const spriteIndex = INGREDIENTS[Math.floor(ran * INGREDIENTS.length)];
+            const position = new Vector3(posX, 1.75, -0.001 * index - 0.004);
+            const sprite = createSprite(screen, {
+                spriteIndex,
+                position
+            });
+            return sprite;
+        });
+        const ran = randomizer.random();
+        let posX = Math.floor((-1 + ran * 3)) * DISPLACEMENT;
+        combination.push(createSprite(screen, {
+            spriteIndex: 5,
+            position: new Vector3(posX, 1.75, -0.001 * 5 - 0.004)
+        }));
+    };
+    setCombination();
+    const reset = () => {
+        state.idle = true;
+        state.dtCount = 0;
+        state.layers = [];
+        state.basePosition = 0;
+        state.score = 0;
+        combination.forEach((sprite, index) => {
+            sprite.dispose();
+        });
+        setCombination();
+    };
+    const start = ({ level }) => {
+        state.idle = false;
+        state.level = level;
+    };
+    const callbacks = {
+        onComplete: null,
+        onStateChange: null
+    };
+    const onComplete = (fn) => {
+        callbacks.onComplete = fn;
+        return () => callbacks.onComplete = null;
+    };
+    const getScreenState = () => state;
+    const dispose = () => {
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.PRIMARY, moveLeft);
+        Input.instance.unsubscribe("BUTTON_DOWN", ActionButton.SECONDARY, moveRight);
+    };
+    return {
+        getScreenState,
+        start,
+        updateScreen,
+        onComplete,
+        reset,
+        setState,
+        onStateChange,
+        dispose
+    };
+};
+
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createScreen = void 0;
+const SpriteAnimation_1 = __webpack_require__(0);
+const SpriteMaterial_1 = __webpack_require__(1);
+const move_1 = __webpack_require__(15);
+const seed_1 = __webpack_require__(3);
+const Sound_1 = __webpack_require__(2);
+const carPool_1 = __webpack_require__(64);
+const PIXEL = 4 / 128;
+const yOffset = -PIXEL * 36;
+const KEY = {
+    UP: ActionButton.POINTER,
+    LEFT: ActionButton.PRIMARY,
+    RIGHT: ActionButton.SECONDARY
+};
+const sammichPlaceholderPositions = [
+    -1.5 + PIXEL * 12 + (PIXEL * 8) / 2,
+    -1.5 + PIXEL * 28 + (PIXEL * 8) / 2,
+    -1.5 + PIXEL * 44 + (PIXEL * 8) / 2,
+    -1.5 + PIXEL * 60 + (PIXEL * 8) / 2,
+    -1.5 + PIXEL * 76 + (PIXEL * 8) / 2,
+];
+const createSammich = (root, { x, index }) => {
+    let taken = false;
+    const callbacks = { onTake: null };
+    const spriteEntity = SpriteAnimation_1.createSpriteEntity(root, {
+        position: new Vector3(x, 2 - PIXEL * 15 + (PIXEL * 8) / 2, -0.001),
+        scale: new Vector3(PIXEL * 8, PIXEL * 8, 1),
+        uvs: SpriteAnimation_1.getSpriteUv(2, (528 / 8) * (1024 / 8), 8, 8)
+    });
+    const take = () => {
+        taken = true;
+        spriteEntity.getShape().visible = false;
+    };
+    const checkFrog = (frogPosition) => {
+        if (taken)
+            return false;
+        if (frogPosition.y < 2 - PIXEL * 15)
+            return false;
+        if (frogPosition.x === x) {
+            take();
+            Sound_1.playOnce("ok");
+            return true;
+        }
+    };
+    const onTake = (fn) => {
+        callbacks.onTake = fn;
+        return () => callbacks.onTake = null;
+    };
+    const isTaken = () => taken;
+    return { spriteEntity, take, checkFrog, onTake, isTaken, index };
+};
+const SAMMICHES = 5;
+exports.createScreen = (root, { player, seed }) => {
+    const screenState = {
+        blocked: false,
+        lastKey: KEY.UP,
+        movingFrog: false,
+        countDt: 0,
+        frogPosition: new Vector3(0, 0 + yOffset, -0.009),
+        score: 0,
+        takenSammiches: [false, false, false, false, false]
+    };
+    const screen = new Entity();
+    const background = new Entity();
+    background.setParent(screen);
+    screen.setParent(root);
+    const randomizer = seed_1.seedGen.create(seed);
+    const carPools = Array(9).fill(null).map((v, index) => carPool_1.createCarPool(screen, { track: index, randomizer }));
+    const sammichesPositions = [0, 1, 2, 3, 4];
+    const sammiches = Array(SAMMICHES).fill(null).map((s, index) => {
+        return createSammich(screen, { x: sammichPlaceholderPositions[sammichesPositions[index]], index });
+    });
+    screen.addComponent(new Transform({
+        position: new Vector3(player === 1 ? -1.5 : 1.5, 2, -0),
+    }));
+    background.addComponent(new Transform({
+        scale: new Vector3(3, 4, 1)
+    }));
+    const backgroundShape = new PlaneShape();
+    backgroundShape.uvs = SpriteAnimation_1.getSpriteUv(9, 11, 96, 128);
+    ;
+    background.addComponent(backgroundShape);
+    background.addComponent(SpriteMaterial_1.spriteMaterial);
+    const frog = new SpriteAnimation_1.SpriteAnimationSystem(screen, {
+        frames: [
+            { uvs: SpriteAnimation_1.getSpriteUv(1, (528 / 8) * (1024 / 8), 8, 8) },
+            { uvs: SpriteAnimation_1.getSpriteUv(1, ((528 + 8) / 8) * (1024 / 8), 8, 8) }
+        ],
+        scale: new Vector3(PIXEL * 8, PIXEL * 8, 1),
+        position: screenState.frogPosition,
+        time: 0.1
+    });
+    frog.init();
+    const updateScreen = (dt, checkCollisions) => {
+        screenState.countDt += dt;
+        carPools.forEach(carPool => carPool.update(dt));
+        if (checkCollisions) {
+            const frogPosition = frog.getPosition();
+            const takenSammich = sammiches.find((sammich, index) => {
+                if (sammich.checkFrog(frogPosition))
+                    return { index };
+            });
+            if (takenSammich) {
+                screenState.takenSammiches[takenSammich.index] = true;
+                screenState.score++;
+                console.log("triggering onStateChange", player, JSON.stringify(screenState));
+                callbacks.onStateChange && callbacks.onStateChange(screenState);
+                return;
+            }
+            carPools.forEach(car => {
+                if (car.isCollidingFrog(frogPosition)) {
+                    Sound_1.playOnce("fail");
+                    screenState.blocked = true;
+                    setTimeout(() => {
+                        screenState.blocked = false;
+                        frogPosition.set(0, yOffset, frogPosition.z);
+                        callbacks.onStateChange && callbacks.onStateChange(screenState);
+                    }, 200);
+                }
+            });
+        }
+    };
+    const setTakenSammiches = (takenSammiches) => {
+        console.log("setTakemSammiches", player, JSON.stringify(takenSammiches));
+        takenSammiches.forEach((value, index) => screenState.takenSammiches[index] = value);
+        sammiches.forEach((sammich, index) => {
+            if (takenSammiches[index]) {
+                sammich.spriteEntity.hide();
+            }
+        });
+    };
+    const moveFrog = (key) => {
+        if (screenState.movingFrog || screenState.blocked)
+            return;
+        Sound_1.playOnce("swing");
+        screenState.movingFrog = true;
+        frog.setRotation(key === KEY.UP ? 0 : key === KEY.LEFT ? 90 : 270);
+        frog.play([0, 1, 0], { loop: false, time: 0.1 });
+        const frogPosition = frog.getPosition();
+        frog.addComponentOrReplace(new move_1.MoveTransformComponent(frogPosition, new Vector3(key === KEY.LEFT
+            ? frogPosition.x - PIXEL * 8
+            : key === KEY.RIGHT
+                ? frogPosition.x + PIXEL * 8
+                : frogPosition.x, key === KEY.UP ? frogPosition.y + PIXEL * 8 : frogPosition.y, frogPosition.z), 0.1, () => {
+            screenState.movingFrog = false;
+            const frogPosition = frog.getPosition();
+            if (frogPosition.y >= 1.625) {
+                if ((frogPosition.x + 1.5) / (PIXEL * 8) % 2) {
+                    frogPosition.y = (yOffset + PIXEL * 8 * 10);
+                }
+                else {
+                    screenState.blocked = true;
+                    setTimeout(() => {
+                        screenState.blocked = false;
+                        frogPosition.set(frogPosition.x, yOffset, frogPosition.z);
+                        screenState.frogPosition = frogPosition;
+                        callbacks.onStateChange && callbacks.onStateChange(screenState);
+                    }, 300);
+                }
+            }
+            if (frogPosition.x <= (-1.5 + (PIXEL * 8))) {
+                frogPosition.x = (-1.5 + (PIXEL * 8));
+            }
+            else if (frogPosition.x >= (1.5 - (PIXEL * 8))) {
+                frogPosition.x = (1.5 - (PIXEL * 8));
+            }
+            screenState.frogPosition = frogPosition;
+            callbacks.onStateChange && callbacks.onStateChange(screenState);
+        }));
+    };
+    const up = () => moveFrog(KEY.UP);
+    const left = () => moveFrog(KEY.LEFT);
+    const right = () => moveFrog(KEY.RIGHT);
+    const getScreenState = () => screenState;
+    const callbacks = { onStateChange: null };
+    const onStateChange = (fn) => {
+        callbacks.onStateChange = fn;
+        return () => callbacks.onStateChange = null;
+    };
+    const setFrogPosition = (x, y, z) => {
+        frog.getPosition().set(x, y, z);
+    };
+    return {
+        updateScreen,
+        getScreenState,
+        up,
+        left,
+        right,
+        onStateChange,
+        setFrogPosition,
+        setTakenSammiches,
+        block: () => screenState.blocked = true
+    };
+    function getRandomInt(randomizer, min, max, except) {
+        const result = Math.floor(randomizer.random() * (max - min + 1)) + min;
+        if (!except)
+            return result;
+        return (except.find(i => i === result)) ? getRandomInt(randomizer, min, max, except) : result;
+    }
+};
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createCarPool = void 0;
+const PIXEL = 4 / 128;
+const yOffset = -PIXEL * 36;
+const CAR_SIZE = PIXEL * 8;
+const carBlueMaterial = new Material();
+carBlueMaterial.albedoColor = Color3.Blue();
+const carShape = new PlaneShape();
+exports.createCarPool = (parent, { track, randomizer }) => {
+    const NUM_CARS = 3;
+    const state = {
+        countDt: 0,
+        nextCarAt: Number.MAX_VALUE,
+        currentPoolIndex: 0
+    };
+    const absX = (x) => x + 1.5;
+    let cancel, iterations = 0;
+    const spawnInitialPosition = Array(NUM_CARS).fill(null).reduce((acc, current) => {
+        let x = randomizer.random() * 3 - 1.5;
+        while (!cancel && acc.find((xx) => absX(xx) - absX(x) < ((CAR_SIZE) + PIXEL))) {
+            x = randomizer.random() * 3 - 1.5;
+            iterations++;
+            if (iterations > 10000) {
+                console.error("Tell the author he did something wrong in the code", iterations);
+                cancel = true;
+            }
+        }
+        acc.push(x);
+        return acc;
+    }, []);
+    const pool = new Array(NUM_CARS).fill(null).map((v, index) => {
+        const carEntity = new Entity();
+        const carTransform = new Transform({
+            position: new Vector3(spawnInitialPosition[index], -PIXEL * 28 + track * PIXEL * 8 + (track >= 4 ? (PIXEL * 8) : 0), -0.001),
+            scale: new Vector3(CAR_SIZE, PIXEL * 4, 0.1)
+        });
+        carEntity.addComponent(carBlueMaterial);
+        carEntity.addComponent(carShape);
+        carEntity.addComponent(carTransform);
+        carEntity.setParent(parent);
+        return { entity: carEntity, transform: carTransform, spawned: true };
+    });
+    const roundSafePosition = (value) => {
+        return Math.floor(value * 1000) / 1000;
+    };
+    const handleScale = () => {
+        pool.filter(c => c.spawned).forEach((car) => {
+            const x = car.transform.position.x;
+            if (x > 1.5 - CAR_SIZE / 2 || x < -1.5 + CAR_SIZE / 2) {
+                car.transform.scale.set(0.01, car.transform.scale.y, car.transform.scale.z);
+            }
+            else {
+                car.transform.scale.set(CAR_SIZE, car.transform.scale.y, car.transform.scale.z);
+            }
+        });
+    };
+    const handlePosition = (dt) => {
+        pool.filter(c => c.spawned).forEach((car, index) => {
+            const x = car.transform.position.x;
+            if (track % 2 === 0) {
+                if (x <= -1.5) {
+                    car.transform.position.set(1.5, car.transform.position.y, car.transform.position.z);
+                }
+                else {
+                    car.transform.position.set(roundSafePosition(x - (0.5 * dt)), car.transform.position.y, car.transform.position.z);
+                }
+            }
+            else {
+                if (x >= 1.5) {
+                    car.transform.position.set(-1.5, car.transform.position.y, car.transform.position.z);
+                }
+                else {
+                    car.transform.position.set(roundSafePosition(x + (0.5 * dt)), car.transform.position.y, car.transform.position.z);
+                }
+            }
+        });
+    };
+    const update = (dt) => {
+        state.countDt += dt;
+        handlePosition(dt);
+    };
+    const isCollidingFrog = (frogPosition) => {
+        const FROG_SIZE = PIXEL * 6;
+        const CAR_HEIGHT = PIXEL * 4;
+        const CAR_WIDTH = PIXEL * 8;
+        let i = pool.length;
+        while (i--) {
+            const carPosition = pool[i].transform.position;
+            const carLeft = carPosition.x - CAR_WIDTH / 2;
+            const carRight = carPosition.x + CAR_WIDTH / 2;
+            const carTop = carPosition.y + CAR_HEIGHT / 2;
+            const carBottom = carPosition.y - CAR_HEIGHT / 2;
+            const frogLeft = frogPosition.x - FROG_SIZE / 2;
+            const frogRight = frogPosition.x + FROG_SIZE / 2;
+            const frogTop = frogPosition.y - FROG_SIZE / 2;
+            const frogBottom = frogPosition.y + FROG_SIZE / 2;
+            if (carLeft <= frogRight && carRight >= frogLeft
+                && carTop <= frogBottom && carBottom >= frogTop) {
+                console.log("COLLISION");
+                return true;
+            }
+        }
+    };
+    return {
+        update,
+        isCollidingFrog
+    };
+};
+
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createSpectatorTrack = void 0;
+const TextPanel_1 = __webpack_require__(6);
+const Sound_1 = __webpack_require__(2);
+const SpritePanel_1 = __webpack_require__(5);
+const VideoPanel_1 = __webpack_require__(17);
+const SpriteAnimation_1 = __webpack_require__(0);
+const TrackUtil_1 = __webpack_require__(18);
+let timeOffset = 0;
+exports.createSpectatorTrack = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted }) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("alreadyStarted", alreadyStarted);
+    console.log("createSpectatorTrack", root, lobbyRoom, trackSeed, minGames, alreadyStarted);
+    let gameTrackDefinition = TrackUtil_1.generateTrack(trackSeed, minGames);
+    const state = {
+        currentIndex: 0,
+        currentPlayer: 0,
+        score1: 0,
+        score2: 0
+    };
+    let game = null;
+    if (!alreadyStarted) {
+        console.log("spectator from start");
+        Sound_1.stopSound("music2");
+        yield sleep(100);
+        Sound_1.playOnce("vs", { volume: 1 });
+        TextPanel_1.updateTextPanel({ value: `${lobbyRoom.state.player1.displayName}\nVS\n${lobbyRoom.state.player2.displayName}`, bottom: true, color: Color3.Black() });
+        yield sleep(1000);
+        VideoPanel_1.reproduceVideo(root, gameTrackDefinition[0].Game.id);
+        SpritePanel_1.hideSpritePanel();
+        TextPanel_1.updateTextPanel({ value: gameTrackDefinition[0].Game.instructions });
+        if (game) {
+            game.destroy();
+            game = null;
+        }
+        game = new gameTrackDefinition[state.currentIndex].Game(root, {
+            seed: trackSeed,
+            currentPlayer: 0,
+            level: 1
+        });
+    }
+    setSpectatorRoomMessageHandlers(lobbyRoom);
+    function setSpectatorRoomMessageHandlers(lobbyRoom) {
+        let listeners = [];
+        listeners.push(lobbyRoom.onMessage("NEXT_GAME", ({ serverTime, startTime, gameIndex }) => {
+            console.log("spectator NEXT_GAME", { serverTime, startTime, gameIndex });
+            timeOffset = serverTime - Date.now();
+            TextPanel_1.updateTextPanel({ value: `` });
+            VideoPanel_1.removeVideoPanel();
+            Sound_1.stopAllSounds();
+            game && game.init();
+            game && game.block();
+            game && game.setStartTime(getLocalStartTime(startTime));
+        }));
+        listeners.push(lobbyRoom.onMessage("SHARE_STATE", (sharedState) => {
+            game && game.shareState(sharedState || {});
+        }));
+        listeners.push(lobbyRoom.onMessage("NEXT_ROUND", ({ winner, startTime, serverTime }) => {
+            timeOffset = serverTime - Date.now();
+            game && game.finishRound && game.finishRound({ winner });
+            const localRoundStartTime = getLocalStartTime(startTime);
+            game && game.setRoundStartTime && game.setRoundStartTime(localRoundStartTime);
+        }));
+        listeners.push(lobbyRoom.onMessage("FINSIH_AGREE", ({ winner, nextSeed, nextIndex }) => __awaiter(this, void 0, void 0, function* () {
+            console.log("spectator FINSIH_AGREE ", winner, nextSeed, nextIndex);
+            game && game.finish && game.finish({ winner });
+            const winnerDisplayName = lobbyRoom.state[`player${winner}`].displayName;
+            TextPanel_1.updateTextPanel({ value: `(${winner}) ${winnerDisplayName} wins` });
+            yield sleep(2000);
+            game && game.destroy();
+            game = null;
+            if (state.currentIndex + 1 >= gameTrackDefinition.length && state.score1 === state.score2) {
+                gameTrackDefinition.push(TrackUtil_1.generateTrack(nextSeed, 1)[0]);
+                console.log("tie-breaker", gameTrackDefinition);
+            }
+            if (state.currentIndex < gameTrackDefinition.length) {
+                state.currentIndex = nextIndex;
+                const instructions = gameTrackDefinition[nextIndex].Game.instructions || `ERROR: MISSING_INSTRUCTIONS`;
+                SpritePanel_1.hideSpritePanel();
+                VideoPanel_1.reproduceVideo(root, gameTrackDefinition[nextIndex].Game.id);
+                TextPanel_1.updateTextPanel({ value: `${instructions}\n` });
+                yield sleep(1500);
+                game && game.destroy();
+                game = null;
+                createGame({ nextSeed });
+            }
+        })));
+        listeners.push(lobbyRoom.onMessage("FINISH_TRACK", ({ score }) => {
+            console.log("receive FINISH_TRACK", score);
+            game && game.destroy();
+            game = null;
+            Sound_1.stopAllSounds();
+            Sound_1.playOnce("pwned");
+            const winnerPlayer = (score.player1 || 0) > (score.player2 || 0) ? 1 : 2;
+            SpritePanel_1.updateSpritePanel({
+                uvs: SpriteAnimation_1.getSpriteUv(8, 0, 192, 128),
+                scale: new Vector3(winnerPlayer === 1 ? 6 : -6, 4, 1)
+            });
+            SpritePanel_1.showSpritePanel();
+        }));
+        listeners.push(lobbyRoom.onMessage("PLAYER_LEFT", () => {
+            if (game) {
+                game.destroy();
+                game = null;
+            }
+        }));
+        listeners.push(lobbyRoom.onMessage("GAME_DISPOSE", () => {
+            console.log("GAME_DISPOSE");
+            listeners.forEach((unregister) => {
+                unregister();
+            });
+            listeners = [];
+        }));
+    }
+    function createGame({ nextSeed }) {
+        console.log(`
+            createGame
+            state.currentIndex: ${state.currentIndex}
+            gameTrackDefinition[state.currentIndex]: ${gameTrackDefinition[state.currentIndex] && gameTrackDefinition[state.currentIndex].Game.id}
+  
+        `);
+        const Game = gameTrackDefinition[state.currentIndex].Game;
+        if (game) {
+            game.destroy();
+            game = null;
+        }
+        game = new Game(root, { seed: nextSeed, currentPlayer: 0, level: 1 });
+    }
+});
+function getLocalStartTime(startTime) {
+    return startTime - timeOffset;
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(67);
+var Client_1 = __webpack_require__(68);
+exports.Client = Client_1.Client;
+var Protocol_1 = __webpack_require__(39);
+exports.Protocol = Protocol_1.Protocol;
+exports.ErrorCode = Protocol_1.ErrorCode;
+var Room_1 = __webpack_require__(36);
+exports.Room = Room_1.Room;
+var Auth_1 = __webpack_require__(43);
+exports.Auth = Auth_1.Auth;
+exports.Platform = Auth_1.Platform;
+var FossilDeltaSerializer_1 = __webpack_require__(80);
+exports.FossilDeltaSerializer = FossilDeltaSerializer_1.FossilDeltaSerializer;
+var SchemaSerializer_1 = __webpack_require__(85);
+exports.SchemaSerializer = SchemaSerializer_1.SchemaSerializer;
+var Serializer_1 = __webpack_require__(38);
+exports.registerSerializer = Serializer_1.registerSerializer;
+Serializer_1.registerSerializer('fossil-delta', FossilDeltaSerializer_1.FossilDeltaSerializer);
+Serializer_1.registerSerializer('schema', SchemaSerializer_1.SchemaSerializer);
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports) {
+
+if (!ArrayBuffer.isView) {
+    ArrayBuffer.isView = function (a) {
+        return a !== null && typeof (a) === 'object' && a.buffer instanceof ArrayBuffer;
+    };
+}
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try {
+            step(generator.next(value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function rejected(value) { try {
+            step(generator["throw"](value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function () { if (t[0] & 1)
+            throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f)
+            throw new TypeError("Generator is already executing.");
+        while (_)
+            try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+                    return t;
+                if (y = 0, t)
+                    op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0:
+                    case 1:
+                        t = op;
+                        break;
+                    case 4:
+                        _.label++;
+                        return { value: op[1], done: false };
+                    case 5:
+                        _.label++;
+                        y = op[1];
+                        op = [0];
+                        continue;
+                    case 7:
+                        op = _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                            _ = 0;
+                            continue;
+                        }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                            _.label = op[1];
+                            break;
+                        }
+                        if (op[0] === 6 && _.label < t[1]) {
+                            _.label = t[1];
+                            t = op;
+                            break;
+                        }
+                        if (t && _.label < t[2]) {
+                            _.label = t[2];
+                            _.ops.push(op);
+                            break;
+                        }
+                        if (t[2])
+                            _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                }
+                op = body.call(thisArg, _);
+            }
+            catch (e) {
+                op = [6, e];
+                y = 0;
+            }
+            finally {
+                f = t = 0;
+            }
+        if (op[0] & 5)
+            throw op[1];
+        return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var httpie_1 = __webpack_require__(35);
+var ServerError_1 = __webpack_require__(69);
+var Room_1 = __webpack_require__(36);
+var Auth_1 = __webpack_require__(43);
+var Push_1 = __webpack_require__(79);
+var MatchMakeError = (function (_super) {
+    __extends(MatchMakeError, _super);
+    function MatchMakeError(message, code) {
+        var _this = _super.call(this, message) || this;
+        _this.code = code;
+        Object.setPrototypeOf(_this, MatchMakeError.prototype);
+        return _this;
+    }
+    return MatchMakeError;
+}(Error));
+exports.MatchMakeError = MatchMakeError;
+var Client = (function () {
+    function Client(endpoint) {
+        if (endpoint === void 0) {
+            endpoint = location.protocol.replace("http", "ws") + "//" + location.hostname + (location.port && ":" + location.port);
+        }
+        this.endpoint = endpoint;
+        this.auth = new Auth_1.Auth(this.endpoint);
+        this.push = new Push_1.Push(this.endpoint);
+    }
+    Client.prototype.joinOrCreate = function (roomName, options, rootSchema) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.createMatchMakeRequest('joinOrCreate', roomName, options, rootSchema)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Client.prototype.create = function (roomName, options, rootSchema) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.createMatchMakeRequest('create', roomName, options, rootSchema)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Client.prototype.join = function (roomName, options, rootSchema) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.createMatchMakeRequest('join', roomName, options, rootSchema)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Client.prototype.joinById = function (roomId, options, rootSchema) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.createMatchMakeRequest('joinById', roomId, options, rootSchema)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Client.prototype.reconnect = function (roomId, sessionId, rootSchema) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.createMatchMakeRequest('joinById', roomId, { sessionId: sessionId }, rootSchema)];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Client.prototype.getAvailableRooms = function (roomName) {
+        if (roomName === void 0) {
+            roomName = "";
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            var url;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        url = this.endpoint.replace("ws", "http") + "/matchmake/" + roomName;
+                        return [4, httpie_1.get(url, { headers: { 'Accept': 'application/json' } })];
+                    case 1: return [2, (_a.sent()).data];
+                }
+            });
+        });
+    };
+    Client.prototype.consumeSeatReservation = function (response, rootSchema) {
+        return __awaiter(this, void 0, void 0, function () {
+            var room;
+            return __generator(this, function (_a) {
+                room = this.createRoom(response.room.name, rootSchema);
+                room.id = response.room.roomId;
+                room.sessionId = response.sessionId;
+                room.connect(this.buildEndpoint(response.room, { sessionId: room.sessionId }));
+                return [2, new Promise(function (resolve, reject) {
+                        var onError = function (code, message) { return reject(new ServerError_1.ServerError(code, message)); };
+                        room.onError.once(onError);
+                        room.onJoin.once(function () {
+                            room.onError.remove(onError);
+                            resolve(room);
+                        });
+                    })];
+            });
+        });
+    };
+    Client.prototype.createMatchMakeRequest = function (method, roomName, options, rootSchema) {
+        if (options === void 0) {
+            options = {};
+        }
+        return __awaiter(this, void 0, void 0, function () {
+            var url, response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        url = this.endpoint.replace("ws", "http") + "/matchmake/" + method + "/" + roomName;
+                        if (this.auth.hasToken) {
+                            options.token = this.auth.token;
+                        }
+                        return [4, httpie_1.post(url, {
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(options)
+                            })];
+                    case 1:
+                        response = (_a.sent()).data;
+                        if (response.error) {
+                            throw new MatchMakeError(response.error, response.code);
+                        }
+                        return [2, this.consumeSeatReservation(response, rootSchema)];
+                }
+            });
+        });
+    };
+    Client.prototype.createRoom = function (roomName, rootSchema) {
+        return new Room_1.Room(roomName, rootSchema);
+    };
+    Client.prototype.buildEndpoint = function (room, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        var params = [];
+        for (var name_1 in options) {
+            if (!options.hasOwnProperty(name_1)) {
+                continue;
+            }
+            params.push(name_1 + "=" + options[name_1]);
+        }
+        return this.endpoint + "/" + room.processId + "/" + room.roomId + "?" + params.join('&');
+    };
+    return Client;
+}());
+exports.Client = Client;
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var ServerError = (function (_super) {
+    __extends(ServerError, _super);
+    function ServerError(code, message) {
+        var _this = _super.call(this, message) || this;
+        _this.name = "ServerError";
+        _this.code = code;
+        return _this;
+    }
+    return ServerError;
+}(Error));
+exports.ServerError = ServerError;
+
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function Decoder(buffer, offset) {
+    this._offset = offset;
+    if (buffer instanceof ArrayBuffer) {
+        this._buffer = buffer;
+        this._view = new DataView(this._buffer);
+    }
+    else if (ArrayBuffer.isView(buffer)) {
+        this._buffer = buffer.buffer;
+        this._view = new DataView(this._buffer, buffer.byteOffset, buffer.byteLength);
+    }
+    else {
+        throw new Error('Invalid argument');
+    }
+}
+function utf8Read(view, offset, length) {
+    var string = '', chr = 0;
+    for (var i = offset, end = offset + length; i < end; i++) {
+        var byte = view.getUint8(i);
+        if ((byte & 0x80) === 0x00) {
+            string += String.fromCharCode(byte);
+            continue;
+        }
+        if ((byte & 0xe0) === 0xc0) {
+            string += String.fromCharCode(((byte & 0x1f) << 6) |
+                (view.getUint8(++i) & 0x3f));
+            continue;
+        }
+        if ((byte & 0xf0) === 0xe0) {
+            string += String.fromCharCode(((byte & 0x0f) << 12) |
+                ((view.getUint8(++i) & 0x3f) << 6) |
+                ((view.getUint8(++i) & 0x3f) << 0));
+            continue;
+        }
+        if ((byte & 0xf8) === 0xf0) {
+            chr = ((byte & 0x07) << 18) |
+                ((view.getUint8(++i) & 0x3f) << 12) |
+                ((view.getUint8(++i) & 0x3f) << 6) |
+                ((view.getUint8(++i) & 0x3f) << 0);
+            if (chr >= 0x010000) {
+                chr -= 0x010000;
+                string += String.fromCharCode((chr >>> 10) + 0xD800, (chr & 0x3FF) + 0xDC00);
+            }
+            else {
+                string += String.fromCharCode(chr);
+            }
+            continue;
+        }
+        throw new Error('Invalid byte ' + byte.toString(16));
+    }
+    return string;
+}
+Decoder.prototype._array = function (length) {
+    var value = new Array(length);
+    for (var i = 0; i < length; i++) {
+        value[i] = this._parse();
+    }
+    return value;
+};
+Decoder.prototype._map = function (length) {
+    var key = '', value = {};
+    for (var i = 0; i < length; i++) {
+        key = this._parse();
+        value[key] = this._parse();
+    }
+    return value;
+};
+Decoder.prototype._str = function (length) {
+    var value = utf8Read(this._view, this._offset, length);
+    this._offset += length;
+    return value;
+};
+Decoder.prototype._bin = function (length) {
+    var value = this._buffer.slice(this._offset, this._offset + length);
+    this._offset += length;
+    return value;
+};
+Decoder.prototype._parse = function () {
+    var prefix = this._view.getUint8(this._offset++);
+    var value, length = 0, type = 0, hi = 0, lo = 0;
+    if (prefix < 0xc0) {
+        if (prefix < 0x80) {
+            return prefix;
+        }
+        if (prefix < 0x90) {
+            return this._map(prefix & 0x0f);
+        }
+        if (prefix < 0xa0) {
+            return this._array(prefix & 0x0f);
+        }
+        return this._str(prefix & 0x1f);
+    }
+    if (prefix > 0xdf) {
+        return (0xff - prefix + 1) * -1;
+    }
+    switch (prefix) {
+        case 0xc0:
+            return null;
+        case 0xc2:
+            return false;
+        case 0xc3:
+            return true;
+        case 0xc4:
+            length = this._view.getUint8(this._offset);
+            this._offset += 1;
+            return this._bin(length);
+        case 0xc5:
+            length = this._view.getUint16(this._offset);
+            this._offset += 2;
+            return this._bin(length);
+        case 0xc6:
+            length = this._view.getUint32(this._offset);
+            this._offset += 4;
+            return this._bin(length);
+        case 0xc7:
+            length = this._view.getUint8(this._offset);
+            type = this._view.getInt8(this._offset + 1);
+            this._offset += 2;
+            return [type, this._bin(length)];
+        case 0xc8:
+            length = this._view.getUint16(this._offset);
+            type = this._view.getInt8(this._offset + 2);
+            this._offset += 3;
+            return [type, this._bin(length)];
+        case 0xc9:
+            length = this._view.getUint32(this._offset);
+            type = this._view.getInt8(this._offset + 4);
+            this._offset += 5;
+            return [type, this._bin(length)];
+        case 0xca:
+            value = this._view.getFloat32(this._offset);
+            this._offset += 4;
+            return value;
+        case 0xcb:
+            value = this._view.getFloat64(this._offset);
+            this._offset += 8;
+            return value;
+        case 0xcc:
+            value = this._view.getUint8(this._offset);
+            this._offset += 1;
+            return value;
+        case 0xcd:
+            value = this._view.getUint16(this._offset);
+            this._offset += 2;
+            return value;
+        case 0xce:
+            value = this._view.getUint32(this._offset);
+            this._offset += 4;
+            return value;
+        case 0xcf:
+            hi = this._view.getUint32(this._offset) * Math.pow(2, 32);
+            lo = this._view.getUint32(this._offset + 4);
+            this._offset += 8;
+            return hi + lo;
+        case 0xd0:
+            value = this._view.getInt8(this._offset);
+            this._offset += 1;
+            return value;
+        case 0xd1:
+            value = this._view.getInt16(this._offset);
+            this._offset += 2;
+            return value;
+        case 0xd2:
+            value = this._view.getInt32(this._offset);
+            this._offset += 4;
+            return value;
+        case 0xd3:
+            hi = this._view.getInt32(this._offset) * Math.pow(2, 32);
+            lo = this._view.getUint32(this._offset + 4);
+            this._offset += 8;
+            return hi + lo;
+        case 0xd4:
+            type = this._view.getInt8(this._offset);
+            this._offset += 1;
+            if (type === 0x00) {
+                this._offset += 1;
+                return void 0;
+            }
+            return [type, this._bin(1)];
+        case 0xd5:
+            type = this._view.getInt8(this._offset);
+            this._offset += 1;
+            return [type, this._bin(2)];
+        case 0xd6:
+            type = this._view.getInt8(this._offset);
+            this._offset += 1;
+            return [type, this._bin(4)];
+        case 0xd7:
+            type = this._view.getInt8(this._offset);
+            this._offset += 1;
+            if (type === 0x00) {
+                hi = this._view.getInt32(this._offset) * Math.pow(2, 32);
+                lo = this._view.getUint32(this._offset + 4);
+                this._offset += 8;
+                return new Date(hi + lo);
+            }
+            return [type, this._bin(8)];
+        case 0xd8:
+            type = this._view.getInt8(this._offset);
+            this._offset += 1;
+            return [type, this._bin(16)];
+        case 0xd9:
+            length = this._view.getUint8(this._offset);
+            this._offset += 1;
+            return this._str(length);
+        case 0xda:
+            length = this._view.getUint16(this._offset);
+            this._offset += 2;
+            return this._str(length);
+        case 0xdb:
+            length = this._view.getUint32(this._offset);
+            this._offset += 4;
+            return this._str(length);
+        case 0xdc:
+            length = this._view.getUint16(this._offset);
+            this._offset += 2;
+            return this._array(length);
+        case 0xdd:
+            length = this._view.getUint32(this._offset);
+            this._offset += 4;
+            return this._array(length);
+        case 0xde:
+            length = this._view.getUint16(this._offset);
+            this._offset += 2;
+            return this._map(length);
+        case 0xdf:
+            length = this._view.getUint32(this._offset);
+            this._offset += 4;
+            return this._map(length);
+    }
+    throw new Error('Could not parse');
+};
+function decode(buffer, offset) {
+    if (offset === void 0) {
+        offset = 0;
+    }
+    var decoder = new Decoder(buffer, offset);
+    var value = decoder._parse();
+    if (decoder._offset !== buffer.byteLength) {
+        throw new Error((buffer.byteLength - decoder._offset) + ' trailing bytes');
+    }
+    return value;
+}
+exports.default = decode;
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function utf8Write(view, offset, str) {
+    var c = 0;
+    for (var i = 0, l = str.length; i < l; i++) {
+        c = str.charCodeAt(i);
+        if (c < 0x80) {
+            view.setUint8(offset++, c);
+        }
+        else if (c < 0x800) {
+            view.setUint8(offset++, 0xc0 | (c >> 6));
+            view.setUint8(offset++, 0x80 | (c & 0x3f));
+        }
+        else if (c < 0xd800 || c >= 0xe000) {
+            view.setUint8(offset++, 0xe0 | (c >> 12));
+            view.setUint8(offset++, 0x80 | (c >> 6) & 0x3f);
+            view.setUint8(offset++, 0x80 | (c & 0x3f));
+        }
+        else {
+            i++;
+            c = 0x10000 + (((c & 0x3ff) << 10) | (str.charCodeAt(i) & 0x3ff));
+            view.setUint8(offset++, 0xf0 | (c >> 18));
+            view.setUint8(offset++, 0x80 | (c >> 12) & 0x3f);
+            view.setUint8(offset++, 0x80 | (c >> 6) & 0x3f);
+            view.setUint8(offset++, 0x80 | (c & 0x3f));
+        }
+    }
+}
+function utf8Length(str) {
+    var c = 0, length = 0;
+    for (var i = 0, l = str.length; i < l; i++) {
+        c = str.charCodeAt(i);
+        if (c < 0x80) {
+            length += 1;
+        }
+        else if (c < 0x800) {
+            length += 2;
+        }
+        else if (c < 0xd800 || c >= 0xe000) {
+            length += 3;
+        }
+        else {
+            i++;
+            length += 4;
+        }
+    }
+    return length;
+}
+function _encode(bytes, defers, value) {
+    var type = typeof value, i = 0, l = 0, hi = 0, lo = 0, length = 0, size = 0;
+    if (type === 'string') {
+        length = utf8Length(value);
+        if (length < 0x20) {
+            bytes.push(length | 0xa0);
+            size = 1;
+        }
+        else if (length < 0x100) {
+            bytes.push(0xd9, length);
+            size = 2;
+        }
+        else if (length < 0x10000) {
+            bytes.push(0xda, length >> 8, length);
+            size = 3;
+        }
+        else if (length < 0x100000000) {
+            bytes.push(0xdb, length >> 24, length >> 16, length >> 8, length);
+            size = 5;
+        }
+        else {
+            throw new Error('String too long');
+        }
+        defers.push({ _str: value, _length: length, _offset: bytes.length });
+        return size + length;
+    }
+    if (type === 'number') {
+        if (Math.floor(value) !== value || !isFinite(value)) {
+            bytes.push(0xcb);
+            defers.push({ _float: value, _length: 8, _offset: bytes.length });
+            return 9;
+        }
+        if (value >= 0) {
+            if (value < 0x80) {
+                bytes.push(value);
+                return 1;
+            }
+            if (value < 0x100) {
+                bytes.push(0xcc, value);
+                return 2;
+            }
+            if (value < 0x10000) {
+                bytes.push(0xcd, value >> 8, value);
+                return 3;
+            }
+            if (value < 0x100000000) {
+                bytes.push(0xce, value >> 24, value >> 16, value >> 8, value);
+                return 5;
+            }
+            hi = (value / Math.pow(2, 32)) >> 0;
+            lo = value >>> 0;
+            bytes.push(0xcf, hi >> 24, hi >> 16, hi >> 8, hi, lo >> 24, lo >> 16, lo >> 8, lo);
+            return 9;
+        }
+        else {
+            if (value >= -0x20) {
+                bytes.push(value);
+                return 1;
+            }
+            if (value >= -0x80) {
+                bytes.push(0xd0, value);
+                return 2;
+            }
+            if (value >= -0x8000) {
+                bytes.push(0xd1, value >> 8, value);
+                return 3;
+            }
+            if (value >= -0x80000000) {
+                bytes.push(0xd2, value >> 24, value >> 16, value >> 8, value);
+                return 5;
+            }
+            hi = Math.floor(value / Math.pow(2, 32));
+            lo = value >>> 0;
+            bytes.push(0xd3, hi >> 24, hi >> 16, hi >> 8, hi, lo >> 24, lo >> 16, lo >> 8, lo);
+            return 9;
+        }
+    }
+    if (type === 'object') {
+        if (value === null) {
+            bytes.push(0xc0);
+            return 1;
+        }
+        if (Array.isArray(value)) {
+            length = value.length;
+            if (length < 0x10) {
+                bytes.push(length | 0x90);
+                size = 1;
+            }
+            else if (length < 0x10000) {
+                bytes.push(0xdc, length >> 8, length);
+                size = 3;
+            }
+            else if (length < 0x100000000) {
+                bytes.push(0xdd, length >> 24, length >> 16, length >> 8, length);
+                size = 5;
+            }
+            else {
+                throw new Error('Array too large');
+            }
+            for (i = 0; i < length; i++) {
+                size += _encode(bytes, defers, value[i]);
+            }
+            return size;
+        }
+        if (value instanceof Date) {
+            var time = value.getTime();
+            hi = Math.floor(time / Math.pow(2, 32));
+            lo = time >>> 0;
+            bytes.push(0xd7, 0, hi >> 24, hi >> 16, hi >> 8, hi, lo >> 24, lo >> 16, lo >> 8, lo);
+            return 10;
+        }
+        if (value instanceof ArrayBuffer) {
+            length = value.byteLength;
+            if (length < 0x100) {
+                bytes.push(0xc4, length);
+                size = 2;
+            }
+            else if (length < 0x10000) {
+                bytes.push(0xc5, length >> 8, length);
+                size = 3;
+            }
+            else if (length < 0x100000000) {
+                bytes.push(0xc6, length >> 24, length >> 16, length >> 8, length);
+                size = 5;
+            }
+            else {
+                throw new Error('Buffer too large');
+            }
+            defers.push({ _bin: value, _length: length, _offset: bytes.length });
+            return size + length;
+        }
+        if (typeof value.toJSON === 'function') {
+            return _encode(bytes, defers, value.toJSON());
+        }
+        var keys = [], key = '';
+        var allKeys = Object.keys(value);
+        for (i = 0, l = allKeys.length; i < l; i++) {
+            key = allKeys[i];
+            if (typeof value[key] !== 'function') {
+                keys.push(key);
+            }
+        }
+        length = keys.length;
+        if (length < 0x10) {
+            bytes.push(length | 0x80);
+            size = 1;
+        }
+        else if (length < 0x10000) {
+            bytes.push(0xde, length >> 8, length);
+            size = 3;
+        }
+        else if (length < 0x100000000) {
+            bytes.push(0xdf, length >> 24, length >> 16, length >> 8, length);
+            size = 5;
+        }
+        else {
+            throw new Error('Object too large');
+        }
+        for (i = 0; i < length; i++) {
+            key = keys[i];
+            size += _encode(bytes, defers, key);
+            size += _encode(bytes, defers, value[key]);
+        }
+        return size;
+    }
+    if (type === 'boolean') {
+        bytes.push(value ? 0xc3 : 0xc2);
+        return 1;
+    }
+    if (type === 'undefined') {
+        bytes.push(0xd4, 0, 0);
+        return 3;
+    }
+    throw new Error('Could not encode');
+}
+function encode(value) {
+    var bytes = [];
+    var defers = [];
+    var size = _encode(bytes, defers, value);
+    var buf = new ArrayBuffer(size);
+    var view = new DataView(buf);
+    var deferIndex = 0;
+    var deferWritten = 0;
+    var nextOffset = -1;
+    if (defers.length > 0) {
+        nextOffset = defers[0]._offset;
+    }
+    var defer, deferLength = 0, offset = 0;
+    for (var i = 0, l = bytes.length; i < l; i++) {
+        view.setUint8(deferWritten + i, bytes[i]);
+        if (i + 1 !== nextOffset) {
+            continue;
+        }
+        defer = defers[deferIndex];
+        deferLength = defer._length;
+        offset = deferWritten + nextOffset;
+        if (defer._bin) {
+            var bin = new Uint8Array(defer._bin);
+            for (var j = 0; j < deferLength; j++) {
+                view.setUint8(offset + j, bin[j]);
+            }
+        }
+        else if (defer._str) {
+            utf8Write(view, offset, defer._str);
+        }
+        else if (defer._float !== undefined) {
+            view.setFloat64(offset, defer._float);
+        }
+        deferIndex++;
+        deferWritten += deferLength;
+        if (defers[deferIndex]) {
+            nextOffset = defers[deferIndex]._offset;
+        }
+    }
+    return buf;
+}
+exports.default = encode;
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var EventEmitter = (function () {
+    function EventEmitter() {
+        this.handlers = [];
+    }
+    EventEmitter.prototype.register = function (cb, once) {
+        if (once === void 0) {
+            once = false;
+        }
+        this.handlers.push(cb);
+        return this;
+    };
+    EventEmitter.prototype.invoke = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.handlers.forEach(function (handler) { return handler.apply(void 0, args); });
+    };
+    EventEmitter.prototype.invokeAsync = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return Promise.all(this.handlers.map(function (handler) { return handler.apply(void 0, args); }));
+    };
+    EventEmitter.prototype.remove = function (cb) {
+        var index = this.handlers.indexOf(cb);
+        this.handlers[index] = this.handlers[this.handlers.length - 1];
+        this.handlers.pop();
+    };
+    EventEmitter.prototype.clear = function () {
+        this.handlers = [];
+    };
+    return EventEmitter;
+}());
+exports.EventEmitter = EventEmitter;
+function createSignal() {
+    var emitter = new EventEmitter();
+    function register(cb) {
+        return emitter.register(cb, this === null);
+    }
+    ;
+    register.once = function (cb) {
+        var callback = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            cb.apply(void 0, args);
+            emitter.remove(callback);
+        };
+        emitter.register(callback);
+    };
+    register.remove = function (cb) { return emitter.remove(cb); };
+    register.invoke = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return emitter.invoke.apply(emitter, args);
+    };
+    register.invokeAsync = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return emitter.invokeAsync.apply(emitter, args);
+    };
+    register.clear = function () { return emitter.clear(); };
+    return register;
+}
+exports.createSignal = createSignal;
+
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createNanoEvents = void 0;
+let createNanoEvents = () => ({
+    events: {},
+    emit(event, ...args) {
+        for (let i of this.events[event] || []) {
+            i(...args);
+        }
+    },
+    on(event, cb) {
+        ;
+        (this.events[event] = this.events[event] || []).push(cb);
+        return () => (this.events[event] = this.events[event].filter(i => i !== cb));
+    }
+});
+exports.createNanoEvents = createNanoEvents;
+
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var websocket_1 = __importDefault(__webpack_require__(75));
+var Connection = (function (_super) {
+    __extends(Connection, _super);
+    function Connection(url, autoConnect) {
+        if (autoConnect === void 0) {
+            autoConnect = true;
+        }
+        var _this = _super.call(this, url, undefined, { connect: autoConnect }) || this;
+        _this._enqueuedCalls = [];
+        return _this;
+    }
+    Connection.prototype.onOpenCallback = function (event) {
+        _super.prototype.onOpenCallback.call(this);
+        this.binaryType = 'arraybuffer';
+        if (this._enqueuedCalls.length > 0) {
+            for (var _i = 0, _a = this._enqueuedCalls; _i < _a.length; _i++) {
+                var _b = _a[_i], method = _b[0], args = _b[1];
+                this[method].apply(this, args);
+            }
+            this._enqueuedCalls = [];
+        }
+    };
+    Connection.prototype.send = function (data) {
+        if (this.ws.readyState === websocket_1.default.OPEN) {
+            if (data instanceof ArrayBuffer) {
+                return _super.prototype.send.call(this, data);
+            }
+            else if (Array.isArray(data)) {
+                return _super.prototype.send.call(this, (new Uint8Array(data)).buffer);
+            }
+        }
+        else {
+            this._enqueuedCalls.push(['send', [data]]);
+        }
+    };
+    return Connection;
+}(websocket_1.default));
+exports.Connection = Connection;
+
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor)
+        descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+} } return function (Constructor, protoProps, staticProps) { if (protoProps)
+    defineProperties(Constructor.prototype, protoProps); if (staticProps)
+    defineProperties(Constructor, staticProps); return Constructor; }; }();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+} }
+var createBackoff = __webpack_require__(76).createBackoff;
+var WebSocketImpl = typeof WebSocket !== "undefined" ? WebSocket : __webpack_require__(77);
+var WebSocketClient = function () {
+    function WebSocketClient(url, protocols) { var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {}; _classCallCheck(this, WebSocketClient); this.url = url; this.protocols = protocols; this.reconnectEnabled = true; this.listeners = {}; this.backoff = createBackoff(options.backoff || 'exponential', options); this.backoff.onReady = this.onBackoffReady.bind(this); if (typeof options.connect === "undefined" || options.connect) {
+        this.open();
+    } }
+    _createClass(WebSocketClient, [{ key: 'open', value: function open() {
+                var reconnect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+                this.isReconnect = reconnect;
+                var binaryType = this.ws && this.ws.binaryType;
+                this.ws = new WebSocketImpl(this.url, this.protocols);
+                this.ws.onclose = this.onCloseCallback.bind(this);
+                this.ws.onerror = this.onErrorCallback.bind(this);
+                this.ws.onmessage = this.onMessageCallback.bind(this);
+                this.ws.onopen = this.onOpenCallback.bind(this);
+                if (binaryType) {
+                    this.ws.binaryType = binaryType;
+                }
+            }
+        }, { key: 'onBackoffReady', value: function onBackoffReady(number, delay) {
+                this.open(true);
+            }
+        }, { key: 'onCloseCallback', value: function onCloseCallback(e) { if (!this.isReconnect && this.listeners['onclose']) {
+                this.listeners['onclose'].apply(null, arguments);
+            } if (this.reconnectEnabled && e.code < 3000) {
+                this.backoff.backoff();
+            } }
+        }, { key: 'onErrorCallback', value: function onErrorCallback() { if (this.listeners['onerror']) {
+                this.listeners['onerror'].apply(null, arguments);
+            } }
+        }, { key: 'onMessageCallback', value: function onMessageCallback() { if (this.listeners['onmessage']) {
+                this.listeners['onmessage'].apply(null, arguments);
+            } }
+        }, { key: 'onOpenCallback', value: function onOpenCallback() { if (this.listeners['onopen']) {
+                this.listeners['onopen'].apply(null, arguments);
+            } if (this.isReconnect && this.listeners['onreconnect']) {
+                this.listeners['onreconnect'].apply(null, arguments);
+            } this.isReconnect = false; }
+        }, { key: 'close',
+            value: function close(code, reason) { if (typeof code == 'undefined') {
+                code = 1000;
+            } this.reconnectEnabled = false; this.ws.close(code, reason); }
+        }, { key: 'send', value: function send(data) { this.ws.send(data); }
+        }, { key: 'bufferedAmount', get: function get() { return this.ws.bufferedAmount; }
+        }, { key: 'readyState', get: function get() { return this.ws.readyState; }
+        }, { key: 'binaryType', get: function get() { return this.ws.binaryType; }, set: function set(binaryType) { this.ws.binaryType = binaryType; }
+        }, { key: 'extensions', get: function get() { return this.ws.extensions; }, set: function set(extensions) { this.ws.extensions = extensions; }
+        }, { key: 'protocol', get: function get() { return this.ws.protocol; }, set: function set(protocol) { this.ws.protocol = protocol; } }, { key: 'onclose', set: function set(listener) { this.listeners['onclose'] = listener; }, get: function get() { return this.listeners['onclose']; }
+        }, { key: 'onerror', set: function set(listener) { this.listeners['onerror'] = listener; }, get: function get() { return this.listeners['onerror']; }
+        }, { key: 'onmessage', set: function set(listener) { this.listeners['onmessage'] = listener; }, get: function get() { return this.listeners['onmessage']; }
+        }, { key: 'onopen', set: function set(listener) { this.listeners['onopen'] = listener; }, get: function get() { return this.listeners['onopen']; }
+        }, { key: 'onreconnect', set: function set(listener) { this.listeners['onreconnect'] = listener; }, get: function get() { return this.listeners['onreconnect']; } }]);
+    return WebSocketClient;
+}();
+WebSocketClient.CONNECTING = WebSocketImpl.CONNECTING;
+WebSocketClient.OPEN = WebSocketImpl.OPEN;
+WebSocketClient.CLOSING = WebSocketImpl.CLOSING;
+WebSocketClient.CLOSED = WebSocketImpl.CLOSED;
+exports.default = WebSocketClient;
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createBackoff = createBackoff;
+var backoff = { exponential: function exponential(attempt, delay) { return Math.floor(Math.random() * Math.pow(2, attempt) * delay); }, fibonacci: function fibonacci(attempt, delay) { var current = 1; if (attempt > current) {
+        var prev = 1, current = 2;
+        for (var index = 2; index < attempt; index++) {
+            var next = prev + current;
+            prev = current;
+            current = next;
+        }
+    } return Math.floor(Math.random() * current * delay); } };
+function createBackoff(type, options) { return new Backoff(backoff[type], options); }
+function Backoff(func, options) { this.func = func; this.attempts = 0; this.delay = typeof options.initialDelay !== "undefined" ? options.initialDelay : 100; }
+Backoff.prototype.backoff = function () { setTimeout(this.onReady, this.func(++this.attempts, this.delay)); };
+
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var storage;
+function getStorage() {
+    if (!storage) {
+        storage = (typeof (cc) !== 'undefined' && cc.sys && cc.sys.localStorage)
+            ? cc.sys.localStorage
+            : typeof (window) !== "undefined" && window.localStorage
+                ? window.localStorage
+                : {
+                    cache: {},
+                    setItem: function (key, value) { this.cache[key] = value; },
+                    getItem: function (key) { this.cache[key]; },
+                    removeItem: function (key) { delete this.cache[key]; },
+                };
+    }
+    return storage;
+}
+function setItem(key, value) {
+    getStorage().setItem(key, value);
+}
+exports.setItem = setItem;
+function removeItem(key) {
+    getStorage().removeItem(key);
+}
+exports.removeItem = removeItem;
+function getItem(key, callback) {
+    var value = getStorage().getItem(key);
+    if (typeof (Promise) === 'undefined' ||
+        !(value instanceof Promise)) {
+        callback(value);
+    }
+    else {
+        value.then(function (id) { return callback(id); });
+    }
+}
+exports.getItem = getItem;
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try {
+            step(generator.next(value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function rejected(value) { try {
+            step(generator["throw"](value));
+        }
+        catch (e) {
+            reject(e);
+        } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function () { if (t[0] & 1)
+            throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f)
+            throw new TypeError("Generator is already executing.");
+        while (_)
+            try {
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done)
+                    return t;
+                if (y = 0, t)
+                    op = [op[0] & 2, t.value];
+                switch (op[0]) {
+                    case 0:
+                    case 1:
+                        t = op;
+                        break;
+                    case 4:
+                        _.label++;
+                        return { value: op[1], done: false };
+                    case 5:
+                        _.label++;
+                        y = op[1];
+                        op = [0];
+                        continue;
+                    case 7:
+                        op = _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                    default:
+                        if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+                            _ = 0;
+                            continue;
+                        }
+                        if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) {
+                            _.label = op[1];
+                            break;
+                        }
+                        if (op[0] === 6 && _.label < t[1]) {
+                            _.label = t[1];
+                            t = op;
+                            break;
+                        }
+                        if (t && _.label < t[2]) {
+                            _.label = t[2];
+                            _.ops.push(op);
+                            break;
+                        }
+                        if (t[2])
+                            _.ops.pop();
+                        _.trys.pop();
+                        continue;
+                }
+                op = body.call(thisArg, _);
+            }
+            catch (e) {
+                op = [6, e];
+                y = 0;
+            }
+            finally {
+                f = t = 0;
+            }
+        if (op[0] & 5)
+            throw op[1];
+        return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Push = (function () {
+    function Push(endpoint) {
+        this.endpoint = endpoint.replace("ws", "http");
+    }
+    Push.prototype.register = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this.check();
+                        return [4, this.registerServiceWorker()];
+                    case 1:
+                        _a.sent();
+                        return [4, this.requestNotificationPermission()];
+                    case 2:
+                        _a.sent();
+                        return [2];
+                }
+            });
+        });
+    };
+    ;
+    Push.prototype.registerServiceWorker = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, navigator.serviceWorker.register(this.endpoint + "/push")];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    Push.prototype.requestNotificationPermission = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var permission;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, window["Notification"].requestPermission()];
+                    case 1:
+                        permission = _a.sent();
+                        if (permission !== "granted") {
+                            throw new Error("Permission not granted for Notification");
+                        }
+                        return [2];
+                }
+            });
+        });
+    };
+    Push.prototype.check = function () {
+        if (!("serviceWorker" in navigator)) {
+            throw new Error("No Service Worker support!");
+        }
+        if (!("PushManager" in window)) {
+            throw new Error("No Push API Support!");
+        }
+    };
+    return Push;
+}());
+exports.Push = Push;
+
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule)
+        return mod;
+    var result = {};
+    if (mod != null)
+        for (var k in mod)
+            if (Object.hasOwnProperty.call(mod, k))
+                result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var state_listener_1 = __webpack_require__(81);
+var fossilDelta = __importStar(__webpack_require__(84));
+var msgpack = __importStar(__webpack_require__(37));
+var FossilDeltaSerializer = (function () {
+    function FossilDeltaSerializer() {
+        this.api = new state_listener_1.StateContainer({});
+    }
+    FossilDeltaSerializer.prototype.getState = function () {
+        return this.api.state;
+    };
+    FossilDeltaSerializer.prototype.setState = function (encodedState) {
+        this.previousState = new Uint8Array(encodedState);
+        this.api.set(msgpack.decode(this.previousState));
+    };
+    FossilDeltaSerializer.prototype.patch = function (binaryPatch) {
+        this.previousState = new Uint8Array(fossilDelta.apply(this.previousState, binaryPatch));
+        this.api.set(msgpack.decode(this.previousState));
+    };
+    FossilDeltaSerializer.prototype.teardown = function () {
+        this.api.removeAllListeners();
+    };
+    return FossilDeltaSerializer;
+}());
+exports.FossilDeltaSerializer = FossilDeltaSerializer;
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var StateContainer_1 = __webpack_require__(82);
+exports.StateContainer = StateContainer_1.StateContainer;
+
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var compare_1 = __webpack_require__(83);
+var StateContainer = (function () {
+    function StateContainer(state) {
+        this.listeners = [];
+        this.matcherPlaceholders = {
+            ":id": /^([a-zA-Z0-9\-_]+)$/,
+            ":number": /^([0-9]+)$/,
+            ":string": /^(\w+)$/,
+            ":axis": /^([xyz])$/,
+            ":*": /(.*)/,
+        };
+        this.state = state;
+        this.reset();
+    }
+    StateContainer.prototype.set = function (newState) {
+        var patches = compare_1.compare(this.state, newState);
+        this.state = newState;
+        this.checkPatches(patches, this.listeners, this.defaultListener);
+        return patches;
+    };
+    StateContainer.prototype.registerPlaceholder = function (placeholder, matcher) {
+        this.matcherPlaceholders[placeholder] = matcher;
+    };
+    StateContainer.prototype.listen = function (segments, callback, immediate) {
+        var _this = this;
+        var rules;
+        if (typeof (segments) === "function") {
+            rules = [];
+            callback = segments;
+        }
+        else {
+            rules = segments.split("/");
+        }
+        if (callback.length > 1) {
+            console.warn(".listen() accepts only one parameter.");
+        }
+        var listener = {
+            callback: callback,
+            rawRules: rules,
+            rules: rules.map(function (segment) {
+                if (typeof (segment) === "string") {
+                    return (segment.indexOf(":") === 0)
+                        ? _this.matcherPlaceholders[segment] || _this.matcherPlaceholders[":*"]
+                        : new RegExp("^" + segment + "$");
+                }
+                else {
+                    return segment;
+                }
+            })
+        };
+        if (rules.length === 0) {
+            this.defaultListener = listener;
+        }
+        else {
+            this.listeners.push(listener);
+        }
+        if (immediate) {
+            this.checkPatches(compare_1.compare({}, this.state), [listener]);
+        }
+        return listener;
+    };
+    StateContainer.prototype.removeListener = function (listener) {
+        for (var i = this.listeners.length - 1; i >= 0; i--) {
+            if (this.listeners[i] === listener) {
+                this.listeners.splice(i, 1);
+            }
+        }
+    };
+    StateContainer.prototype.removeAllListeners = function () {
+        this.reset();
+    };
+    StateContainer.prototype.checkPatches = function (patches, listeners, defaultListener) {
+        for (var j = 0, len = listeners.length; j < len; j++) {
+            var listener = listeners[j];
+            for (var i = patches.length - 1; i >= 0; i--) {
+                var pathVariables = listener && this.getPathVariables(patches[i], listener);
+                if (pathVariables) {
+                    listener.callback({
+                        path: pathVariables,
+                        rawPath: patches[i].path,
+                        operation: patches[i].operation,
+                        value: patches[i].value
+                    });
+                    patches[i].matched = true;
+                }
+            }
+        }
+        if (defaultListener) {
+            for (var i = patches.length - 1; i >= 0; i--) {
+                if (!patches[i].matched) {
+                    defaultListener.callback(patches[i]);
+                }
+            }
+        }
+    };
+    StateContainer.prototype.getPathVariables = function (patch, listener) {
+        if (patch.path.length !== listener.rules.length) {
+            return false;
+        }
+        var path = {};
+        for (var i = 0, len = listener.rules.length; i < len; i++) {
+            var matches = patch.path[i].match(listener.rules[i]);
+            if (!matches || matches.length === 0 || matches.length > 2) {
+                return false;
+            }
+            else if (listener.rawRules[i].substr(0, 1) === ":") {
+                path[listener.rawRules[i].substr(1)] = matches[1];
+            }
+        }
+        return path;
+    };
+    StateContainer.prototype.reset = function () {
+        this.listeners = [];
+    };
+    return StateContainer;
+}());
+exports.StateContainer = StateContainer;
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function compare(tree1, tree2) {
+    var patches = [];
+    generate(tree1, tree2, patches, []);
+    return patches;
+}
+exports.compare = compare;
+function concat(arr, value) {
+    var newArr = arr.slice();
+    newArr.push(value);
+    return newArr;
+}
+function objectKeys(obj) {
+    if (Array.isArray(obj)) {
+        var keys_1 = new Array(obj.length);
+        for (var k = 0; k < keys_1.length; k++) {
+            keys_1[k] = "" + k;
+        }
+        return keys_1;
+    }
+    if (Object.keys) {
+        return Object.keys(obj);
+    }
+    var keys = [];
+    for (var i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            keys.push(i);
+        }
+    }
+    return keys;
+}
+;
+function generate(mirror, obj, patches, path) {
+    var newKeys = objectKeys(obj);
+    var oldKeys = objectKeys(mirror);
+    var deleted = false;
+    for (var t = oldKeys.length - 1; t >= 0; t--) {
+        var key = oldKeys[t];
+        var oldVal = mirror[key];
+        if (obj.hasOwnProperty(key) && !(obj[key] === undefined && oldVal !== undefined && Array.isArray(obj) === false)) {
+            var newVal = obj[key];
+            if (typeof oldVal == "object" && oldVal != null && typeof newVal == "object" && newVal != null) {
+                generate(oldVal, newVal, patches, concat(path, key));
+            }
+            else {
+                if (oldVal !== newVal) {
+                    patches.push({
+                        operation: "replace",
+                        path: concat(path, key),
+                        value: newVal,
+                        previousValue: oldVal
+                    });
+                }
+            }
+        }
+        else {
+            patches.push({ operation: "remove", path: concat(path, key) });
+            deleted = true;
+        }
+    }
+    if (!deleted && newKeys.length == oldKeys.length) {
+        return;
+    }
+    for (var t = newKeys.length - 1; t >= 0; t--) {
+        var key = newKeys[t];
+        if (!mirror.hasOwnProperty(key) && obj[key] !== undefined) {
+            var newVal = obj[key];
+            var addPath = concat(path, key);
+            if (typeof newVal == "object" && newVal != null) {
+                generate({}, newVal, patches, addPath);
+            }
+            patches.push({ operation: "add", path: addPath, value: newVal });
+        }
+    }
+}
+
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (root, factory) {
+    if ( true && module.exports)
+        module.exports = factory();
+    else
+        root.fossilDelta = factory();
+})(this, function () {
+    'use strict';
+    var fossilDelta = {};
+    var NHASH = 16;
+    function RollingHash() {
+        this.a = 0;
+        this.b = 0;
+        this.i = 0;
+        this.z = new Array(NHASH);
+    }
+    RollingHash.prototype.init = function (z, pos) {
+        var a = 0, b = 0, i, x;
+        for (i = 0; i < NHASH; i++) {
+            x = z[pos + i];
+            a = (a + x) & 0xffff;
+            b = (b + (NHASH - i) * x) & 0xffff;
+            this.z[i] = x;
+        }
+        this.a = a & 0xffff;
+        this.b = b & 0xffff;
+        this.i = 0;
+    };
+    RollingHash.prototype.next = function (c) {
+        var old = this.z[this.i];
+        this.z[this.i] = c;
+        this.i = (this.i + 1) & (NHASH - 1);
+        this.a = (this.a - old + c) & 0xffff;
+        this.b = (this.b - NHASH * old + this.a) & 0xffff;
+    };
+    RollingHash.prototype.value = function () {
+        return ((this.a & 0xffff) | (this.b & 0xffff) << 16) >>> 0;
+    };
+    var zDigits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz~".
+        split('').map(function (x) { return x.charCodeAt(0); });
+    var zValue = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1,
+        -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+        25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, 36,
+        -1, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+        52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, -1, -1, -1, 63, -1
+    ];
+    function Reader(array) {
+        this.a = array;
+        this.pos = 0;
+    }
+    Reader.prototype.haveBytes = function () {
+        return this.pos < this.a.length;
+    };
+    Reader.prototype.getByte = function () {
+        var b = this.a[this.pos];
+        this.pos++;
+        if (this.pos > this.a.length)
+            throw new RangeError('out of bounds');
+        return b;
+    };
+    Reader.prototype.getChar = function () {
+        return String.fromCharCode(this.getByte());
+    };
+    Reader.prototype.getInt = function () {
+        var v = 0, c;
+        while (this.haveBytes() && (c = zValue[0x7f & this.getByte()]) >= 0) {
+            v = (v << 6) + c;
+        }
+        this.pos--;
+        return v >>> 0;
+    };
+    function Writer() {
+        this.a = [];
+    }
+    Writer.prototype.toArray = function () {
+        return this.a;
+    };
+    Writer.prototype.putByte = function (b) {
+        this.a.push(b & 0xff);
+    };
+    Writer.prototype.putChar = function (s) {
+        this.putByte(s.charCodeAt(0));
+    };
+    Writer.prototype.putInt = function (v) {
+        var i, j, zBuf = [];
+        if (v === 0) {
+            this.putChar('0');
+            return;
+        }
+        for (i = 0; v > 0; i++, v >>>= 6)
+            zBuf.push(zDigits[v & 0x3f]);
+        for (j = i - 1; j >= 0; j--)
+            this.putByte(zBuf[j]);
+    };
+    Writer.prototype.putArray = function (a, start, end) {
+        for (var i = start; i < end; i++)
+            this.a.push(a[i]);
+    };
+    function digitCount(v) {
+        var i, x;
+        for (i = 1, x = 64; v >= x; i++, x <<= 6) { }
+        return i;
+    }
+    function checksum(arr) {
+        var sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0, z = 0, N = arr.length;
+        while (N >= 16) {
+            sum0 = sum0 + arr[z + 0] | 0;
+            sum1 = sum1 + arr[z + 1] | 0;
+            sum2 = sum2 + arr[z + 2] | 0;
+            sum3 = sum3 + arr[z + 3] | 0;
+            sum0 = sum0 + arr[z + 4] | 0;
+            sum1 = sum1 + arr[z + 5] | 0;
+            sum2 = sum2 + arr[z + 6] | 0;
+            sum3 = sum3 + arr[z + 7] | 0;
+            sum0 = sum0 + arr[z + 8] | 0;
+            sum1 = sum1 + arr[z + 9] | 0;
+            sum2 = sum2 + arr[z + 10] | 0;
+            sum3 = sum3 + arr[z + 11] | 0;
+            sum0 = sum0 + arr[z + 12] | 0;
+            sum1 = sum1 + arr[z + 13] | 0;
+            sum2 = sum2 + arr[z + 14] | 0;
+            sum3 = sum3 + arr[z + 15] | 0;
+            z += 16;
+            N -= 16;
+        }
+        while (N >= 4) {
+            sum0 = sum0 + arr[z + 0] | 0;
+            sum1 = sum1 + arr[z + 1] | 0;
+            sum2 = sum2 + arr[z + 2] | 0;
+            sum3 = sum3 + arr[z + 3] | 0;
+            z += 4;
+            N -= 4;
+        }
+        sum3 = (((sum3 + (sum2 << 8) | 0) + (sum1 << 16) | 0) + (sum0 << 24) | 0);
+        switch (N) {
+            case 3: sum3 = sum3 + (arr[z + 2] << 8) | 0;
+            case 2: sum3 = sum3 + (arr[z + 1] << 16) | 0;
+            case 1: sum3 = sum3 + (arr[z + 0] << 24) | 0;
+        }
+        return sum3 >>> 0;
+    }
+    fossilDelta.create = function (src, out) {
+        var zDelta = new Writer();
+        var lenOut = out.length;
+        var lenSrc = src.length;
+        var i, lastRead = -1;
+        zDelta.putInt(lenOut);
+        zDelta.putChar('\n');
+        if (lenSrc <= NHASH) {
+            zDelta.putInt(lenOut);
+            zDelta.putChar(':');
+            zDelta.putArray(out, 0, lenOut);
+            zDelta.putInt(checksum(out));
+            zDelta.putChar(';');
+            return zDelta.toArray();
+        }
+        var nHash = Math.ceil(lenSrc / NHASH);
+        var collide = new Array(nHash);
+        var landmark = new Array(nHash);
+        for (i = 0; i < collide.length; i++)
+            collide[i] = -1;
+        for (i = 0; i < landmark.length; i++)
+            landmark[i] = -1;
+        var hv, h = new RollingHash();
+        for (i = 0; i < lenSrc - NHASH; i += NHASH) {
+            h.init(src, i);
+            hv = h.value() % nHash;
+            collide[i / NHASH] = landmark[hv];
+            landmark[hv] = i / NHASH;
+        }
+        var base = 0;
+        var iSrc, iBlock, bestCnt, bestOfst, bestLitsz;
+        while (base + NHASH < lenOut) {
+            bestOfst = 0;
+            bestLitsz = 0;
+            h.init(out, base);
+            i = 0;
+            bestCnt = 0;
+            while (1) {
+                var limit = 250;
+                hv = h.value() % nHash;
+                iBlock = landmark[hv];
+                while (iBlock >= 0 && (limit--) > 0) {
+                    var cnt, ofst, litsz;
+                    var j, k, x, y;
+                    var sz;
+                    iSrc = iBlock * NHASH;
+                    for (j = 0, x = iSrc, y = base + i; x < lenSrc && y < lenOut; j++, x++, y++) {
+                        if (src[x] !== out[y])
+                            break;
+                    }
+                    j--;
+                    for (k = 1; k < iSrc && k <= i; k++) {
+                        if (src[iSrc - k] !== out[base + i - k])
+                            break;
+                    }
+                    k--;
+                    ofst = iSrc - k;
+                    cnt = j + k + 1;
+                    litsz = i - k;
+                    sz = digitCount(i - k) + digitCount(cnt) + digitCount(ofst) + 3;
+                    if (cnt >= sz && cnt > bestCnt) {
+                        bestCnt = cnt;
+                        bestOfst = iSrc - k;
+                        bestLitsz = litsz;
+                    }
+                    iBlock = collide[iBlock];
+                }
+                if (bestCnt > 0) {
+                    if (bestLitsz > 0) {
+                        zDelta.putInt(bestLitsz);
+                        zDelta.putChar(':');
+                        zDelta.putArray(out, base, base + bestLitsz);
+                        base += bestLitsz;
+                    }
+                    base += bestCnt;
+                    zDelta.putInt(bestCnt);
+                    zDelta.putChar('@');
+                    zDelta.putInt(bestOfst);
+                    zDelta.putChar(',');
+                    if (bestOfst + bestCnt - 1 > lastRead) {
+                        lastRead = bestOfst + bestCnt - 1;
+                    }
+                    bestCnt = 0;
+                    break;
+                }
+                if (base + i + NHASH >= lenOut) {
+                    zDelta.putInt(lenOut - base);
+                    zDelta.putChar(':');
+                    zDelta.putArray(out, base, base + lenOut - base);
+                    base = lenOut;
+                    break;
+                }
+                h.next(out[base + i + NHASH]);
+                i++;
+            }
+        }
+        if (base < lenOut) {
+            zDelta.putInt(lenOut - base);
+            zDelta.putChar(':');
+            zDelta.putArray(out, base, base + lenOut - base);
+        }
+        zDelta.putInt(checksum(out));
+        zDelta.putChar(';');
+        return zDelta.toArray();
+    };
+    fossilDelta.outputSize = function (delta) {
+        var zDelta = new Reader(delta);
+        var size = zDelta.getInt();
+        if (zDelta.getChar() !== '\n')
+            throw new Error('size integer not terminated by \'\\n\'');
+        return size;
+    };
+    fossilDelta.apply = function (src, delta, opts) {
+        var limit, total = 0;
+        var zDelta = new Reader(delta);
+        var lenSrc = src.length;
+        var lenDelta = delta.length;
+        limit = zDelta.getInt();
+        if (zDelta.getChar() !== '\n')
+            throw new Error('size integer not terminated by \'\\n\'');
+        var zOut = new Writer();
+        while (zDelta.haveBytes()) {
+            var cnt, ofst;
+            cnt = zDelta.getInt();
+            switch (zDelta.getChar()) {
+                case '@':
+                    ofst = zDelta.getInt();
+                    if (zDelta.haveBytes() && zDelta.getChar() !== ',')
+                        throw new Error('copy command not terminated by \',\'');
+                    total += cnt;
+                    if (total > limit)
+                        throw new Error('copy exceeds output file size');
+                    if (ofst + cnt > lenSrc)
+                        throw new Error('copy extends past end of input');
+                    zOut.putArray(src, ofst, ofst + cnt);
+                    break;
+                case ':':
+                    total += cnt;
+                    if (total > limit)
+                        throw new Error('insert command gives an output larger than predicted');
+                    if (cnt > lenDelta)
+                        throw new Error('insert count exceeds size of delta');
+                    zOut.putArray(zDelta.a, zDelta.pos, zDelta.pos + cnt);
+                    zDelta.pos += cnt;
+                    break;
+                case ';':
+                    var out = zOut.toArray();
+                    if ((!opts || opts.verifyChecksum !== false) && cnt !== checksum(out))
+                        throw new Error('bad checksum');
+                    if (total !== limit)
+                        throw new Error('generated size does not match predicted size');
+                    return out;
+                default:
+                    throw new Error('unknown delta operator');
+            }
+        }
+        throw new Error('unterminated delta');
+    };
+    return fossilDelta;
+});
+
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var schema_1 = __webpack_require__(44);
+var SchemaSerializer = (function () {
+    function SchemaSerializer() {
+    }
+    SchemaSerializer.prototype.setState = function (rawState) {
+        this.state.decode(rawState);
+    };
+    SchemaSerializer.prototype.getState = function () {
+        return this.state;
+    };
+    SchemaSerializer.prototype.patch = function (patches) {
+        this.state.decode(patches);
+    };
+    SchemaSerializer.prototype.teardown = function () {
+    };
+    SchemaSerializer.prototype.handshake = function (bytes, it) {
+        if (this.state) {
+            var reflection = new schema_1.Reflection();
+            reflection.decode(bytes, it);
+        }
+        else {
+            this.state = schema_1.Reflection.decode(bytes);
+        }
+    };
+    return SchemaSerializer;
+}());
+exports.SchemaSerializer = SchemaSerializer;
+
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventEmitter = void 0;
+var EventEmitter = (function () {
+    function EventEmitter() {
+        this.handlers = [];
+    }
+    EventEmitter.prototype.register = function (cb, once) {
+        if (once === void 0) {
+            once = false;
+        }
+        this.handlers.push(cb);
+        return this;
+    };
+    EventEmitter.prototype.invoke = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        this.handlers.forEach(function (handler) { return handler.apply(void 0, args); });
+    };
+    EventEmitter.prototype.invokeAsync = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        return Promise.all(this.handlers.map(function (handler) { return handler.apply(void 0, args); }));
+    };
+    EventEmitter.prototype.remove = function (cb) {
+        var index = this.handlers.indexOf(cb);
+        this.handlers[index] = this.handlers[this.handlers.length - 1];
+        this.handlers.pop();
+    };
+    EventEmitter.prototype.clear = function () {
+        this.handlers = [];
+    };
+    return EventEmitter;
+}());
+exports.EventEmitter = EventEmitter;
+
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dumpChanges = void 0;
+var _1 = __webpack_require__(44);
+var MapSchema_1 = __webpack_require__(11);
+var ArraySchema_1 = __webpack_require__(10);
+function dumpChanges(schema) {
+    var dump = {};
+    var $changes = schema.$changes;
+    var fieldsByIndex = schema['_fieldsByIndex'] || {};
+    for (var _i = 0, _a = Array.from($changes.changes); _i < _a.length; _i++) {
+        var fieldIndex = _a[_i];
+        var field = fieldsByIndex[fieldIndex] || fieldIndex;
+        if (schema[field] instanceof MapSchema_1.MapSchema ||
+            schema[field] instanceof ArraySchema_1.ArraySchema ||
+            schema[field] instanceof _1.Schema) {
+            dump[field] = dumpChanges(schema[field]);
+        }
+        else {
+            dump[field] = schema[field];
+        }
+    }
+    return dump;
+}
+exports.dumpChanges = dumpChanges;
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b)
+                if (b.hasOwnProperty(p))
+                    d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function")
+        r = Reflect.decorate(decorators, target, key, desc);
+    else
+        for (var i = decorators.length - 1; i >= 0; i--)
+            if (d = decorators[i])
+                r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Reflection = exports.ReflectionType = exports.ReflectionField = void 0;
+var annotations_1 = __webpack_require__(46);
+var Schema_1 = __webpack_require__(13);
+var ArraySchema_1 = __webpack_require__(10);
+var MapSchema_1 = __webpack_require__(11);
+var reflectionContext = new annotations_1.Context();
+var ReflectionField = (function (_super) {
+    __extends(ReflectionField, _super);
+    function ReflectionField() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate([
+        annotations_1.type("string", reflectionContext)
+    ], ReflectionField.prototype, "name", void 0);
+    __decorate([
+        annotations_1.type("string", reflectionContext)
+    ], ReflectionField.prototype, "type", void 0);
+    __decorate([
+        annotations_1.type("uint8", reflectionContext)
+    ], ReflectionField.prototype, "referencedType", void 0);
+    return ReflectionField;
+}(Schema_1.Schema));
+exports.ReflectionField = ReflectionField;
+var ReflectionType = (function (_super) {
+    __extends(ReflectionType, _super);
+    function ReflectionType() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.fields = new ArraySchema_1.ArraySchema();
+        return _this;
+    }
+    __decorate([
+        annotations_1.type("uint8", reflectionContext)
+    ], ReflectionType.prototype, "id", void 0);
+    __decorate([
+        annotations_1.type([ReflectionField], reflectionContext)
+    ], ReflectionType.prototype, "fields", void 0);
+    return ReflectionType;
+}(Schema_1.Schema));
+exports.ReflectionType = ReflectionType;
+var Reflection = (function (_super) {
+    __extends(Reflection, _super);
+    function Reflection() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.types = new ArraySchema_1.ArraySchema();
+        return _this;
+    }
+    Reflection.encode = function (instance) {
+        var rootSchemaType = instance.constructor;
+        var reflection = new Reflection();
+        reflection.rootType = rootSchemaType._typeid;
+        var buildType = function (currentType, schema) {
+            for (var fieldName in schema) {
+                var field = new ReflectionField();
+                field.name = fieldName;
+                var fieldType = void 0;
+                if (typeof (schema[fieldName]) === "string") {
+                    fieldType = schema[fieldName];
+                }
+                else {
+                    var isSchema = typeof (schema[fieldName]) === "function";
+                    var isArray = Array.isArray(schema[fieldName]);
+                    var isMap = !isArray && schema[fieldName].map;
+                    var childTypeSchema = void 0;
+                    if (isSchema) {
+                        fieldType = "ref";
+                        childTypeSchema = schema[fieldName];
+                    }
+                    else if (isArray) {
+                        fieldType = "array";
+                        if (typeof (schema[fieldName][0]) === "string") {
+                            fieldType += ":" + schema[fieldName][0];
+                        }
+                        else {
+                            childTypeSchema = schema[fieldName][0];
+                        }
+                    }
+                    else if (isMap) {
+                        fieldType = "map";
+                        if (typeof (schema[fieldName].map) === "string") {
+                            fieldType += ":" + schema[fieldName].map;
+                        }
+                        else {
+                            childTypeSchema = schema[fieldName].map;
+                        }
+                    }
+                    field.referencedType = (childTypeSchema)
+                        ? childTypeSchema._typeid
+                        : 255;
+                }
+                field.type = fieldType;
+                currentType.fields.push(field);
+            }
+            reflection.types.push(currentType);
+        };
+        var types = rootSchemaType._context.types;
+        for (var typeid in types) {
+            var type_1 = new ReflectionType();
+            type_1.id = Number(typeid);
+            buildType(type_1, types[typeid]._schema);
+        }
+        return reflection.encodeAll();
+    };
+    Reflection.decode = function (bytes) {
+        var context = new annotations_1.Context();
+        var reflection = new Reflection();
+        reflection.decode(bytes);
+        var schemaTypes = reflection.types.reduce(function (types, reflectionType) {
+            types[reflectionType.id] = (function (_super) {
+                __extends(_, _super);
+                function _() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                return _;
+            }(Schema_1.Schema));
+            return types;
+        }, {});
+        reflection.types.forEach(function (reflectionType, i) {
+            reflectionType.fields.forEach(function (field) {
+                var schemaType = schemaTypes[reflectionType.id];
+                if (field.referencedType !== undefined) {
+                    var refType = schemaTypes[field.referencedType];
+                    if (!refType) {
+                        refType = field.type.split(":")[1];
+                    }
+                    if (field.type.indexOf("array") === 0) {
+                        annotations_1.type([refType], context)(schemaType.prototype, field.name);
+                    }
+                    else if (field.type.indexOf("map") === 0) {
+                        annotations_1.type({ map: refType }, context)(schemaType.prototype, field.name);
+                    }
+                    else if (field.type === "ref") {
+                        annotations_1.type(refType, context)(schemaType.prototype, field.name);
+                    }
+                }
+                else {
+                    annotations_1.type(field.type, context)(schemaType.prototype, field.name);
+                }
+            });
+        });
+        var rootType = schemaTypes[reflection.rootType];
+        var rootInstance = new rootType();
+        for (var fieldName in rootType._schema) {
+            var fieldType = rootType._schema[fieldName];
+            if (typeof (fieldType) !== "string") {
+                var isSchema = typeof (fieldType) === "function";
+                var isArray = Array.isArray(fieldType);
+                var isMap = !isArray && fieldType.map;
+                rootInstance[fieldName] = (isArray)
+                    ? new ArraySchema_1.ArraySchema()
+                    : (isMap)
+                        ? new MapSchema_1.MapSchema()
+                        : (isSchema)
+                            ? new fieldType()
+                            : undefined;
+            }
+        }
+        return rootInstance;
+    };
+    __decorate([
+        annotations_1.type([ReflectionType], reflectionContext)
+    ], Reflection.prototype, "types", void 0);
+    __decorate([
+        annotations_1.type("uint8", reflectionContext)
+    ], Reflection.prototype, "rootType", void 0);
+    return Reflection;
+}(Schema_1.Schema));
+exports.Reflection = Reflection;
+
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HTTP_HOST = exports.WS_HOST = void 0;
+exports.WS_HOST = `ws://localhost:2567`;
+exports.HTTP_HOST = `http://localhost:2567`;
+
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getHostData = exports.setHostData = void 0;
+let hostData = null;
+exports.setHostData = (_hostData) => {
+    hostData = _hostData;
+};
+exports.getHostData = () => {
+    return hostData;
+};
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLand = void 0;
+exports.getLand = () => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    yield dcl.loadModule('ParcelIdentity');
+    const data = yield dcl.callRpc('ParcelIdentity', 'getParcel', []);
+    console.log("LAND_DATA", data);
+    return (_c = (_b = (_a = data === null || data === void 0 ? void 0 : data.land) === null || _a === void 0 ? void 0 : _a.sceneJsonData) === null || _b === void 0 ? void 0 : _b.scene) === null || _c === void 0 ? void 0 : _c.base;
+});
+
+
+/***/ })
+/******/ ]);
