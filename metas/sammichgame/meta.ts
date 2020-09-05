@@ -6266,6 +6266,33 @@ class SammichGame {
                     Notification_1.showNotification(`${displayName} left the game`);
                 });
             };
+            gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
+                console.log("onPlayersFull", lobbyRoom);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onGameRunning(({ lobbyRoom, minGames }) => {
+                console.log("onGameRunning", lobbyRoom, typeof lobbyRoom, minGames);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed: lobbyRoom.state.trackSeed, minGames, alreadyStarted: true });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onChangeState((fieldChanges, state) => {
+                console.log("gameLobby onChangeState");
+            });
+            gameLobby.onCreate((gameRoom, { minGames }) => {
+                console.log("you have CREATED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 1, minGames }));
+            });
+            gameLobby.onJoin((gameRoom, { minGames }) => {
+                console.log("you have JOINED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 2, minGames }));
+            });
             const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
             if (showJoinVoice) {
                 const joinVoice = new Entity();
