@@ -6219,6 +6219,14 @@ class SammichGame {
             Sound_1.loadSounds();
             const user = api.getUserData ? (yield api.getUserData()) : api.user.data;
             const land = yield land_1.getLand();
+            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
+                console.log("handleGameRoomFull", { trackSeed, player, minGames });
+                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            };
             hostData_1.setHostData({ land, gameID, position, rotation, scale, hideFrame, hideBoard, hideAd, soundDistance, showJoinVoice, voiceChannel, showScenario, serverWs, serverHttp });
             console.log("META_LAND", land);
             console.log("uuuser", user);
@@ -6258,14 +6266,6 @@ class SammichGame {
                 });
                 game.init();
             }
-            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
-                console.log("handleGameRoomFull", { trackSeed, player, minGames });
-                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
-                    console.log("PLAYER_LEFT", displayName);
-                    Notification_1.showNotification(`${displayName} left the game`);
-                });
-            };
         }))();
     }
     update(dt) {
