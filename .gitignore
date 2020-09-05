@@ -105,3 +105,4 @@ dist
 metas/sammich/.DS_Store
 metas/.DS_Store
 .DS_Store
+bin/game.js
