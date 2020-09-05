@@ -6266,45 +6266,6 @@ class SammichGame {
                     Notification_1.showNotification(`${displayName} left the game`);
                 });
             };
-            const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
-            if (showJoinVoice) {
-                const joinVoice = new Entity();
-                const joinVoiceShape = new GLTFShape(`${resourceBaseUrl}models/joinVoice.glb`);
-                joinVoice.addComponent(new Transform({
-                    position: new Vector3(0, position.y - 1.5, -13),
-                    scale: new Vector3(1.5, 2, 2)
-                }));
-                joinVoice.addComponent(joinVoiceShape);
-                joinVoice.addComponent(new OnPointerDown(() => {
-                    openExternalURL(`https://meet.jit.si/${voiceChannel}#config.startWithAudioMuted=true&config.startWithVideoMuted=true`);
-                }));
-                joinVoice.setParent(root);
-            }
-            if (showScenario) {
-                const sammichScenario = new Entity();
-                const scenarioShape = new GLTFShape(`${resourceBaseUrl}models/sammich-scene.glb`);
-                const rotationX = rotation.y === 0
-                    ? 0
-                    : rotation.y === 90
-                        ? -6
-                        : rotation.y === 180
-                            ? 0
-                            : 6;
-                const rotationZ = rotation.y === 0
-                    ? -6
-                    : rotation.y === 90
-                        ? 0
-                        : rotation.y === 180
-                            ? 6
-                            : 0;
-                sammichScenario.addComponent(new Transform({
-                    position: new Vector3(position.x + rotationX, 0, position.z + rotationZ),
-                    rotation: Quaternion.Euler(rotation.x, rotation.y - 180, rotation.z),
-                    scale: new Vector3(1, 1, 1)
-                }));
-                sammichScenario.addComponent(scenarioShape);
-                engine.addEntity(sammichScenario);
-            }
         }))();
     }
     update(dt) {
