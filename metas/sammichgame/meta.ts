@@ -82,7 +82,7 @@ export default
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 47);
+/******/ 	return __webpack_require__(__webpack_require__.s = 49);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -432,6 +432,53 @@ exports.seedGen = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.showSpritePanel = exports.hideSpritePanel = exports.updateSpritePanel = exports.createSpritePanel = void 0;
+const SpriteAnimation_1 = __webpack_require__(0);
+const SpriteMaterial_1 = __webpack_require__(1);
+const spriteShape = new PlaneShape();
+spriteShape.withCollisions = false;
+spriteShape.isPointerBlocker = false;
+const spriteTransform = new Transform({ position: new Vector3(0, 2, -0.001), scale: new Vector3(6, 4, 1) });
+exports.createSpritePanel = (root) => {
+    const spritePanel = new Entity();
+    spritePanel.addComponent(spriteShape);
+    spritePanel.addComponent(SpriteMaterial_1.spriteMaterial);
+    spritePanel.addComponent(spriteTransform);
+    spritePanel.setParent(root);
+};
+exports.updateSpritePanel = ({ uvs = null, width = null, height = null, col = null, row = null, canvasWidth = null, scale = null }) => {
+    if (uvs) {
+        spriteShape.uvs = uvs;
+    }
+    else {
+        spriteShape.uvs = SpriteAnimation_1.getSpriteUv(1024 / width * row + col, 0, width, height);
+    }
+    if (canvasWidth) {
+        spriteTransform.scale.set(canvasWidth, spriteTransform.scale.y, spriteTransform.scale.z);
+    }
+    if (scale) {
+        spriteTransform.scale.set(scale.x, scale.y, scale.z);
+    }
+    else {
+        spriteTransform.scale.set(6, 4, 1);
+    }
+};
+exports.hideSpritePanel = () => {
+    spriteShape.visible = false;
+    spriteTransform.scale.set(6, 4, 1);
+};
+exports.showSpritePanel = () => {
+    spriteShape.visible = true;
+};
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.sleep = exports.createUI = exports.createRoundResult = exports.createTimeResult = exports.createPlayerAnswer = void 0;
 const SpriteAnimation_1 = __webpack_require__(0);
 const answerSpriteIndex = {
@@ -632,53 +679,6 @@ exports.sleep = sleep;
 
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.showSpritePanel = exports.hideSpritePanel = exports.updateSpritePanel = exports.createSpritePanel = void 0;
-const SpriteAnimation_1 = __webpack_require__(0);
-const SpriteMaterial_1 = __webpack_require__(1);
-const spriteShape = new PlaneShape();
-spriteShape.withCollisions = false;
-spriteShape.isPointerBlocker = false;
-const spriteTransform = new Transform({ position: new Vector3(0, 2, -0.001), scale: new Vector3(6, 4, 1) });
-exports.createSpritePanel = (root) => {
-    const spritePanel = new Entity();
-    spritePanel.addComponent(spriteShape);
-    spritePanel.addComponent(SpriteMaterial_1.spriteMaterial);
-    spritePanel.addComponent(spriteTransform);
-    spritePanel.setParent(root);
-};
-exports.updateSpritePanel = ({ uvs = null, width = null, height = null, col = null, row = null, canvasWidth = null, scale = null }) => {
-    if (uvs) {
-        spriteShape.uvs = uvs;
-    }
-    else {
-        spriteShape.uvs = SpriteAnimation_1.getSpriteUv(1024 / width * row + col, 0, width, height);
-    }
-    if (canvasWidth) {
-        spriteTransform.scale.set(canvasWidth, spriteTransform.scale.y, spriteTransform.scale.z);
-    }
-    if (scale) {
-        spriteTransform.scale.set(scale.x, scale.y, scale.z);
-    }
-    else {
-        spriteTransform.scale.set(6, 4, 1);
-    }
-};
-exports.hideSpritePanel = () => {
-    spriteShape.visible = false;
-    spriteTransform.scale.set(6, 4, 1);
-};
-exports.showSpritePanel = () => {
-    spriteShape.visible = true;
-};
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -733,11 +733,11 @@ exports.getTextPanelValue = () => text.value;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransformSystem = void 0;
-const move_1 = __webpack_require__(15);
-const rotate_1 = __webpack_require__(23);
-const scale_1 = __webpack_require__(24);
-const followpath_1 = __webpack_require__(25);
-const keeprotating_1 = __webpack_require__(26);
+const move_1 = __webpack_require__(16);
+const rotate_1 = __webpack_require__(25);
+const scale_1 = __webpack_require__(26);
+const followpath_1 = __webpack_require__(27);
+const keeprotating_1 = __webpack_require__(28);
 class TransformSystem {
     constructor() {
         this._components = [];
@@ -1130,13 +1130,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Schema = void 0;
-var spec_1 = __webpack_require__(42);
-var encode = __webpack_require__(40);
-var decode = __webpack_require__(41);
+var spec_1 = __webpack_require__(44);
+var encode = __webpack_require__(42);
+var decode = __webpack_require__(43);
 var ArraySchema_1 = __webpack_require__(10);
 var MapSchema_1 = __webpack_require__(11);
-var ChangeTree_1 = __webpack_require__(45);
-var EventEmitter_1 = __webpack_require__(87);
+var ChangeTree_1 = __webpack_require__(47);
+var EventEmitter_1 = __webpack_require__(93);
 var EncodeSchemaError = (function (_super) {
     __extends(EncodeSchemaError, _super);
     function EncodeSchemaError() {
@@ -1805,6 +1805,40 @@ exports.Schema = Schema;
 
 "use strict";
 
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.removeVideoPanel = exports.reproduceVideo = void 0;
+const spriteTransform = new Transform({ position: new Vector3(0, 1.975, -0.001), scale: new Vector3(-5.95, 3.95, 1) });
+const spritePanel = new Entity();
+spritePanel.addComponent(spriteTransform);
+exports.reproduceVideo = (root, id) => {
+    const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
+    const myVideoClip = new VideoClip(`${resourceBaseUrl}video/${id}.mp4`);
+    const myVideoTexture = new VideoTexture(myVideoClip);
+    const myMaterial = new Material();
+    myMaterial.transparencyMode = 1;
+    myMaterial.specularIntensity = 1;
+    myMaterial.roughness = 1;
+    myMaterial.albedoTexture = myVideoTexture;
+    const shape = new PlaneShape();
+    shape.withCollisions = shape.isPointerBlocker = false;
+    spritePanel.addComponentOrReplace(shape);
+    spritePanel.addComponentOrReplace(myMaterial);
+    spritePanel.setParent(root);
+    myVideoTexture.playing = true;
+    myVideoTexture.loop = true;
+};
+exports.removeVideoPanel = () => {
+    spritePanel.setParent(null);
+    engine.removeEntity(spritePanel);
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1853,7 +1887,7 @@ exports.BaseGame = BaseGame;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1904,16 +1938,16 @@ exports.MoveTransformComponent = MoveTransformComponent;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimerSystem = void 0;
-const interval_1 = __webpack_require__(28);
-const delay_1 = __webpack_require__(27);
-const expire_1 = __webpack_require__(29);
+const interval_1 = __webpack_require__(30);
+const delay_1 = __webpack_require__(29);
+const expire_1 = __webpack_require__(31);
 class TimerSystem {
     constructor() {
         this._components = [];
@@ -1956,41 +1990,36 @@ TimerSystem._instance = null;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeVideoPanel = exports.reproduceVideo = void 0;
-const spriteTransform = new Transform({ position: new Vector3(0, 1.975, -0.001), scale: new Vector3(-5.95, 3.95, 1) });
-const spritePanel = new Entity();
-spritePanel.addComponent(spriteTransform);
-exports.reproduceVideo = (root, id) => {
-    const resourceBaseUrl = `${engine["RESOURCE_BASE"] || globalThis["RESOURCE_BASE"] || ''}`;
-    const myVideoClip = new VideoClip(`${resourceBaseUrl}video/${id}.mp4`);
-    const myVideoTexture = new VideoTexture(myVideoClip);
-    const myMaterial = new Material();
-    myMaterial.transparencyMode = 1;
-    myMaterial.specularIntensity = 1;
-    myMaterial.roughness = 1;
-    myMaterial.albedoTexture = myVideoTexture;
-    const shape = new PlaneShape();
-    shape.withCollisions = shape.isPointerBlocker = false;
-    spritePanel.addComponentOrReplace(shape);
-    spritePanel.addComponentOrReplace(myMaterial);
-    spritePanel.setParent(root);
-    myVideoTexture.playing = true;
-    myVideoTexture.loop = true;
+exports.HTTP_HOST = exports.WS_HOST = void 0;
+exports.WS_HOST = `ws://localhost:2567`;
+exports.HTTP_HOST = `http://localhost:2567`;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getHostData = exports.setHostData = void 0;
+let hostData = null;
+exports.setHostData = (_hostData) => {
+    hostData = _hostData;
 };
-exports.removeVideoPanel = () => {
-    spritePanel.setParent(null);
-    engine.removeEntity(spritePanel);
+exports.getHostData = () => {
+    return hostData;
 };
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2000,15 +2029,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateTrack = void 0;
-const CostumeGame_1 = __webpack_require__(19);
-const GameRepo_1 = __importDefault(__webpack_require__(21));
-const MathGame_1 = __webpack_require__(32);
-const ObstacleGame_1 = __webpack_require__(31);
-const RotationGame_1 = __webpack_require__(22);
-const DifferentGame_1 = __webpack_require__(33);
+const CostumeGame_1 = __webpack_require__(21);
+const GameRepo_1 = __importDefault(__webpack_require__(23));
+const MathGame_1 = __webpack_require__(34);
+const ObstacleGame_1 = __webpack_require__(33);
+const RotationGame_1 = __webpack_require__(24);
+const DifferentGame_1 = __webpack_require__(35);
 const seed_1 = __webpack_require__(3);
-const FroggerGame_1 = __webpack_require__(34);
-const AttackGame_1 = __webpack_require__(30);
+const FroggerGame_1 = __webpack_require__(36);
+const AttackGame_1 = __webpack_require__(32);
 function generateTrack(seed, minGames) {
     const randomizer = seed_1.seedGen.create(seed.toString());
     const NUM_GAMES = minGames;
@@ -2046,7 +2075,7 @@ exports.generateTrack = generateTrack;
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2054,14 +2083,14 @@ exports.generateTrack = generateTrack;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CostumeGame = void 0;
 const seed_1 = __webpack_require__(3);
-const BaseGame_1 = __webpack_require__(14);
-const Model_1 = __webpack_require__(50);
-const collectionCreator_1 = __webpack_require__(55);
-const collectionControl_1 = __webpack_require__(56);
+const BaseGame_1 = __webpack_require__(15);
+const Model_1 = __webpack_require__(56);
+const collectionCreator_1 = __webpack_require__(61);
+const collectionControl_1 = __webpack_require__(62);
 const utils_1 = __webpack_require__(9);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const Sound_1 = __webpack_require__(2);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const SpriteAnimation_1 = __webpack_require__(0);
 const ROUNDS = 3;
 class CostumeGame {
@@ -2352,7 +2381,7 @@ CostumeGame.instructions = `You have to complete the costume
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2393,20 +2422,20 @@ exports.createCross = (root, { position, scale }) => {
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const RotationGame_1 = __webpack_require__(22);
-const AttackGame_1 = __webpack_require__(30);
-const CostumeGame_1 = __webpack_require__(19);
-const ObstacleGame_1 = __webpack_require__(31);
-const MathGame_1 = __webpack_require__(32);
-const SammichGame_1 = __webpack_require__(62);
-const DifferentGame_1 = __webpack_require__(33);
-const FroggerGame_1 = __webpack_require__(34);
+const RotationGame_1 = __webpack_require__(24);
+const AttackGame_1 = __webpack_require__(32);
+const CostumeGame_1 = __webpack_require__(21);
+const ObstacleGame_1 = __webpack_require__(33);
+const MathGame_1 = __webpack_require__(34);
+const SammichGame_1 = __webpack_require__(68);
+const DifferentGame_1 = __webpack_require__(35);
+const FroggerGame_1 = __webpack_require__(36);
 exports.default = {
     DifferentGame: DifferentGame_1.DifferentGame,
     AttackGame: AttackGame_1.AttackGame,
@@ -2420,7 +2449,7 @@ exports.default = {
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2430,15 +2459,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RotationGame = void 0;
-const index_1 = __importDefault(__webpack_require__(57));
+const index_1 = __importDefault(__webpack_require__(63));
 const seed_1 = __webpack_require__(3);
-const BaseGame_1 = __webpack_require__(14);
+const BaseGame_1 = __webpack_require__(15);
 const utils_1 = __webpack_require__(9);
 const SpriteMaterial_1 = __webpack_require__(1);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const Sound_1 = __webpack_require__(2);
 const SpriteAnimation_1 = __webpack_require__(0);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const ROUNDS = 5;
 class RotationGame {
     constructor(root, { currentPlayer, seed, level = 1, gameIndex }) {
@@ -2810,7 +2839,7 @@ function buildBox(entity, material, uvs) {
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2861,7 +2890,7 @@ exports.RotateTransformComponent = RotateTransformComponent;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2912,7 +2941,7 @@ exports.ScaleTransformComponent = ScaleTransformComponent;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2980,7 +3009,7 @@ exports.FollowPathComponent = FollowPathComponent;
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3022,7 +3051,7 @@ exports.KeepRotatingComponent = KeepRotatingComponent;
 
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3035,7 +3064,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Delay = void 0;
-const timerSystem_1 = __webpack_require__(16);
+const timerSystem_1 = __webpack_require__(17);
 let Delay = class Delay {
     constructor(millisecs, onTimeReachedCallback) {
         timerSystem_1.TimerSystem.createAndAddToEngine();
@@ -3059,7 +3088,7 @@ exports.Delay = Delay;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3072,7 +3101,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Interval = void 0;
-const timerSystem_1 = __webpack_require__(16);
+const timerSystem_1 = __webpack_require__(17);
 let Interval = class Interval {
     constructor(millisecs, onTimeReachedCallback) {
         timerSystem_1.TimerSystem.createAndAddToEngine();
@@ -3096,7 +3125,7 @@ exports.Interval = Interval;
 
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3109,7 +3138,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpireIn = void 0;
-const timerSystem_1 = __webpack_require__(16);
+const timerSystem_1 = __webpack_require__(17);
 let ExpireIn = class ExpireIn {
     constructor(millisecs, onTimeReachedCallback) {
         timerSystem_1.TimerSystem.createAndAddToEngine();
@@ -3134,21 +3163,21 @@ exports.ExpireIn = ExpireIn;
 
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AttackGame = void 0;
-const BaseGame_1 = __webpack_require__(14);
+const BaseGame_1 = __webpack_require__(15);
 const seed_1 = __webpack_require__(3);
 const utils_1 = __webpack_require__(9);
 const SpriteMaterial_1 = __webpack_require__(1);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const Sound_1 = __webpack_require__(2);
 const SpriteAnimation_1 = __webpack_require__(0);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const MOVE = {
     DEFEND: 0,
     ATTACK: 1
@@ -3489,7 +3518,7 @@ AttackGame.instructions = `2 old warriors on each player side,
 
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3506,10 +3535,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ObstacleGame = void 0;
 const seed_1 = __webpack_require__(3);
-const Screen_1 = __webpack_require__(61);
+const Screen_1 = __webpack_require__(67);
 const Sound_1 = __webpack_require__(2);
 const TextPanel_1 = __webpack_require__(6);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const generateTrack = ({ getRandomInt, level }) => {
     const length = Math.log(level + 1) * 80;
     let i = length;
@@ -3753,7 +3782,7 @@ function sleep(ms) {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3762,11 +3791,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MathGame = void 0;
 const Sound_1 = __webpack_require__(2);
 const SpriteMaterial_1 = __webpack_require__(1);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const seed_1 = __webpack_require__(3);
 const utils_1 = __webpack_require__(9);
 const SpriteAnimation_1 = __webpack_require__(0);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const ROUNDS = 5;
 const PIXEL = 4 / 128;
 const TEACHER_OFFSET = (576 / 64) * (1024 / 64);
@@ -4086,19 +4115,19 @@ MathGame.instructions = `Math\nClick the correct answer`;
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DifferentGame = void 0;
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const seed_1 = __webpack_require__(3);
 const SpriteMaterial_1 = __webpack_require__(1);
 const SpriteAnimation_1 = __webpack_require__(0);
 const Sound_1 = __webpack_require__(2);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const TextPanel_1 = __webpack_require__(6);
 const utils_1 = __webpack_require__(9);
 const SPRITE_OFFSET = 768 / 64 * 1024 / 64;
@@ -4350,16 +4379,16 @@ function shuffle(array, randomFn) {
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FroggerGame = void 0;
-const FroggerScreen_1 = __webpack_require__(64);
+const FroggerScreen_1 = __webpack_require__(70);
 const seed_1 = __webpack_require__(3);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const Sound_1 = __webpack_require__(2);
 const TextPanel_1 = __webpack_require__(6);
 const KEY = {
@@ -4520,7 +4549,7 @@ FroggerGame.instructions = `cross the roads and\ntake all sammiches\npressing E 
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4599,7 +4628,7 @@ var put = send.bind(send, 'PUT');
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4616,14 +4645,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var msgpack = __importStar(__webpack_require__(37));
-var strong_events_1 = __webpack_require__(73);
-var nanoevents_1 = __webpack_require__(74);
-var Connection_1 = __webpack_require__(75);
-var Serializer_1 = __webpack_require__(38);
-var Protocol_1 = __webpack_require__(39);
-var encode = __importStar(__webpack_require__(40));
-var decode = __importStar(__webpack_require__(41));
+var msgpack = __importStar(__webpack_require__(39));
+var strong_events_1 = __webpack_require__(79);
+var nanoevents_1 = __webpack_require__(80);
+var Connection_1 = __webpack_require__(81);
+var Serializer_1 = __webpack_require__(40);
+var Protocol_1 = __webpack_require__(41);
+var encode = __importStar(__webpack_require__(42));
+var decode = __importStar(__webpack_require__(43));
 var Room = (function () {
     function Room(name, rootSchema) {
         var _this = this;
@@ -4823,7 +4852,7 @@ exports.Room = Room;
 
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4832,14 +4861,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var decode_1 = __importDefault(__webpack_require__(71));
-var encode_1 = __importDefault(__webpack_require__(72));
+var decode_1 = __importDefault(__webpack_require__(77));
+var encode_1 = __importDefault(__webpack_require__(78));
 exports.decode = decode_1.default;
 exports.encode = encode_1.default;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4857,7 +4886,7 @@ exports.getSerializer = getSerializer;
 
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4951,7 +4980,7 @@ exports.utf8Length = utf8Length;
 
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5190,14 +5219,14 @@ exports.number = number;
 
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.indexChangeCheck = exports.nilCheck = exports.arrayCheck = exports.numberCheck = exports.number = exports.stringCheck = exports.string = exports.boolean = exports.readFloat64 = exports.readFloat32 = exports.uint64 = exports.int64 = exports.float64 = exports.float32 = exports.uint32 = exports.int32 = exports.uint16 = exports.int16 = exports.uint8 = exports.int8 = void 0;
-var spec_1 = __webpack_require__(42);
+var spec_1 = __webpack_require__(44);
 function utf8Read(bytes, offset, length) {
     var string = '', chr = 0;
     for (var i = offset, end = offset + length; i < end; i++) {
@@ -5399,7 +5428,7 @@ exports.indexChangeCheck = indexChangeCheck;
 
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5413,7 +5442,7 @@ exports.TYPE_ID = 0xd5;
 
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5518,8 +5547,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var http = __importStar(__webpack_require__(35));
-var Storage_1 = __webpack_require__(79);
+var http = __importStar(__webpack_require__(37));
+var Storage_1 = __webpack_require__(85);
 var TOKEN_STORAGE = "colyseus-auth-token";
 var Platform;
 (function (Platform) {
@@ -5743,7 +5772,7 @@ exports.Auth = Auth;
 
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5755,13 +5784,13 @@ var MapSchema_1 = __webpack_require__(11);
 Object.defineProperty(exports, "MapSchema", { enumerable: true, get: function () { return MapSchema_1.MapSchema; } });
 var ArraySchema_1 = __webpack_require__(10);
 Object.defineProperty(exports, "ArraySchema", { enumerable: true, get: function () { return ArraySchema_1.ArraySchema; } });
-var utils_1 = __webpack_require__(88);
+var utils_1 = __webpack_require__(94);
 Object.defineProperty(exports, "dumpChanges", { enumerable: true, get: function () { return utils_1.dumpChanges; } });
-var Reflection_1 = __webpack_require__(89);
+var Reflection_1 = __webpack_require__(95);
 Object.defineProperty(exports, "Reflection", { enumerable: true, get: function () { return Reflection_1.Reflection; } });
 Object.defineProperty(exports, "ReflectionType", { enumerable: true, get: function () { return Reflection_1.ReflectionType; } });
 Object.defineProperty(exports, "ReflectionField", { enumerable: true, get: function () { return Reflection_1.ReflectionField; } });
-var annotations_1 = __webpack_require__(46);
+var annotations_1 = __webpack_require__(48);
 Object.defineProperty(exports, "type", { enumerable: true, get: function () { return annotations_1.type; } });
 Object.defineProperty(exports, "deprecated", { enumerable: true, get: function () { return annotations_1.deprecated; } });
 Object.defineProperty(exports, "filter", { enumerable: true, get: function () { return annotations_1.filter; } });
@@ -5770,7 +5799,7 @@ Object.defineProperty(exports, "Context", { enumerable: true, get: function () {
 
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5892,14 +5921,14 @@ exports.ChangeTree = ChangeTree;
 
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defineTypes = exports.deprecated = exports.filter = exports.type = exports.globalContext = exports.Context = void 0;
-var ChangeTree_1 = __webpack_require__(45);
+var ChangeTree_1 = __webpack_require__(47);
 var Schema_1 = __webpack_require__(13);
 var Context = (function () {
     function Context() {
@@ -6091,7 +6120,7 @@ exports.defineTypes = defineTypes;
 
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6109,19 +6138,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Frame_1 = __webpack_require__(48);
-const GameTrackRunner_1 = __webpack_require__(49);
-const SpectatorTrackRunner_1 = __webpack_require__(66);
-const Colyseus = __webpack_require__(67);
+const Frame_1 = __webpack_require__(50);
+const LobbyControl_1 = __webpack_require__(51);
+const GameTrackRunner_1 = __webpack_require__(55);
+const SpectatorTrackRunner_1 = __webpack_require__(72);
+const Colyseus = __webpack_require__(73);
 const TextPanel_1 = __webpack_require__(6);
-const SpritePanel_1 = __webpack_require__(5);
+const SpritePanel_1 = __webpack_require__(4);
 const Sound_1 = __webpack_require__(2);
 const SpriteAnimation_1 = __webpack_require__(0);
-const gameUtils_1 = __webpack_require__(4);
-const GameRepo_1 = __importDefault(__webpack_require__(21));
-const config_1 = __webpack_require__(90);
-const hostData_1 = __webpack_require__(91);
-const land_1 = __webpack_require__(92);
+const gameUtils_1 = __webpack_require__(5);
+const GameRepo_1 = __importDefault(__webpack_require__(23));
+const config_1 = __webpack_require__(18);
+const hostData_1 = __webpack_require__(19);
+const land_1 = __webpack_require__(96);
 const SpriteMaterial_1 = __webpack_require__(1);
 engine["PRODI"] = true;
 const DevGame = GameRepo_1.default.CostumeGame;
@@ -6210,6 +6240,7 @@ class SammichGame {
                     scale: new Vector3(6.5, 0.75, 1),
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
+            gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
         }))();
     }
     update(dt) {
@@ -6247,7 +6278,7 @@ exports.default = SammichGame;
 
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6273,7 +6304,474 @@ exports.createFrame = (root) => {
 
 
 /***/ }),
-/* 49 */
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createLobbyControl = void 0;
+const StartButtonPanel_1 = __webpack_require__(52);
+const GameLobby_1 = __webpack_require__(53);
+const Board_1 = __webpack_require__(54);
+const TextPanel_1 = __webpack_require__(6);
+const SpritePanel_1 = __webpack_require__(4);
+const Sound_1 = __webpack_require__(2);
+const VideoPanel_1 = __webpack_require__(14);
+const SpriteAnimation_1 = __webpack_require__(0);
+let lobbyRoom = null;
+const callbacks = {
+    onCreate: null,
+    onJoin: null,
+    onPlayersFull: null,
+    onChangeState: null,
+    onMessage: null,
+    onSpectatorMessage: null,
+    onGameRunning: null
+};
+let firstTimeLobbyStateChange = true;
+exports.createLobbyControl = (root, { gameID, user, client, hideBoard }) => {
+    const startButtonPanel = StartButtonPanel_1.createStartButtonPanel(root);
+    if (!hideBoard)
+        Board_1.createBoard(root);
+    startButtonPanel.showJoinButtonOn(() => {
+        console.log("showJoin");
+        if (!lobbyRoom || !lobbyRoom.state || !lobbyRoom.state.initialized)
+            return false;
+        if (lobbyRoom.state.player1 && lobbyRoom.state.player1.userId === user.userId)
+            return false;
+        if (lobbyRoom.state.player1 && !lobbyRoom.state.player2)
+            return true;
+        return false;
+    });
+    startButtonPanel.showCreateButtonOn(() => {
+        console.log("showCreate");
+        if (!lobbyRoom || !lobbyRoom.state || !lobbyRoom.state.initialized)
+            return false;
+        if (lobbyRoom.state.player1)
+            return false;
+        if (!lobbyRoom.state.player1)
+            return true;
+    });
+    startButtonPanel.showCancelButtonOn(() => {
+        var _a;
+        console.log("showCancel");
+        if (((_a = lobbyRoom === null || lobbyRoom === void 0 ? void 0 : lobbyRoom.state) === null || _a === void 0 ? void 0 : _a.player1) && lobbyRoom.state.player2)
+            return false;
+        if (!lobbyRoom || !lobbyRoom.state || !lobbyRoom.state.initialized)
+            return false;
+        if (!lobbyRoom.state.player1)
+            return false;
+        if (lobbyRoom.state.player1 && lobbyRoom.state.player1.userId === user.userId)
+            return true;
+    });
+    startButtonPanel.update();
+    GameLobby_1.joinOrCreateGameLobby(client, { gameID, user })
+        .then((gameLobby) => {
+        TextPanel_1.updateTextPanel({ value: "", color: Color3.FromHexString("#ffffff") });
+        console.log("gameLobby", gameLobby, user);
+        lobbyRoom = gameLobby.room;
+        let _gameRoom = null;
+        lobbyRoom.onMessage("GAME_FULL", ({ trackSeed, minGames }) => {
+            callbacks.onPlayersFull({ lobbyRoom, trackSeed, minGames });
+        });
+        lobbyRoom.state.onChange = (fieldChanges) => {
+            var _a;
+            startButtonPanel.update();
+            console.log("LOBBY STATE CHANGE", fieldChanges);
+            Board_1.updateBoard(lobbyRoom);
+            console.log("lobbyRoom.state", lobbyRoom.state);
+            if (lobbyRoom.state.player1 && !lobbyRoom.state.player2) {
+                Sound_1.stopAllSounds();
+                Sound_1.playLoop("music2");
+                TextPanel_1.updateTextPanel({ value: `${lobbyRoom.state.player1.displayName} as player 1\nwaiting for someone to join`, bottom: true, color: Color3.Black(), hTextAlign: "left" });
+                SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(1, 0, 192, 128) });
+                SpritePanel_1.showSpritePanel();
+            }
+            if (!lobbyRoom.state.player1 && !lobbyRoom.state.player2) {
+                if (engine["PRODI"]) {
+                    VideoPanel_1.removeVideoPanel();
+                    SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(1, 0, 192, 128) });
+                    SpritePanel_1.showSpritePanel();
+                    if ((_a = lobbyRoom.state.lastPlayer1) === null || _a === void 0 ? void 0 : _a.displayName) {
+                        TextPanel_1.updateTextPanel({ value: `${lobbyRoom.state.lastPlayer1.displayName} ${lobbyRoom.state.lastPlayer1.score} - ${lobbyRoom.state.lastPlayer2.score} ${lobbyRoom.state.lastPlayer2.displayName}` });
+                    }
+                    else {
+                        TextPanel_1.updateTextPanel({ value: "" });
+                    }
+                    Sound_1.stopAllSounds();
+                }
+            }
+            if (lobbyRoom.state.player1 && lobbyRoom.state.player2 && !isCurrentUserPlayer() && (player2EmptyPreviously() || firstTimeLobbyStateChange)) {
+                console.log("stop all and tell players playing");
+                Sound_1.stopAllSounds();
+                TextPanel_1.updateTextPanel({ value: `${lobbyRoom.state.player1.displayName} and ${lobbyRoom.state.player2.displayName}\nare playing` });
+                SpritePanel_1.updateSpritePanel({ uvs: SpriteAnimation_1.getSpriteUv(9, 0, 192, 128) });
+                SpritePanel_1.showSpritePanel();
+                if (firstTimeLobbyStateChange) {
+                    callbacks.onGameRunning({ lobbyRoom, minGames });
+                }
+            }
+            firstTimeLobbyStateChange = false;
+            function isCurrentUserPlayer() {
+                var _a;
+                return lobbyRoom.state.player1 && lobbyRoom.state.player2 && (lobbyRoom.state.player1.userId === user.userId || ((_a = lobbyRoom.state.player2) === null || _a === void 0 ? void 0 : _a.userId) === user.userId);
+            }
+            function player2EmptyPreviously() {
+                const player2FieldChange = fieldChanges.find(f => f.field === 'player2') || {};
+                return player2FieldChange.value && !player2FieldChange.previousValue;
+            }
+            function hasChangeTrackSeed(fieldChanges) {
+                const trackSeedFieldChange = getFieldChange(fieldChanges, "trackSeed");
+                return trackSeedFieldChange.value !== trackSeedFieldChange.value;
+            }
+            function getFieldChange(fieldChanges, fieldId) {
+                return fieldChanges.find(f => f.field === fieldId);
+            }
+        };
+        lobbyRoom.state.onAdd = (instance, key) => {
+            console.log("LOBBY STATE onAdd", instance, key);
+        };
+        lobbyRoom.state.onRemove = (instance, key) => {
+            console.log("LOBBY STATE onRemove", instance, key);
+        };
+        const minGames = 5;
+        startButtonPanel.onRequestCreate(() => {
+            if (lobbyRoom.state.player1)
+                return;
+            gameLobby.requestCreate({
+                gameID,
+                user,
+                minGames,
+                lobbySessionId: lobbyRoom.sessionId
+            }).then(({ sessionId, gameRoom }) => {
+                _gameRoom = gameRoom;
+                callbacks.onCreate(gameRoom, { minGames });
+            }, () => {
+                console.log("requestCreate rejected");
+            });
+        });
+        startButtonPanel.onRequestCancel(() => {
+            _gameRoom && _gameRoom.leave();
+        });
+        startButtonPanel.onRequestJoin(() => {
+            console.log("requestJoin", gameID, lobbyRoom.state.gameRoomID, gameLobby.room.sessionId);
+            if (lobbyRoom.state.player2)
+                return;
+            gameLobby.requestJoin({
+                roomID: lobbyRoom.state.gameRoomID,
+                gameID,
+                user,
+                lobbySessionId: lobbyRoom.sessionId
+            }).then(({ gameRoom }) => {
+                _gameRoom = gameRoom;
+                callbacks.onJoin(gameRoom, { minGames });
+            }, () => {
+                console.log("requestJoin rejected");
+            });
+        });
+    }, (err) => {
+        TextPanel_1.updateTextPanel({ value: "Unable to connect to server.\nServer could be down.\n\nAlso some adblockers can\nblock websocket connection.\n\nTry to refresh when problem solved.", color: Color3.FromHexString("#ff0000") });
+        log("ERR__", err);
+    });
+    return {
+        onCreate: (fn) => {
+            callbacks.onCreate = fn;
+            return () => callbacks.onCreate = null;
+        },
+        onJoin: (fn) => {
+            callbacks.onJoin = fn;
+            return () => callbacks.onJoin = null;
+        },
+        onPlayersFull: (fn) => {
+            callbacks.onPlayersFull = fn;
+            return () => callbacks.onPlayersFull = null;
+        },
+        onGameRunning: (fn) => {
+            callbacks.onGameRunning = fn;
+            return () => callbacks.onGameRunning = null;
+        },
+        onChangeState: (fn) => {
+            callbacks.onChangeState = fn;
+            return () => callbacks.onChangeState = null;
+        },
+        onMessage: (fn) => {
+            callbacks.onMessage = fn;
+            return () => callbacks.onMessage;
+        },
+        update: () => {
+        },
+        getLobbyRoom: () => lobbyRoom,
+        hide: () => {
+        }
+    };
+};
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateStartButtonPanel = exports.onRequestCancel = exports.onRequestJoin = exports.onRequestCreate = exports.showJoinButtonOn = exports.showCreateButtonOn = exports.showCancelButtonOn = exports.createStartButtonPanel = void 0;
+const SpriteMaterial_1 = __webpack_require__(1);
+const SpriteAnimation_1 = __webpack_require__(0);
+const triggers = { showCreateButtonOn: null, showJoinButtonOn: null, showCancelButtonOn: null };
+let createGameButton = null;
+let joinGameButton = null;
+let cancelGameButton = null;
+const callbacks = {
+    onRequestCreate: null,
+    onRequestJoin: null,
+    onRequestCancel: null
+};
+const createButton = (parent, buttonText, position) => {
+    let callbacks = {
+        onClick: null
+    };
+    const button = new Entity();
+    const transform = new Transform({ position });
+    button.addComponent(transform);
+    const box = new Entity();
+    const boxShape = new PlaneShape();
+    boxShape.withCollisions = false;
+    boxShape.uvs = SpriteAnimation_1.getSpriteUv(buttonText === "create"
+        ? 1
+        : buttonText === "join"
+            ? 2
+            : 9, 12 * (1024 / 48), 48, 32);
+    box.addComponent(SpriteMaterial_1.spriteMaterial);
+    box.addComponent(boxShape);
+    boxShape.visible = false;
+    box.addComponent(new Transform({ scale: new Vector3(1.5, 1, 1), position: new Vector3(0, 0, 0) }));
+    box.addComponent(new OnClick(() => {
+        callbacks.onClick();
+    }));
+    box.setParent(button);
+    button.setParent(parent);
+    const hide = () => {
+        boxShape.visible = false;
+    };
+    hide();
+    return {
+        onClick: (fn) => {
+            callbacks.onClick = fn;
+            return () => callbacks.onClick = null;
+        },
+        show: () => {
+            boxShape.visible = true;
+        },
+        hide
+    };
+};
+const PIXEL = 0.03125;
+exports.createStartButtonPanel = (root) => {
+    const panel = new Entity();
+    const buttonY = (PIXEL * 25 / 2) + PIXEL * 2;
+    createGameButton = createButton(panel, "create", new Vector3(-(3 - 48 * PIXEL / 2 - PIXEL * 2), buttonY, -0.01));
+    createGameButton.onClick(() => callbacks.onRequestCreate());
+    joinGameButton = createButton(panel, "join", new Vector3((3 - 48 * PIXEL / 2 - PIXEL * 2), buttonY, -0.01));
+    joinGameButton.onClick(() => callbacks.onRequestJoin());
+    cancelGameButton = createButton(panel, "cancel", new Vector3(-(3 - 48 * PIXEL / 2 - PIXEL * 2), buttonY + PIXEL * 36, -0.01));
+    cancelGameButton.onClick(() => callbacks.onRequestCancel());
+    if (engine["PRODI"]) {
+        panel.setParent(root);
+    }
+    return {
+        onRequestCreate: exports.onRequestCreate,
+        onRequestJoin: exports.onRequestJoin,
+        onRequestCancel: exports.onRequestCancel,
+        showCreateButtonOn: exports.showCreateButtonOn,
+        showJoinButtonOn: exports.showJoinButtonOn,
+        showCancelButtonOn: exports.showCancelButtonOn,
+        update: exports.updateStartButtonPanel
+    };
+};
+exports.showCancelButtonOn = (fn) => {
+    triggers.showCancelButtonOn = fn;
+    return () => triggers.showCancelButtonOn = null;
+};
+exports.showCreateButtonOn = (fn) => {
+    triggers.showCreateButtonOn = fn;
+    return () => triggers.showCreateButtonOn = null;
+};
+exports.showJoinButtonOn = (fn) => {
+    triggers.showJoinButtonOn = fn;
+    return () => triggers.showJoinButtonOn = null;
+};
+exports.onRequestCreate = (fn) => {
+    callbacks.onRequestCreate = fn;
+    return () => callbacks.onRequestCreate = null;
+};
+exports.onRequestJoin = (fn) => {
+    callbacks.onRequestJoin = fn;
+    return () => callbacks.onRequestJoin = null;
+};
+exports.onRequestCancel = (fn) => {
+    callbacks.onRequestCancel = fn;
+    return () => callbacks.onRequestCancel = null;
+};
+exports.updateStartButtonPanel = () => {
+    if (triggers.showCreateButtonOn()) {
+        createGameButton.show();
+    }
+    else {
+        createGameButton.hide();
+    }
+    if (triggers.showJoinButtonOn()) {
+        joinGameButton.show();
+    }
+    else {
+        joinGameButton.hide();
+    }
+    if (triggers.showCancelButtonOn()) {
+        cancelGameButton.show();
+    }
+    else {
+        cancelGameButton.hide();
+    }
+};
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.joinOrCreateGameLobby = void 0;
+const config_1 = __webpack_require__(18);
+const hostData_1 = __webpack_require__(19);
+const navigator = globalThis && globalThis.navigator || {};
+exports.joinOrCreateGameLobby = (client, { gameID, user }) => __awaiter(void 0, void 0, void 0, function* () {
+    const { serverHttp } = hostData_1.getHostData();
+    yield fetch(`${serverHttp || config_1.HTTP_HOST}/game?id=${gameID}`);
+    return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        const { land } = hostData_1.getHostData();
+        console.log("HOPST_DATA_LAND", land);
+        client.joinOrCreate(`gameLobby_${gameID}`, { gameID, user, land, clientInfo: { language: navigator.language || null } }).then(lobbyRoom => {
+            console.log("___lobbyRoom", lobbyRoom);
+            resolve({
+                requestCreate: ({ gameID, user, minGames, lobbySessionId }) => __awaiter(void 0, void 0, void 0, function* () {
+                    log("requestCreate", gameID, user);
+                    return client.create(`game_${gameID}`, { gameID, user: Object.assign(Object.assign({}, user), { address: (user.address || 'empty') }), minGames, lobbySessionId, land }).then((room) => {
+                        return { sessionId: room.sessionId, gameRoomID: room.id, gameRoom: room };
+                    }, () => {
+                        console.log("ERROR CREATE");
+                    });
+                }),
+                requestJoin: ({ roomID, user, lobbySessionId }) => __awaiter(void 0, void 0, void 0, function* () {
+                    log("requestJoin", roomID);
+                    return client.joinById(roomID, { gameID, user: Object.assign(Object.assign({}, user), { address: (user.address || 'empty') }), lobbySessionId, land }).then((room) => {
+                        return { sessionId: room.sessionId, gameRoomID: room.id, gameRoom: room };
+                    }, () => {
+                        console.log("ERROR JOIN");
+                    });
+                }),
+                room: lobbyRoom
+            });
+        }).catch(e => {
+            reject({
+                message: "_join error",
+                error: e
+            });
+        });
+    }));
+});
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateBoard = exports.createBoard = void 0;
+const SpriteAnimation_1 = __webpack_require__(0);
+const Sound_1 = __webpack_require__(2);
+const entity = {
+    player1: new Entity(),
+    player2: new Entity()
+};
+exports.createBoard = (root) => {
+    const text1 = new TextShape();
+    const text2 = new TextShape();
+    const board = new Entity();
+    board.addComponent(new Transform({
+        position: new Vector3(0, 4, -0.15)
+    }));
+    board.setParent(root);
+    text1.color = Color3.FromHexString("#6666ff");
+    text2.color = Color3.FromHexString("#ffff00");
+    text1.hTextAlign = "left";
+    text1.vTextAlign = text2.vTextAlign = "top";
+    text2.hTextAlign = "right";
+    text1.fontSize = text2.fontSize = 2;
+    entity.player1.addComponent(text1);
+    entity.player2.addComponent(text2);
+    entity.player1.addComponent(new Transform({ position: new Vector3(-2.99, 0.5, -0.001) }));
+    entity.player2.addComponent(new Transform({ position: new Vector3(+2.99, 0.5, -0.001) }));
+    entity.player1.setParent(board);
+    entity.player2.setParent(board);
+    const background = new Entity();
+    const backMat = new Material();
+    background.addComponent(backMat);
+    backMat.transparencyMode = 1;
+    backMat.specularIntensity = 0;
+    backMat.roughness = 1;
+    backMat.metallic = 0;
+    backMat.alphaTest = 0.5;
+    backMat.albedoColor = new Color4(0, 0, 0, 0.7);
+    background.addComponent(new PlaneShape());
+    background.addComponent(new Transform({
+        scale: new Vector3(6, 0.5, 1),
+        position: new Vector3(0, 0.25, 0)
+    }));
+    background.setParent(board);
+    let musicEnabled = true;
+    const musicToggler = SpriteAnimation_1.createSpriteEntity(board, {
+        uvs: SpriteAnimation_1.getSpriteUv(10, (512 / 16) * (1024 / 16), 16, 16),
+        position: new Vector3(0, 0.25, -0.001),
+        scale: new Vector3(0.5, 0.5, 1)
+    });
+    musicToggler.getEntity().addComponent(new OnClick(() => {
+        Sound_1.toggleMusic();
+        musicEnabled = !musicEnabled;
+        if (musicEnabled) {
+            musicToggler.getShape().uvs = SpriteAnimation_1.getSpriteUv(10, (512 / 16) * (1024 / 16), 16, 16);
+        }
+        else {
+            musicToggler.getShape().uvs = SpriteAnimation_1.getSpriteUv(11, (512 / 16) * (1024 / 16), 16, 16);
+        }
+    }));
+};
+exports.updateBoard = (lobbyRoom) => {
+    if (lobbyRoom.state.player1)
+        entity.player1.getComponent(TextShape).value = `${lobbyRoom.state.player1.score || 0} points\n${lobbyRoom.state.player1.displayName}`;
+    if (lobbyRoom.state.player2)
+        entity.player2.getComponent(TextShape).value = `${lobbyRoom.state.player2.score || 0} points\n${lobbyRoom.state.player2.displayName}`;
+    if (!lobbyRoom.state.player1)
+        entity.player1.getComponent(TextShape).value = `<free>`;
+    if (!lobbyRoom.state.player2)
+        entity.player2.getComponent(TextShape).value = `<free>`;
+};
+
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6291,10 +6789,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createTrack = void 0;
 const TextPanel_1 = __webpack_require__(6);
 const Sound_1 = __webpack_require__(2);
-const SpritePanel_1 = __webpack_require__(5);
-const VideoPanel_1 = __webpack_require__(17);
+const SpritePanel_1 = __webpack_require__(4);
+const VideoPanel_1 = __webpack_require__(14);
 const SpriteAnimation_1 = __webpack_require__(0);
-const TrackUtil_1 = __webpack_require__(18);
+const TrackUtil_1 = __webpack_require__(20);
 let timeOffset = 0;
 exports.createTrack = (root, { gameRoom, lobbyRoom, user, trackSeed, minGames }) => __awaiter(void 0, void 0, void 0, function* () {
     const callbacks = {
@@ -6517,17 +7015,17 @@ function sleep(ms) {
 
 
 /***/ }),
-/* 50 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createModel = void 0;
-const Hair_1 = __webpack_require__(51);
-const Glasses_1 = __webpack_require__(52);
-const Shirt_1 = __webpack_require__(53);
-const Pants_1 = __webpack_require__(54);
+const Hair_1 = __webpack_require__(57);
+const Glasses_1 = __webpack_require__(58);
+const Shirt_1 = __webpack_require__(59);
+const Pants_1 = __webpack_require__(60);
 const SpriteMaterial_1 = __webpack_require__(1);
 const SpriteAnimation_1 = __webpack_require__(0);
 exports.createModel = (root, { modelDefinition, position, scale, showLabel = "" }) => {
@@ -6585,7 +7083,7 @@ exports.createModel = (root, { modelDefinition, position, scale, showLabel = "" 
 
 
 /***/ }),
-/* 51 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6622,7 +7120,7 @@ exports.createHair = (parent, { partDefinition }) => {
 
 
 /***/ }),
-/* 52 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6659,7 +7157,7 @@ exports.createGlasses = (parent, { partDefinition }) => {
 
 
 /***/ }),
-/* 53 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6696,7 +7194,7 @@ exports.createShirt = (parent, { partDefinition }) => {
 
 
 /***/ }),
-/* 54 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6733,7 +7231,7 @@ exports.createPants = (parent, { partDefinition }) => {
 
 
 /***/ }),
-/* 55 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6783,7 +7281,7 @@ exports.createCollection = (getRandomInt, modelDefinition) => {
 
 
 /***/ }),
-/* 56 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6791,7 +7289,7 @@ exports.createCollection = (getRandomInt, modelDefinition) => {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCollectionControl = void 0;
 const PartUtils_1 = __webpack_require__(8);
-const Cross_1 = __webpack_require__(20);
+const Cross_1 = __webpack_require__(22);
 const SpriteMaterial_1 = __webpack_require__(1);
 const SpriteAnimation_1 = __webpack_require__(0);
 const Sound_1 = __webpack_require__(2);
@@ -6918,25 +7416,25 @@ exports.createCollectionControl = (root, { collection, side, avoidAdd = false })
 
 
 /***/ }),
-/* 57 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const move_1 = __webpack_require__(15);
-const rotate_1 = __webpack_require__(23);
-const scale_1 = __webpack_require__(24);
-const followpath_1 = __webpack_require__(25);
-const keeprotating_1 = __webpack_require__(26);
+const move_1 = __webpack_require__(16);
+const rotate_1 = __webpack_require__(25);
+const scale_1 = __webpack_require__(26);
+const followpath_1 = __webpack_require__(27);
+const keeprotating_1 = __webpack_require__(28);
 const transfromSystem_1 = __webpack_require__(7);
 const interpolation_1 = __webpack_require__(12);
-const toggleComponent_1 = __webpack_require__(58);
-const delay_1 = __webpack_require__(27);
-const expire_1 = __webpack_require__(29);
-const interval_1 = __webpack_require__(28);
-const triggerSystem_1 = __webpack_require__(59);
-const actionsSequenceSystem_1 = __webpack_require__(60);
+const toggleComponent_1 = __webpack_require__(64);
+const delay_1 = __webpack_require__(29);
+const expire_1 = __webpack_require__(31);
+const interval_1 = __webpack_require__(30);
+const triggerSystem_1 = __webpack_require__(65);
+const actionsSequenceSystem_1 = __webpack_require__(66);
 exports.default = {
     TransformSystem: transfromSystem_1.TransformSystem,
     MoveTransformComponent: move_1.MoveTransformComponent,
@@ -6960,7 +7458,7 @@ exports.default = {
 
 
 /***/ }),
-/* 58 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7014,7 +7512,7 @@ exports.default = {
 
 
 /***/ }),
-/* 59 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7397,7 +7895,7 @@ exports.TriggerSphereShape = TriggerSphereShape;
 
 
 /***/ }),
-/* 60 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7733,7 +8231,7 @@ class BreakWhileSequenceNode extends SequenceNode {
 
 
 /***/ }),
-/* 61 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7748,7 +8246,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createScreen = void 0;
 const SpriteMaterial_1 = __webpack_require__(1);
 const SpriteAnimation_1 = __webpack_require__(0);
-const Cross_1 = __webpack_require__(20);
+const Cross_1 = __webpack_require__(22);
 const TIME_MOVE = 0.3;
 let Step = class Step {
     constructor(index, isObstacle) {
@@ -7976,16 +8474,16 @@ exports.createScreen = (root, { player, track }) => {
 
 
 /***/ }),
-/* 62 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SammichGame = void 0;
-const Screen_1 = __webpack_require__(63);
+const Screen_1 = __webpack_require__(69);
 const Sound_1 = __webpack_require__(2);
-const gameUtils_1 = __webpack_require__(4);
+const gameUtils_1 = __webpack_require__(5);
 const ROUNDS = 5;
 class SammichGame {
     constructor(root, { currentPlayer, seed, level, gameIndex }) {
@@ -8175,7 +8673,7 @@ SammichGame.instructions = `Move to sides with E and F\nto build the perfect sam
 
 
 /***/ }),
-/* 63 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8413,7 +8911,7 @@ exports.createScreen = (root, { seed, player, owner }) => {
 
 
 /***/ }),
-/* 64 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8422,10 +8920,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createScreen = void 0;
 const SpriteAnimation_1 = __webpack_require__(0);
 const SpriteMaterial_1 = __webpack_require__(1);
-const move_1 = __webpack_require__(15);
+const move_1 = __webpack_require__(16);
 const seed_1 = __webpack_require__(3);
 const Sound_1 = __webpack_require__(2);
-const carPool_1 = __webpack_require__(65);
+const carPool_1 = __webpack_require__(71);
 const PIXEL = 4 / 128;
 const yOffset = -PIXEL * 36;
 const KEY = {
@@ -8622,7 +9120,7 @@ exports.createScreen = (root, { player, seed }) => {
 
 
 /***/ }),
-/* 65 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8738,7 +9236,7 @@ exports.createCarPool = (parent, { track, randomizer }) => {
 
 
 /***/ }),
-/* 66 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8756,10 +9254,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSpectatorTrack = void 0;
 const TextPanel_1 = __webpack_require__(6);
 const Sound_1 = __webpack_require__(2);
-const SpritePanel_1 = __webpack_require__(5);
-const VideoPanel_1 = __webpack_require__(17);
+const SpritePanel_1 = __webpack_require__(4);
+const VideoPanel_1 = __webpack_require__(14);
 const SpriteAnimation_1 = __webpack_require__(0);
-const TrackUtil_1 = __webpack_require__(18);
+const TrackUtil_1 = __webpack_require__(20);
 let timeOffset = 0;
 exports.createSpectatorTrack = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted }) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("alreadyStarted", alreadyStarted);
@@ -8889,35 +9387,35 @@ function sleep(ms) {
 
 
 /***/ }),
-/* 67 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(68);
-var Client_1 = __webpack_require__(69);
+__webpack_require__(74);
+var Client_1 = __webpack_require__(75);
 exports.Client = Client_1.Client;
-var Protocol_1 = __webpack_require__(39);
+var Protocol_1 = __webpack_require__(41);
 exports.Protocol = Protocol_1.Protocol;
 exports.ErrorCode = Protocol_1.ErrorCode;
-var Room_1 = __webpack_require__(36);
+var Room_1 = __webpack_require__(38);
 exports.Room = Room_1.Room;
-var Auth_1 = __webpack_require__(43);
+var Auth_1 = __webpack_require__(45);
 exports.Auth = Auth_1.Auth;
 exports.Platform = Auth_1.Platform;
-var FossilDeltaSerializer_1 = __webpack_require__(81);
+var FossilDeltaSerializer_1 = __webpack_require__(87);
 exports.FossilDeltaSerializer = FossilDeltaSerializer_1.FossilDeltaSerializer;
-var SchemaSerializer_1 = __webpack_require__(86);
+var SchemaSerializer_1 = __webpack_require__(92);
 exports.SchemaSerializer = SchemaSerializer_1.SchemaSerializer;
-var Serializer_1 = __webpack_require__(38);
+var Serializer_1 = __webpack_require__(40);
 exports.registerSerializer = Serializer_1.registerSerializer;
 Serializer_1.registerSerializer('fossil-delta', FossilDeltaSerializer_1.FossilDeltaSerializer);
 Serializer_1.registerSerializer('schema', SchemaSerializer_1.SchemaSerializer);
 
 
 /***/ }),
-/* 68 */
+/* 74 */
 /***/ (function(module, exports) {
 
 if (!ArrayBuffer.isView) {
@@ -8928,7 +9426,7 @@ if (!ArrayBuffer.isView) {
 
 
 /***/ }),
-/* 69 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9037,11 +9535,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var httpie_1 = __webpack_require__(35);
-var ServerError_1 = __webpack_require__(70);
-var Room_1 = __webpack_require__(36);
-var Auth_1 = __webpack_require__(43);
-var Push_1 = __webpack_require__(80);
+var httpie_1 = __webpack_require__(37);
+var ServerError_1 = __webpack_require__(76);
+var Room_1 = __webpack_require__(38);
+var Auth_1 = __webpack_require__(45);
+var Push_1 = __webpack_require__(86);
 var MatchMakeError = (function (_super) {
     __extends(MatchMakeError, _super);
     function MatchMakeError(message, code) {
@@ -9211,7 +9709,7 @@ exports.Client = Client;
 
 
 /***/ }),
-/* 70 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9246,7 +9744,7 @@ exports.ServerError = ServerError;
 
 
 /***/ }),
-/* 71 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9498,7 +9996,7 @@ exports.default = decode;
 
 
 /***/ }),
-/* 72 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9770,7 +10268,7 @@ exports.default = encode;
 
 
 /***/ }),
-/* 73 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9851,7 +10349,7 @@ exports.createSignal = createSignal;
 
 
 /***/ }),
-/* 74 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9875,7 +10373,7 @@ exports.createNanoEvents = createNanoEvents;
 
 
 /***/ }),
-/* 75 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9899,7 +10397,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var websocket_1 = __importDefault(__webpack_require__(76));
+var websocket_1 = __importDefault(__webpack_require__(82));
 var Connection = (function (_super) {
     __extends(Connection, _super);
     function Connection(url, autoConnect) {
@@ -9940,7 +10438,7 @@ exports.Connection = Connection;
 
 
 /***/ }),
-/* 76 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9959,8 +10457,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
 } }
-var createBackoff = __webpack_require__(77).createBackoff;
-var WebSocketImpl = typeof WebSocket !== "undefined" ? WebSocket : __webpack_require__(78);
+var createBackoff = __webpack_require__(83).createBackoff;
+var WebSocketImpl = typeof WebSocket !== "undefined" ? WebSocket : __webpack_require__(84);
 var WebSocketClient = function () {
     function WebSocketClient(url, protocols) { var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {}; _classCallCheck(this, WebSocketClient); this.url = url; this.protocols = protocols; this.reconnectEnabled = true; this.listeners = {}; this.backoff = createBackoff(options.backoff || 'exponential', options); this.backoff.onReady = this.onBackoffReady.bind(this); if (typeof options.connect === "undefined" || options.connect) {
         this.open();
@@ -10021,7 +10519,7 @@ exports.default = WebSocketClient;
 
 
 /***/ }),
-/* 77 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10042,13 +10540,13 @@ Backoff.prototype.backoff = function () { setTimeout(this.onReady, this.func(++t
 
 
 /***/ }),
-/* 78 */
+/* 84 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 79 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10092,7 +10590,7 @@ exports.getItem = getItem;
 
 
 /***/ }),
-/* 80 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10248,7 +10746,7 @@ exports.Push = Push;
 
 
 /***/ }),
-/* 81 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10265,9 +10763,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var state_listener_1 = __webpack_require__(82);
-var fossilDelta = __importStar(__webpack_require__(85));
-var msgpack = __importStar(__webpack_require__(37));
+var state_listener_1 = __webpack_require__(88);
+var fossilDelta = __importStar(__webpack_require__(91));
+var msgpack = __importStar(__webpack_require__(39));
 var FossilDeltaSerializer = (function () {
     function FossilDeltaSerializer() {
         this.api = new state_listener_1.StateContainer({});
@@ -10292,24 +10790,24 @@ exports.FossilDeltaSerializer = FossilDeltaSerializer;
 
 
 /***/ }),
-/* 82 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var StateContainer_1 = __webpack_require__(83);
+var StateContainer_1 = __webpack_require__(89);
 exports.StateContainer = StateContainer_1.StateContainer;
 
 
 /***/ }),
-/* 83 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var compare_1 = __webpack_require__(84);
+var compare_1 = __webpack_require__(90);
 var StateContainer = (function () {
     function StateContainer(state) {
         this.listeners = [];
@@ -10429,7 +10927,7 @@ exports.StateContainer = StateContainer;
 
 
 /***/ }),
-/* 84 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10512,7 +11010,7 @@ function generate(mirror, obj, patches, path) {
 
 
 /***/ }),
-/* 85 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function (root, factory) {
@@ -10822,13 +11320,13 @@ function generate(mirror, obj, patches, path) {
 
 
 /***/ }),
-/* 86 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var schema_1 = __webpack_require__(44);
+var schema_1 = __webpack_require__(46);
 var SchemaSerializer = (function () {
     function SchemaSerializer() {
     }
@@ -10858,7 +11356,7 @@ exports.SchemaSerializer = SchemaSerializer;
 
 
 /***/ }),
-/* 87 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10904,14 +11402,14 @@ exports.EventEmitter = EventEmitter;
 
 
 /***/ }),
-/* 88 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dumpChanges = void 0;
-var _1 = __webpack_require__(44);
+var _1 = __webpack_require__(46);
 var MapSchema_1 = __webpack_require__(11);
 var ArraySchema_1 = __webpack_require__(10);
 function dumpChanges(schema) {
@@ -10936,7 +11434,7 @@ exports.dumpChanges = dumpChanges;
 
 
 /***/ }),
-/* 89 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10968,7 +11466,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Reflection = exports.ReflectionType = exports.ReflectionField = void 0;
-var annotations_1 = __webpack_require__(46);
+var annotations_1 = __webpack_require__(48);
 var Schema_1 = __webpack_require__(13);
 var ArraySchema_1 = __webpack_require__(10);
 var MapSchema_1 = __webpack_require__(11);
@@ -11137,36 +11635,7 @@ exports.Reflection = Reflection;
 
 
 /***/ }),
-/* 90 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.HTTP_HOST = exports.WS_HOST = void 0;
-exports.WS_HOST = `ws://localhost:2567`;
-exports.HTTP_HOST = `http://localhost:2567`;
-
-
-/***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getHostData = exports.setHostData = void 0;
-let hostData = null;
-exports.setHostData = (_hostData) => {
-    hostData = _hostData;
-};
-exports.getHostData = () => {
-    return hostData;
-};
-
-
-/***/ }),
-/* 92 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
