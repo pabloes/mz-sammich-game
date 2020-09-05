@@ -6241,18 +6241,6 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
-            if (!engine["PRODI"]) {
-                SpritePanel_1.hideSpritePanel();
-                Sound_1.toggleMusic();
-                let game = new DevGame(root, { seed: devSeed, currentPlayer: 2, level: 1, gameIndex: 0 });
-                game.setStartTime(Date.now() + 2000);
-                game.onFinish(() => { });
-                game.onFinishRound && game.onFinishRound(() => { });
-                game.onShareState((sharedState) => {
-                    game.shareState(Object.assign(Object.assign({}, sharedState), { player: 1, senderPlayer: 1 }));
-                });
-                game.init();
-            }
         }))();
     }
     update(dt) {
