@@ -6249,7 +6249,7 @@ class SammichGame {
             if (!engine["PRODI"]) {
                 SpritePanel_1.hideSpritePanel();
                 Sound_1.toggleMusic();
-                let game = new DevGame(root, { seed: devSeed, currentPlayer: 2, level: 1 });
+                let game = new DevGame(root, { seed: devSeed, currentPlayer: 2, level: 1, gameIndex: 0 });
                 game.setStartTime(Date.now() + 2000);
                 game.onFinish(() => { });
                 game.onFinishRound && game.onFinishRound(() => { });
