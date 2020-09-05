@@ -6150,8 +6150,9 @@ const SpriteAnimation_1 = __webpack_require__(0);
 const gameUtils_1 = __webpack_require__(5);
 const GameRepo_1 = __importDefault(__webpack_require__(23));
 const config_1 = __webpack_require__(18);
+const Notification_1 = __webpack_require__(96);
 const hostData_1 = __webpack_require__(19);
-const land_1 = __webpack_require__(96);
+const land_1 = __webpack_require__(97);
 const SpriteMaterial_1 = __webpack_require__(1);
 engine["PRODI"] = true;
 const DevGame = GameRepo_1.default.CostumeGame;
@@ -6245,11 +6246,68 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
+            gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
+                console.log("onPlayersFull", lobbyRoom);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onGameRunning(({ lobbyRoom, minGames }) => {
+                console.log("onGameRunning", lobbyRoom, typeof lobbyRoom, minGames);
+                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed: lobbyRoom.state.trackSeed, minGames, alreadyStarted: true });
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                    console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
+                });
+            });
+            gameLobby.onChangeState((fieldChanges, state) => {
+                console.log("gameLobby onChangeState");
+            });
+            gameLobby.onCreate((gameRoom, { minGames }) => {
+                console.log("you have CREATED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 1, minGames }));
+            });
+            gameLobby.onJoin((gameRoom, { minGames }) => {
+                console.log("you have JOINED gameRoom", gameRoom);
+                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 2, minGames }));
+            });
         }))();
     }
     update(dt) {
+        this.state.countToCheckCamera += dt;
+        if (this.state.countToCheckCamera >= 1) {
+            const { position, soundDistance } = hostData_1.getHostData();
+            const bounds = soundDistance ? {
+                x1: position.x - soundDistance,
+                x2: position.x + soundDistance,
+                z1: position.z - soundDistance,
+                z2: position.z + soundDistance
+            } : { x1: 0, x2: 16, z1: 0, z2: 16 };
+            const { x, y, z } = Camera.instance.position;
+            console.log("soundDistance", soundDistance, bounds, { x, y, z });
+            if (Camera.instance.position.x >= bounds.x1
+                && Camera.instance.position.x <= bounds.x2
+                && Camera.instance.position.z >= bounds.z1
+                && Camera.instance.position.z <= bounds.z2) {
+                console.log("mute", false);
+                Sound_1.setTotalMute(false);
+            }
+            else {
+                console.log("mute", true);
+                Sound_1.setTotalMute(true);
+            }
+            this.state.countToCheckCamera = 0;
+        }
     }
     refreshHost(landData) {
+        if (!this.rootTransform)
+            return;
+        const { position, rotation, scale, gameID } = JSON.parse(landData.host_data).sammichgame;
+        this.rootTransform.position.set(position.x, position.y, position.z);
+        this.rootTransform.rotation.setEuler(rotation.x, rotation.y, rotation.z);
+        this.rootTransform.scale.set(scale.x, scale.y, scale.z);
     }
 }
 exports.default = SammichGame;
@@ -11614,6 +11672,40 @@ exports.Reflection = Reflection;
 
 /***/ }),
 /* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.showNotification = void 0;
+const canvas = new UICanvas();
+const text = new UIText(canvas);
+text.fontSize = 30;
+text.color = Color4.White();
+text.hAlign = "center";
+text.vAlign = "center";
+text.width = "100%";
+text.height = "100%";
+text.value = "";
+text.visible = false;
+canvas.visible = false;
+exports.showNotification = (str, { error = false, info = false, warning = false } = {}) => {
+    canvas.visible = true;
+    text.visible = true;
+    console.log("showNotification", str);
+    text.value = str;
+    text.width = 120;
+    text.height = 30;
+    setTimeout(() => {
+        text.visible = false;
+        canvas.visible = false;
+        text.value = "";
+    }, 4000);
+};
+
+
+/***/ }),
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
