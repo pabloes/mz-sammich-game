@@ -6246,14 +6246,6 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
-            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
-                console.log("handleGameRoomFull", { trackSeed, player, minGames });
-                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
-                    console.log("PLAYER_LEFT", displayName);
-                    Notification_1.showNotification(`${displayName} left the game`);
-                });
-            };
             gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
                 console.log("onPlayersFull", lobbyRoom);
                 createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
@@ -6275,11 +6267,9 @@ class SammichGame {
             });
             gameLobby.onCreate((gameRoom, { minGames }) => {
                 console.log("you have CREATED gameRoom", gameRoom);
-                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 1, minGames }));
             });
             gameLobby.onJoin((gameRoom, { minGames }) => {
                 console.log("you have JOINED gameRoom", gameRoom);
-                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 2, minGames }));
             });
         }))();
     }
