@@ -6124,7 +6124,6 @@ const land_1 = __webpack_require__(96);
 const SpriteMaterial_1 = __webpack_require__(1);
 console.log("META_SAMMICH");
 const createSpectatorTrackHandler = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted = false }) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("createSpectatorTrackHandler", root, lobbyRoom, { trackSeed, minGames });
     SpectatorTrackRunner_1.createSpectatorTrack(root, { lobbyRoom, trackSeed, minGames, alreadyStarted });
 });
 const createGameTrackHandler = (root, { gameRoom, lobbyRoom, user, trackSeed, player, minGames }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -6212,9 +6211,10 @@ class SammichGame {
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
             gameLobby.onPlayersFull((params) => {
+                const { lobbyRoom, trackSeed, minGames } = params;
                 console.log("onPlayersFull", params);
             });
-            console.log("Adding only gameLobby.onPlayersFull wihtout logic in callback");
+            console.log("Adding only gameLobby.onPlayersFull wiht only callback params");
         }))();
     }
     update(dt) {
