@@ -6221,7 +6221,7 @@ class SammichGame {
                     Notification_1.showNotification(`${displayName} left the game`);
                 });
             });
-            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom() with showNotification");
+            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom() with showNotification 1");
         }))();
     }
     update(dt) {
