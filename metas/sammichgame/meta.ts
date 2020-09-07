@@ -6215,12 +6215,13 @@ class SammichGame {
                 const { lobbyRoom, trackSeed, minGames } = params;
                 console.log("onPlayersFull", params);
                 SpectatorTrackRunner_1.createSpectatorTrack(root, { lobbyRoom, trackSeed, minGames, alreadyStarted: false });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
+                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", (params) => {
+                    const { displayName } = params;
                     console.log("PLAYER_LEFT", displayName);
                     Notification_1.showNotification(`${displayName} left the game`);
                 });
             });
-            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom()");
+            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom() without spread params");
         }))();
     }
     update(dt) {
