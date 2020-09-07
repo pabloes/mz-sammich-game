@@ -6119,8 +6119,9 @@ const Sound_1 = __webpack_require__(2);
 const SpriteAnimation_1 = __webpack_require__(0);
 const gameUtils_1 = __webpack_require__(5);
 const config_1 = __webpack_require__(18);
+const Notification_1 = __webpack_require__(96);
 const hostData_1 = __webpack_require__(19);
-const land_1 = __webpack_require__(96);
+const land_1 = __webpack_require__(97);
 const SpriteMaterial_1 = __webpack_require__(1);
 console.log("META_SAMMICH");
 const createSpectatorTrackHandler = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted = false }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -6217,9 +6218,10 @@ class SammichGame {
                 gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", (params) => {
                     const { displayName } = params;
                     console.log("PLAYER_LEFT", displayName);
+                    Notification_1.showNotification(`${displayName} left the game`);
                 });
             });
-            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom() without spread params 1");
+            console.log("Adding only gameLobby.onPlayersFull with gameLobby.getLobbyRoom() with showNotification");
         }))();
     }
     update(dt) {
@@ -11618,6 +11620,40 @@ exports.Reflection = Reflection;
 
 /***/ }),
 /* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.showNotification = void 0;
+const canvas = new UICanvas();
+const text = new UIText(canvas);
+text.fontSize = 30;
+text.color = Color4.White();
+text.hAlign = "center";
+text.vAlign = "center";
+text.width = "100%";
+text.height = "100%";
+text.value = "";
+text.visible = false;
+canvas.visible = false;
+exports.showNotification = (str, { error = false, info = false, warning = false } = {}) => {
+    canvas.visible = true;
+    text.visible = true;
+    console.log("showNotification", str);
+    text.value = str;
+    text.width = 120;
+    text.height = 30;
+    setTimeout(() => {
+        text.visible = false;
+        canvas.visible = false;
+        text.value = "";
+    }, 4000);
+};
+
+
+/***/ }),
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
