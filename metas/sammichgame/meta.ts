@@ -6119,9 +6119,8 @@ const Sound_1 = __webpack_require__(2);
 const SpriteAnimation_1 = __webpack_require__(0);
 const gameUtils_1 = __webpack_require__(5);
 const config_1 = __webpack_require__(18);
-const Notification_1 = __webpack_require__(96);
 const hostData_1 = __webpack_require__(19);
-const land_1 = __webpack_require__(97);
+const land_1 = __webpack_require__(96);
 const SpriteMaterial_1 = __webpack_require__(1);
 console.log("META_SAMMICH");
 const createSpectatorTrackHandler = (root, { lobbyRoom, trackSeed, minGames, alreadyStarted = false }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -6212,41 +6211,7 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
-            const handleGameRoomFull = (gameRoom, { trackSeed, player, minGames }) => {
-                console.log("handleGameRoomFull", { trackSeed, player, minGames });
-                createGameTrackHandler(root, { gameRoom, lobbyRoom: gameLobby.getLobbyRoom(), user, trackSeed, player, minGames });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
-                    console.log("PLAYER_LEFT", displayName);
-                    Notification_1.showNotification(`${displayName} left the game`);
-                });
-            };
-            gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
-                console.log("onPlayersFull", lobbyRoom);
-                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
-                    console.log("PLAYER_LEFT", displayName);
-                    Notification_1.showNotification(`${displayName} left the game`);
-                });
-            });
-            gameLobby.onGameRunning(({ lobbyRoom, minGames }) => {
-                console.log("onGameRunning", lobbyRoom, typeof lobbyRoom, minGames);
-                createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed: lobbyRoom.state.trackSeed, minGames, alreadyStarted: true });
-                gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
-                    console.log("PLAYER_LEFT", displayName);
-                    Notification_1.showNotification(`${displayName} left the game`);
-                });
-            });
-            gameLobby.onChangeState((fieldChanges, state) => {
-                console.log("gameLobby onChangeState");
-            });
-            gameLobby.onCreate((gameRoom, { minGames }) => {
-                console.log("you have CREATED gameRoom", gameRoom);
-                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 1, minGames }));
-            });
-            gameLobby.onJoin((gameRoom, { minGames }) => {
-                console.log("you have JOINED gameRoom", gameRoom);
-                gameRoom.onMessage("GAME_FULL", ({ trackSeed }) => handleGameRoomFull(gameRoom, { trackSeed, player: 2, minGames }));
-            });
+            console.log("REMOVED gameLobby CALLBACKS");
         }))();
     }
     update(dt) {
@@ -11645,40 +11610,6 @@ exports.Reflection = Reflection;
 
 /***/ }),
 /* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.showNotification = void 0;
-const canvas = new UICanvas();
-const text = new UIText(canvas);
-text.fontSize = 30;
-text.color = Color4.White();
-text.hAlign = "center";
-text.vAlign = "center";
-text.width = "100%";
-text.height = "100%";
-text.value = "";
-text.visible = false;
-canvas.visible = false;
-exports.showNotification = (str, { error = false, info = false, warning = false } = {}) => {
-    canvas.visible = true;
-    text.visible = true;
-    console.log("showNotification", str);
-    text.value = str;
-    text.width = 120;
-    text.height = 30;
-    setTimeout(() => {
-        text.visible = false;
-        canvas.visible = false;
-        text.value = "";
-    }, 4000);
-};
-
-
-/***/ }),
-/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
