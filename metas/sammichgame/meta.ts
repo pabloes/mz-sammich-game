@@ -6212,7 +6212,8 @@ class SammichGame {
                     uvs: SpriteAnimation_1.getSpriteUv(1, (960 / 64) * (1024 / 384), 384, 64)
                 });
             gameLobby = LobbyControl_1.createLobbyControl(root, { gameID, client, user, hideBoard });
-            gameLobby.onPlayersFull(({ lobbyRoom, trackSeed, minGames }) => {
+            gameLobby.onPlayersFull((params) => {
+                const { lobbyRoom, trackSeed, minGames } = params;
                 console.log("onPlayersFull", lobbyRoom);
                 createSpectatorTrackHandler(root, { lobbyRoom: gameLobby.getLobbyRoom(), trackSeed, minGames });
                 gameLobby.getLobbyRoom().onMessage("PLAYER_LEFT", ({ displayName }) => {
@@ -6220,7 +6221,7 @@ class SammichGame {
                     Notification_1.showNotification(`${displayName} left the game`);
                 });
             });
-            console.log("Adding only gameLobby.onPlayersFull");
+            console.log("Adding only gameLobby.onPlayersFull wihtout spread params");
         }))();
     }
     update(dt) {
