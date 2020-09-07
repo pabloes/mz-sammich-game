@@ -6213,8 +6213,9 @@ class SammichGame {
             gameLobby.onPlayersFull((params) => {
                 const { lobbyRoom, trackSeed, minGames } = params;
                 console.log("onPlayersFull", params);
+                SpectatorTrackRunner_1.createSpectatorTrack(root, { lobbyRoom, trackSeed, minGames, alreadyStarted: false });
             });
-            console.log("Adding only gameLobby.onPlayersFull wiht only callback params");
+            console.log("Adding only gameLobby.onPlayersFull with only createSpectatorTrack");
         }))();
     }
     update(dt) {
