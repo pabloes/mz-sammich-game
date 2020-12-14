@@ -19,6 +19,17 @@ const _getUserData = async () => {
   }
   return userData;
 }
+const _getCurrentRealm = async () => {
+  let data;
+  while(!data){
+    data = await getCurrentRealm();
+    if(!data){
+      console.log("NO REALM DATA, retry", data);
+    }
+  }
+  console.log("currentRealm", data);
+  return data;
+}
 const landOwnerData = {
   host_data: `{
   "sammichgame": {
@@ -54,7 +65,7 @@ let meta;
 try{
   meta = new SammichGame(mzAPI, landOwnerData)
 }catch(err){
-  meta = new SammichGame({getUserData:_getUserData, getCurrentRealm}, landOwnerData)
+  meta = new SammichGame({getUserData:_getUserData, getCurrentRealm:_getCurrentRealm}, landOwnerData)
 }
 
 engine.addSystem(meta);
