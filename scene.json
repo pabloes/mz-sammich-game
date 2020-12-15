@@ -10,9 +10,9 @@
   "owner": "",
   "scene": {
     "parcels": [
-      "0,0"
+      "-139,-123"
     ],
-    "base": "0,0"
+    "base": "-139,-123"
   },
   "communications": {
     "type": "webrtc",
